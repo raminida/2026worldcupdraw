@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2026 북중미 월드컵 시뮬레이터 (Skip Removed)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=VT323&display=swap');
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #0f172a; 
+            color: #e2e8f0;
+            position: relative;
+            padding-bottom: 180px; 
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1504305754058-2f08ccd89a05?q=80&w=2070&auto=format&fit=crop'); 
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .group-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            background-color: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        
+        .korea-highlight {
+            background: linear-gradient(90deg, rgba(200, 16, 46, 0.3) 0%, rgba(0, 71, 160, 0.3) 100%);
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: 15px;
+            object-fit: cover;
+            border-radius: 2px;
+            box-shadow: 0 0 2px rgba(0,0,0,0.5);
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Happiness Circuit Widget */
+        .happiness-widget {
+            position: fixed;
+            top: 70px;
+            right: -100%; 
+            width: 360px; 
+            max-width: 90%;
+            background: rgba(15, 23, 42, 0.98);
+            border: 1px solid #334155;
+            border-left: 4px solid #34d399;
+            border-radius: 12px 0 0 12px;
+            padding: 16px;
+            z-index: 40;
+            backdrop-filter: blur(10px);
+            box-shadow: -10px 10px 30px rgba(0,0,0,0.5);
+            transition: right 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            height: auto;
+            max-height: 80vh;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+
+        .happiness-widget.active { right: 0; }
+
+        @media (max-width: 768px) {
+            .happiness-widget {
+                top: 60px;
+                border-radius: 0 0 0 12px;
+                border-top: 1px solid #334155;
+                max-height: 75vh;
+            }
+        }
+
+        /* Toggle Button */
+        .widget-toggle-btn {
+            position: fixed;
+            top: 110px;
+            right: 0;
+            z-index: 41;
+            background: #34d399;
+            color: #0f172a;
+            padding: 12px 14px 12px 18px;
+            border-radius: 30px 0 0 30px;
+            box-shadow: -2px 2px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            font-weight: bold;
+            transition: right 0.3s;
+        }
+        .widget-toggle-btn:active { transform: scale(0.95); }
+        .widget-toggle-btn.hidden-btn { right: 360px; background: #334155; color: white; }
+        @media (max-width: 768px) {
+            .widget-toggle-btn.hidden-btn { right: 90%; }
+        }
+
+        /* Match Card */
+        .match-card {
+            background: rgba(51, 65, 85, 0.6);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+        .match-card.active-match {
+            border-color: #34d399;
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.2);
+            background: rgba(51, 65, 85, 0.9);
+        }
+        .match-card.finished { opacity: 0.7; }
+        .team-row.winner { color: #34d399; font-weight: bold; }
+        .team-row.loser { opacity: 0.5; }
+
+        /* Sticky Footer */
+        .sticky-footer {
+            background: linear-gradient(0deg, rgba(15, 23, 42, 1) 20%, rgba(15, 23, 42, 0.95) 80%, rgba(15, 23, 42, 0) 100%);
+            padding-bottom: env(safe-area-inset-bottom, 20px); 
+        }
+
+        /* Table Styles */
+        .league-table th, .league-table td { padding: 6px 8px; }
+        .league-table th { color: #94a3b8; font-weight: normal; font-size: 0.75rem; }
+        .league-table td { color: #e2e8f0; font-size: 0.85rem; }
+        
+        .qualify-zone { border-left: 4px solid #34d399; background: linear-gradient(90deg, rgba(52, 211, 153, 0.1) 0%, transparent 100%); }
+        .wildcard-zone { border-left: 4px solid #34d399; background: linear-gradient(90deg, rgba(52, 211, 153, 0.1) 0%, transparent 100%); } 
+        .eliminate-zone { border-left: 4px solid #ef4444; background: linear-gradient(90deg, rgba(239, 68, 68, 0.1) 0%, transparent 100%); }
+
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+        
+        .winner-modal { animation: zoomIn 0.5s ease-out forwards; }
+        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .star-pop { animation: starPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: scale(3); }
+        @keyframes starPop { to { opacity: 1; transform: scale(1); } }
+
+        .score-list-item { font-family: 'VT323', monospace; font-size: 1.2em; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Widget Toggle Button -->
+    <div id="widgetToggle" class="widget-toggle-btn" onclick="toggleWidget()">
+        <i class="fas fa-chart-bar text-xl"></i>
+    </div>
+
+    <!-- Happiness Circuit Widget -->
+    <div id="happinessWidget" class="happiness-widget">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2 sticky top-0 bg-slate-900/95 z-10 pt-1">
+            <h3 class="text-lg font-bold text-emerald-400"><i class="fas fa-calculator mr-2"></i>행복회로</h3>
+            <button onclick="toggleWidget()" class="text-slate-400 hover:text-white p-2"><i class="fas fa-times text-lg"></i></button>
+        </div>
+        
+        <!-- 1. Probability -->
+        <div class="mb-5 bg-slate-800/50 p-3 rounded border border-slate-700">
+            <div class="flex justify-between text-sm text-slate-300 mb-1">
+                <span class="font-bold">🇰🇷 32강 진출 확률</span>
+                <span id="probText" class="font-mono text-emerald-300 font-bold text-lg">--%</span>
+            </div>
+            <div class="w-full bg-slate-700 rounded-full h-3 overflow-hidden shadow-inner">
+                <div id="probBar" class="bg-gradient-to-r from-red-600 via-yellow-500 to-emerald-500 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
+            </div>
+            <div id="probComment" class="text-xs text-center mt-2 text-slate-400 h-4 truncate font-medium"></div>
+        </div>
+
+        <!-- 2. Action & Match Scores -->
+        <div class="mb-6">
+            <button onclick="simulateLeagueRound()" id="widgetSimBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg shadow-lg mb-3 transition flex justify-center items-center text-sm active:scale-95">
+                <i class="fas fa-play mr-2"></i> <span id="widgetSimBtnText">조별리그 1차전 진행</span>
+            </button>
+            
+            <div class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1 ml-1">우리 조 경기 결과</div>
+            <div class="bg-slate-800 rounded border border-slate-700 overflow-hidden p-2 min-h-[100px] overflow-y-auto custom-scrollbar" id="koreaGroupMatches">
+                <div class="text-xs text-slate-600 text-center italic py-4">경기 기록 없음</div>
+            </div>
+        </div>
+
+        <!-- 3. 3rd Place Table -->
+        <div>
+            <div class="flex justify-between items-end mb-2 px-1">
+                <div class="text-xs text-yellow-400 uppercase tracking-wider font-bold"><i class="fas fa-crown mr-1"></i>와일드카드 (Top 8)</div>
+                <div class="text-[10px] text-slate-500">8위까지 생존 (초록색)</div>
+            </div>
+            <div class="bg-slate-800/50 rounded border border-slate-700/50 overflow-hidden">
+                <table class="w-full text-left border-separate border-spacing-0">
+                    <thead>
+                        <tr class="text-slate-500 border-b border-slate-700 text-[10px] bg-slate-800">
+                            <th class="w-8 text-center p-2 border-b border-slate-700">#</th>
+                            <th class="p-2 border-b border-slate-700">Team</th>
+                            <th class="text-center p-2 border-b border-slate-700">Pts</th>
+                            <th class="text-center p-2 border-b border-slate-700">GD</th>
+                        </tr>
+                    </thead>
+                    <tbody id="thirdPlaceBody" class="text-xs">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="h-4"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-700 p-4 text-center shadow-lg relative z-10">
+        <h1 class="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-white to-emerald-400 drop-shadow-lg">
+            2026 FIFA WORLD CUP™
+        </h1>
+        <p class="text-slate-400 mt-1 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">Simulator Final</p>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-slate-900/95 border-b border-slate-800 sticky top-0 z-20 backdrop-blur-sm">
+        <div class="container mx-auto px-2 flex justify-around md:justify-center md:gap-12">
+            <button onclick="switchTab('draw')" id="tab-draw" class="py-3 px-2 font-bold text-base md:text-lg tab-active transition-all border-b-2 border-transparent">
+                <i class="fas fa-th-large mr-1"></i>조별리그
+            </button>
+            <button onclick="switchTab('tournament')" id="tab-tournament" class="py-3 px-2 font-bold text-base md:text-lg tab-inactive transition-all border-b-2 border-transparent hidden">
+                <i class="fas fa-trophy mr-1"></i>32강
+            </button>
+            <button onclick="switchTab('report')" id="tab-report" class="py-3 px-2 font-bold text-base md:text-lg tab-inactive transition-all border-b-2 border-transparent">
+                <i class="fas fa-chart-pie mr-1"></i>분석실
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow relative overflow-hidden w-full">
+        <!-- Section: Draw & League Simulator -->
+        <section id="section-draw" class="container mx-auto px-2 md:px-4 py-4 h-full overflow-y-auto">
+            
+            <div id="fixedInfo" class="text-center mb-6 text-xs md:text-sm text-slate-400 flex justify-center items-center gap-2 flex-wrap bg-slate-800/50 p-2 rounded-lg border border-slate-700/50 mx-auto max-w-xl">
+                <span class="bg-slate-900/80 px-2 py-1 rounded border border-slate-700 text-[10px]">고정</span> 
+                <span class="flex items-center"><img src="https://flagcdn.com/w40/mx.png" class="w-4 h-3 mr-1 inline"> A1</span>
+                <span class="flex items-center"><img src="https://flagcdn.com/w40/ca.png" class="w-4 h-3 mr-1 inline"> B1</span>
+                <span class="flex items-center"><img src="https://flagcdn.com/w40/us.png" class="w-4 h-3 mr-1 inline"> D1</span>
+            </div>
+
+            <div id="groupsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 pb-32">
+                <!-- Groups inserted by JS -->
+            </div>
+        </section>
+
+        <!-- Section: Tournament -->
+        <section id="section-tournament" class="container mx-auto px-2 md:px-4 py-4 hidden h-full overflow-y-auto custom-scrollbar">
+            <div class="max-w-4xl mx-auto pb-32">
+                <div class="flex justify-between items-center mb-6 px-2">
+                    <h2 class="text-xl md:text-2xl font-bold text-white"><i class="fas fa-trophy text-yellow-400 mr-2"></i>32강 토너먼트</h2>
+                </div>
+                <div id="tournamentBracket" class="space-y-8 relative">
+                    <div class="text-center text-slate-500 py-20">
+                        <i class="fas fa-lock text-4xl mb-4 opacity-50"></i><br>
+                        조별리그가 완료되어야 합니다.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Report -->
+        <section id="section-report" class="container mx-auto px-4 py-8 hidden h-full overflow-y-auto custom-scrollbar">
+             <div class="max-w-3xl mx-auto">
+                <div class="bg-slate-800/90 backdrop-blur rounded-xl p-6 shadow-2xl border border-slate-700 text-center mb-8">
+                    <h2 class="text-xl font-bold text-white mb-2">🇰🇷 시뮬레이션 데이터 센터</h2>
+                    <div class="flex justify-center gap-4 flex-wrap mt-6">
+                        <button onclick="runBatchSimulation(100)" id="batchBtn100" class="bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition active:scale-95 text-lg border border-orange-400/30 w-full md:w-auto">100회 가동</button>
+                    </div>
+                    <div id="batchProgress" class="hidden mt-6">
+                        <div class="w-full bg-slate-700 rounded-full h-4 mb-2 overflow-hidden border border-slate-600">
+                            <div id="progressBar" class="bg-emerald-500 h-4 rounded-full transition-all duration-300 relative overflow-hidden" style="width: 0%"></div>
+                        </div>
+                        <p class="text-emerald-400 font-mono text-sm" id="progressText">0 / 0</p>
+                    </div>
+                </div>
+                <div id="reportResults" class="hidden space-y-6 pb-12">
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div id="worstCaseContent" class="bg-slate-800 p-4 rounded-lg border border-slate-700"></div>
+                        <div id="bestCaseContent" class="bg-slate-800 p-4 rounded-lg border border-slate-700"></div>
+                     </div>
+                     <div id="statsTableBody" class="bg-slate-800 p-4 rounded-lg border border-slate-700"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Sticky Controller -->
+    <div id="drawController" class="fixed bottom-0 left-0 w-full sticky-footer p-3 z-50 flex justify-center items-end pb-6 md:pb-8" style="display: none;">
+        <div class="bg-slate-800/95 backdrop-blur-md border border-slate-600 rounded-2xl shadow-2xl p-3 flex items-center gap-3 w-full max-w-2xl mx-2 relative overflow-visible transition-all duration-300">
+            
+            <!-- Draw Controls -->
+            <div id="drawControlsGroup" class="flex items-center w-full relative">
+                <button onclick="drawNextStep()" id="lotteryBtn" class="bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white rounded-full w-16 h-16 md:w-20 md:h-20 flex items-center justify-center shadow-lg border-4 border-slate-900 absolute -top-6 left-4 md:left-8 transition active:scale-95 z-20">
+                    <i class="fas fa-dice text-2xl md:text-3xl animate-pulse"></i>
+                </button>
+                <div class="flex-grow pl-20 md:pl-32 pr-2 py-1">
+                    <div class="text-[10px] md:text-xs text-slate-400 uppercase font-bold tracking-wider">Live Status</div>
+                    <div id="drawStatusText" class="text-sm md:text-lg font-black text-white truncate">Ready</div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="resetDraw()" class="text-slate-400 hover:text-white px-3 py-2 bg-slate-700/50 rounded-lg"><i class="fas fa-undo"></i></button>
+                </div>
+            </div>
+
+            <!-- League Controls -->
+            <div id="leagueControlsGroup" class="hidden w-full flex items-center justify-between pl-2">
+                <div class="flex-grow">
+                    <div class="text-[10px] md:text-xs text-slate-400 uppercase font-bold tracking-wider">Group Stage</div>
+                    <div id="leagueStatusText" class="text-sm md:text-lg font-black text-white truncate">Round 1 Ready</div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="simulateLeagueRound()" id="leagueNextBtn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-xl shadow-lg transition flex items-center text-sm md:text-base">
+                        <i class="fas fa-play mr-1 md:mr-2"></i> <span class="hidden md:inline">라운드 </span>진행
+                    </button>
+                    <button onclick="startTournament()" id="toTournamentBtn" class="hidden bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-xl shadow-lg transition flex items-center text-sm md:text-base">
+                        <i class="fas fa-trophy mr-1 md:mr-2"></i> 32강<span class="hidden md:inline"> 진출</span>
+                    </button>
+                    <button onclick="resetDraw()" class="text-slate-400 hover:text-white px-3 py-2 bg-slate-700/50 rounded-lg"><i class="fas fa-undo"></i></button>
+                </div>
+            </div>
+
+            <!-- Tournament Controls -->
+            <div id="tournamentControlsGroup" class="hidden w-full flex items-center justify-between pl-2">
+                <div class="flex-grow">
+                    <div class="text-[10px] md:text-xs text-slate-400 uppercase font-bold tracking-wider">Tournament</div>
+                    <div id="tournamentStatusText" class="text-sm md:text-lg font-black text-amber-400 truncate">Round of 32</div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="runNextMatch()" id="nextMatchBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-xl shadow-lg transition flex items-center text-sm md:text-base">
+                        <i class="fas fa-futbol mr-1 md:mr-2"></i> <span class="hidden md:inline">다음 </span>경기
+                    </button>
+                    <button onclick="resetDraw()" class="text-slate-400 hover:text-white px-3 py-2 bg-slate-700/50 rounded-lg"><i class="fas fa-undo"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Button -->
+    <div id="initialControls" class="fixed bottom-8 left-0 w-full flex justify-center z-40 px-4 pointer-events-none">
+        <div class="pointer-events-auto bg-slate-800/95 backdrop-blur p-4 rounded-2xl shadow-2xl border border-slate-700 flex flex-col gap-3 w-full max-w-sm">
+            <button onclick="startLiveDraw()" class="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white font-bold py-4 px-6 rounded-xl shadow-lg text-lg w-full">
+                <i class="fas fa-play-circle mr-2"></i> 실시간 추첨 시작
+            </button>
+            <div class="grid grid-cols-2 gap-3">
+                 <button onclick="startSingleDraw()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-3 px-4 rounded-xl text-sm">
+                    <i class="fas fa-fast-forward mr-2"></i> 결과만 보기
+                </button>
+                 <button onclick="switchTab('report')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-3 px-4 rounded-xl text-sm">
+                    <i class="fas fa-chart-pie mr-2"></i> 1000회 분석
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="lotteryModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm p-4">
+        <div class="bg-slate-900 border-2 border-emerald-500/50 p-8 rounded-2xl shadow-2xl text-center max-w-xs w-full transform transition-all scale-100">
+            <div class="mb-6 relative h-24 flex items-center justify-center overflow-hidden bg-slate-800 rounded-xl inner-shadow">
+                <div id="spinningContent" class="text-4xl font-black text-white"><i class="fas fa-futbol text-5xl text-slate-700 animate-spin"></i></div>
+            </div>
+            <h3 id="lotteryTitle" class="text-lg font-bold text-emerald-400 mb-2">추첨 중...</h3>
+        </div>
+    </div>
+
+    <div id="winnerModal" class="fixed inset-0 z-[120] flex items-center justify-center bg-black/90 hidden winner-modal p-4">
+        <div class="text-center relative w-full max-w-md">
+            <h2 class="text-3xl md:text-5xl font-black text-yellow-400 mb-4 drop-shadow-lg animate-pulse">WORLD CHAMPION</h2>
+            <div class="relative inline-block mb-8">
+                <img id="winnerFlag" src="" class="w-full max-w-[280px] h-auto mx-auto rounded shadow-2xl border-4 border-yellow-500 object-cover">
+                <div id="starsContainer" class="absolute -top-8 left-0 w-full flex justify-center gap-2 flex-wrap"></div>
+            </div>
+            <div id="winnerName" class="text-4xl md:text-6xl font-black text-white tracking-widest uppercase mb-8">KOREA</div>
+            <button onclick="closeWinnerModal()" class="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg border border-slate-500">닫기</button>
+        </div>
+    </div>
+
+    <div id="receiptModal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm" onclick="closeReceipt(event)">
+        <div class="receipt-paper p-6 relative" onclick="event.stopPropagation()">
+            <div class="text-center mb-4">
+                <h2 class="text-2xl font-bold tracking-widest border-b-2 border-black pb-2 inline-block">2026 WORLD CUP</h2>
+                <div class="text-sm mt-1">OFFICIAL DRAW RECEIPT</div>
+                <div class="text-xs text-gray-500" id="receiptDate"></div>
+            </div>
+            <div class="text-sm font-mono mb-4"><div id="receiptContent" class="space-y-1"></div></div>
+            <div class="receipt-divider"></div>
+            <div class="text-center text-sm">
+                <div class="font-bold mb-1">LUCK SCORE</div>
+                <div class="text-3xl font-bold" id="receiptScore">--</div>
+            </div>
+            <button onclick="document.getElementById('receiptModal').classList.add('hidden')" class="absolute -top-4 -right-4 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:bg-red-600"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // --- Utility Functions ---
+        function resetDraw() { location.reload(); }
+        function switchTab(tabId) {
+            ['draw', 'tournament', 'report'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`); const section = document.getElementById(`section-${t}`);
+                if (t === tabId) { btn.classList.remove('tab-inactive', 'hidden'); btn.classList.add('tab-active'); section.classList.remove('hidden'); } 
+                else { btn.classList.remove('tab-active'); btn.classList.add('tab-inactive'); section.classList.add('hidden'); }
+            });
+            if(tabId === 'tournament' && tournamentState.active) {
+                document.getElementById('drawControlsGroup').classList.add('hidden');
+                document.getElementById('leagueControlsGroup').classList.add('hidden');
+                document.getElementById('tournamentControlsGroup').classList.remove('hidden');
+                document.getElementById('tournamentControlsGroup').classList.add('flex');
+                document.getElementById('widgetToggle').classList.add('hidden'); 
+                document.getElementById('happinessWidget').classList.remove('active');
+            } else if (tabId === 'draw') {
+                document.getElementById('widgetToggle').classList.remove('hidden');
+                if(liveDrawState.currentStep >= 48) {
+                    document.getElementById('drawControlsGroup').classList.add('hidden');
+                    document.getElementById('leagueControlsGroup').classList.remove('hidden');
+                    document.getElementById('leagueControlsGroup').classList.add('flex');
+                    document.getElementById('happinessWidget').classList.add('active');
+                } else {
+                    document.getElementById('drawControlsGroup').classList.remove('hidden');
+                    document.getElementById('leagueControlsGroup').classList.add('hidden');
+                    document.getElementById('tournamentControlsGroup').classList.add('hidden');
+                }
+            }
+        }
+        function toggleWidget() {
+            const widget = document.getElementById('happinessWidget');
+            const btn = document.getElementById('widgetToggle');
+            if(widget && btn) {
+                widget.classList.toggle('active');
+                btn.classList.toggle('hidden-btn');
+            }
+        }
+        function closeReceipt(e) { if(e.target.id === 'receiptModal') document.getElementById('receiptModal').classList.add('hidden'); }
+        function closeWinnerModal() {
+            document.getElementById('winnerModal').classList.add('hidden');
+            if(confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
+            const ctx = document.getElementById('confetti-canvas').getContext('2d');
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        }
+
+        // --- Data & State ---
+        const pots = {
+            pot1: [
+                { name: "스페인", conf: "UEFA", rank: 1, elo: 2160, code: "es", tier: "S", stars: 1 },
+                { name: "아르헨티나", conf: "CONMEBOL", rank: 2, elo: 2140, code: "ar", tier: "S", stars: 3 },
+                { name: "프랑스", conf: "UEFA", rank: 3, elo: 2120, code: "fr", tier: "S", stars: 2 },
+                { name: "잉글랜드", conf: "UEFA", rank: 4, elo: 2080, code: "gb-eng", tier: "S", stars: 1 },
+                { name: "브라질", conf: "CONMEBOL", rank: 5, elo: 2070, code: "br", tier: "S", stars: 5 },
+                { name: "포르투갈", conf: "UEFA", rank: 6, elo: 2040, code: "pt", tier: "A", stars: 0 },
+                { name: "네덜란드", conf: "UEFA", rank: 7, elo: 2020, code: "nl", tier: "A", stars: 0 },
+                { name: "벨기에", conf: "UEFA", rank: 8, elo: 1980, code: "be", tier: "A", stars: 0 },
+                { name: "독일", conf: "UEFA", rank: 9, elo: 2050, code: "de", tier: "S", stars: 4 },
+                { name: "멕시코", conf: "CONCACAF", host: true, fixedGroup: 0, rank: 15, elo: 1850, code: "mx", tier: "B", stars: 0 },
+                { name: "미국", conf: "CONCACAF", host: true, fixedGroup: 3, rank: 18, elo: 1840, code: "us", tier: "B", stars: 0 },
+                { name: "캐나다", conf: "CONCACAF", host: true, fixedGroup: 1, rank: 35, elo: 1750, code: "ca", tier: "B", stars: 0 }
+            ],
+            pot2: [
+                { name: "크로아티아", conf: "UEFA", rank: 10, elo: 1950, code: "hr", tier: "A", stars: 0 },
+                { name: "모로코", conf: "CAF", rank: 11, elo: 1930, code: "ma", tier: "A", stars: 0 },
+                { name: "콜롬비아", conf: "CONMEBOL", rank: 12, elo: 2010, code: "co", tier: "A", stars: 0 },
+                { name: "우루과이", conf: "CONMEBOL", rank: 14, elo: 1980, code: "uy", tier: "A", stars: 2 },
+                { name: "일본", conf: "AFC", rank: 16, elo: 1900, code: "jp", tier: "B", stars: 0 },
+                { name: "스위스", conf: "UEFA", rank: 17, elo: 1890, code: "ch", tier: "B", stars: 0 },
+                { name: "세네갈", conf: "CAF", rank: 19, elo: 1800, code: "sn", tier: "B", stars: 0 },
+                { name: "이란", conf: "AFC", rank: 20, elo: 1830, code: "ir", tier: "B", stars: 0 },
+                { name: "대한민국", conf: "AFC", rank: 22, elo: 1740, code: "kr", tier: "C", stars: 0 }, 
+                { name: "오스트리아", conf: "UEFA", rank: 23, elo: 1880, code: "at", tier: "B", stars: 0 }, 
+                { name: "에콰도르", conf: "CONMEBOL", rank: 24, elo: 1870, code: "ec", tier: "B", stars: 0 },
+                { name: "호주", conf: "AFC", rank: 25, elo: 1760, code: "au", tier: "C", stars: 0 }        
+            ],
+            pot3: [
+                { name: "노르웨이", conf: "UEFA", rank: 29, elo: 1820, code: "no", tier: "A", buff: true }, 
+                { name: "파나마", conf: "CONCACAF", rank: 30, elo: 1680, code: "pa", tier: "C" },
+                { name: "이집트", conf: "CAF", rank: 34, elo: 1720, code: "eg", tier: "C" },
+                { name: "알제리", conf: "CAF", rank: 35, elo: 1740, code: "dz", tier: "C" },
+                { name: "스코틀랜드", conf: "UEFA", rank: 36, elo: 1780, code: "gb-sct", tier: "C" },
+                { name: "파라과이", conf: "CONMEBOL", rank: 39, elo: 1710, code: "py", tier: "C" },
+                { name: "튀니지", conf: "CAF", rank: 40, elo: 1690, code: "tn", tier: "C" },
+                { name: "코트디부아르", conf: "CAF", rank: 42, elo: 1750, code: "ci", tier: "C" },
+                { name: "우즈베키스탄", conf: "AFC", rank: 50, elo: 1650, code: "uz", tier: "D" }, 
+                { name: "카타르", conf: "AFC", rank: 51, elo: 1640, code: "qa", tier: "C" },       
+                { name: "사우디아라비아", conf: "AFC", rank: 60, elo: 1630, code: "sa", tier: "C" }, 
+                { name: "남아공", conf: "CAF", rank: 61, elo: 1620, code: "za", tier: "D" }        
+            ],
+            pot4: [
+                { name: "이탈리아", conf: "UEFA", rank: 12, elo: 2030, code: "it", tier: "A", stars: 4 }, 
+                { name: "덴마크", conf: "UEFA", rank: 21, elo: 1920, code: "dk", tier: "B" },   
+                { name: "튀르키예", conf: "UEFA", rank: 25, elo: 1850, code: "tr", tier: "B" }, 
+                { name: "우크라이나", conf: "UEFA", rank: 28, elo: 1860, code: "ua", tier: "C" },
+                { name: "콩고민주공화국", conf: "CAF", rank: 56, elo: 1580, code: "cd", tier: "D" }, 
+                { name: "이라크", conf: "AFC", rank: 58, elo: 1550, code: "iq", tier: "D" },        
+                { name: "요르단", conf: "AFC", rank: 66, elo: 1540, code: "jo", tier: "D" },
+                { name: "카보베르데", conf: "CAF", rank: 68, elo: 1520, code: "cv", tier: "D" },
+                { name: "가나", conf: "CAF", rank: 72, elo: 1500, code: "gh", tier: "C" },
+                { name: "퀴라소", conf: "CONCACAF", rank: 82, elo: 1450, code: "cw", tier: "D" },
+                { name: "아이티", conf: "CONCACAF", rank: 84, elo: 1440, code: "ht", tier: "D" },
+                { name: "뉴질랜드", conf: "OFC", rank: 86, elo: 1500, code: "nz", tier: "D" }
+            ]
+        };
+        pots.pot2 = pots.pot2.filter(t => t.name !== "이탈리아");
+
+        const groupNames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+
+        let isDrawing = false;
+        let liveDrawState = { 
+            active: false, 
+            groups: [], 
+            currentPot: 0, 
+            currentGroupIndex: 0, 
+            currentStep: 0, 
+            totalSteps: 48,
+            currentLeagueRound: 0,
+            koreaGroupMatchesLog: [],
+            groupSchedule: [] 
+        };
+        let koreaGroupIndex = -1;
+        let tournamentState = { active: false, rounds: [], currentRoundIndex: 0, currentMatchIndex: 0 };
+        let confettiAnimationId = null;
+
+        // --- Engine ---
+        function getExpectedScore(eloA, eloB, isTournament = false) {
+            const eloDiff = eloA - eloB;
+            const winProbA = 1 / (1 + Math.pow(10, (-eloDiff / 400)));
+            let baseGoals = isTournament ? 2.2 : 2.6; 
+            if (Math.abs(eloDiff) > 400) baseGoals += 1.0; 
+            let lambdaA = baseGoals * winProbA * (0.5 + Math.random());
+            let lambdaB = baseGoals * (1 - winProbA) * (0.5 + Math.random());
+            const poisson = (lambda) => {
+                let L = Math.exp(-lambda), p = 1.0, k = 0;
+                do { k++; p *= Math.random(); } while (p > L);
+                return k - 1;
+            };
+            return { a: poisson(lambdaA), b: poisson(lambdaB) };
+        }
+
+        // --- Core Logic ---
+        function initGrid() {
+            const grid = document.getElementById('groupsGrid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            groupNames.forEach(name => {
+                const groupDiv = document.createElement('div');
+                groupDiv.id = `group-card-${name}`;
+                groupDiv.className = 'group-card rounded-lg p-3 md:p-4 flex flex-col h-full relative';
+                groupDiv.innerHTML = `<div class="border-b border-slate-600 pb-2 mb-2 flex justify-between items-center"><span class="text-lg md:text-xl font-black text-white italic">GROUP ${name}</span></div><div class="flex-grow" id="group-${name}-content"><ul class="space-y-2" id="group-${name}-list"></ul></div>`;
+                const ul = groupDiv.querySelector('ul');
+                for(let i=1; i<=4; i++) ul.innerHTML += `<li class="h-9 bg-slate-700/30 rounded border border-slate-700/30 flex items-center px-3 text-xs text-slate-500">POT ${i}</li>`;
+                grid.appendChild(groupDiv);
+            });
+        }
+
+        function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
+        function isValidPlacement(group, team) {
+            const confCounts = {}; group.forEach(t => { confCounts[t.conf] = (confCounts[t.conf] || 0) + 1; });
+            if (team.conf === 'UEFA') { if ((confCounts['UEFA'] || 0) >= 2) return false; } else { if ((confCounts[team.conf] || 0) >= 1) return false; }
+            return true;
+        }
+        function solveBipartite(groups, teams, groupIndices) {
+            if (teams.length === 0) return true;
+            let team = teams[0]; let remainingTeams = teams.slice(1);
+            if (team.conf === 'UEFA') {
+                groupIndices.sort((a, b) => {
+                    const uefaA = groups[a].filter(t => t.conf === 'UEFA').length;
+                    const uefaB = groups[b].filter(t => t.conf === 'UEFA').length;
+                    return uefaA - uefaB;
+                });
+            } else { shuffle(groupIndices); }
+            for (let i = 0; i < groupIndices.length; i++) {
+                let gIdx = groupIndices[i];
+                if (isValidPlacement(groups[gIdx], team)) {
+                    groups[gIdx].push(team);
+                    let remainingIndices = groupIndices.filter(val => val !== gIdx);
+                    if (solveBipartite(groups, remainingTeams, remainingIndices)) return true;
+                    groups[gIdx].pop();
+                }
+            }
+            return false;
+        }
+        function generateOneSimulation() {
+            let simGroups = Array(12).fill(null).map(() => []);
+            let pot1 = [...pots.pot1];
+            let fixedHosts = pot1.filter(t => t.fixedGroup !== undefined);
+            let randomPot1 = pot1.filter(t => t.fixedGroup === undefined);
+            fixedHosts.forEach(host => simGroups[host.fixedGroup].push(host));
+            randomPot1 = shuffle(randomPot1);
+            let emptyGroupIndices = [];
+            for (let i=0; i<12; i++) { if (simGroups[i].length === 0) emptyGroupIndices.push(i); }
+            for (let i=0; i<randomPot1.length; i++) { simGroups[emptyGroupIndices[i]].push(randomPot1[i]); }
+            const fillPot = (potName) => {
+                let teams = shuffle([...pots[potName]]);
+                let availableGroupIndices = [0,1,2,3,4,5,6,7,8,9,10,11];
+                if (!solveBipartite(simGroups, teams, availableGroupIndices)) throw new Error("Deadlock");
+            };
+            fillPot('pot2'); fillPot('pot3'); fillPot('pot4');
+            simGroups.forEach(g => g.forEach(t => { t.pts = 0; t.gf = 0; t.ga = 0; t.gd = 0; t.played = 0; }));
+            return simGroups;
+        }
+        
+        function generateSchedule(groups) {
+            const schedule = [[], [], []]; 
+            groups.forEach((group, gIdx) => {
+                schedule[0].push({ gIdx, t1: group[0], t2: group[1], played: false, score: null });
+                schedule[0].push({ gIdx, t1: group[2], t2: group[3], played: false, score: null });
+                schedule[1].push({ gIdx, t1: group[0], t2: group[2], played: false, score: null });
+                schedule[1].push({ gIdx, t1: group[1], t2: group[3], played: false, score: null });
+                schedule[2].push({ gIdx, t1: group[0], t2: group[3], played: false, score: null });
+                schedule[2].push({ gIdx, t1: group[1], t2: group[2], played: false, score: null });
+            });
+            return schedule;
+        }
+
+        // --- Happiness (Group Sim) ---
+        function simulateLeagueRound() {
+            if(liveDrawState.currentLeagueRound >= 3) return;
+            const roundIdx = liveDrawState.currentLeagueRound;
+            const matches = liveDrawState.groupSchedule[roundIdx];
+            
+            matches.forEach(m => {
+                const tA = m.t1; 
+                const tB = m.t2;
+                const res = getExpectedScore(tA.elo, tB.elo, false);
+                
+                tA.played++; tB.played++;
+                tA.gf += res.a; tA.ga += res.b; tA.gd += (res.a - res.b);
+                tB.gf += res.b; tB.ga += res.a; tB.gd += (res.b - res.a);
+                if(res.a > res.b) tA.pts += 3; else if (res.a < res.b) tB.pts += 3; else { tA.pts += 1; tB.pts += 1; }
+                
+                m.played = true;
+                m.score = { a: res.a, b: res.b };
+                
+                if (m.gIdx === koreaGroupIndex) {
+                    liveDrawState.koreaGroupMatchesLog.push(`${tA.name} ${res.a} : ${res.b} ${tB.name}`);
+                }
+            });
+            
+            liveDrawState.currentLeagueRound++;
+            document.getElementById('leagueStatusText').innerText = liveDrawState.currentLeagueRound < 3 ? `Round ${liveDrawState.currentLeagueRound} Finished` : "Group Stage Finished";
+            if(liveDrawState.currentLeagueRound === 3) {
+                document.getElementById('leagueNextBtn').classList.add('hidden');
+                document.getElementById('toTournamentBtn').classList.remove('hidden');
+            }
+            updateLeagueTableDisplay();
+        }
+
+        // --- UI ---
+        function toggleWidget() {
+            const widget = document.getElementById('happinessWidget');
+            const btn = document.getElementById('widgetToggle');
+            if(widget && btn) {
+                widget.classList.toggle('active');
+                btn.classList.toggle('hidden-btn');
+            }
+        }
+
+        function updateLeagueTableDisplay() {
+            const containerCheck = document.getElementById(`group-A-content`);
+            if(!containerCheck) return;
+
+            liveDrawState.groups.forEach((group, gIdx) => {
+                const name = groupNames[gIdx];
+                const container = document.getElementById(`group-${name}-content`);
+                if(!container) return;
+
+                const sorted = [...group].sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.rank - b.rank);
+                let html = `<table class="w-full text-xs text-left league-table"><thead><tr class="border-b border-slate-700"><th>팀</th><th class="text-center">경기</th><th class="text-center">승점</th><th class="text-center">득실</th></tr></thead><tbody class="divide-y divide-slate-700">`;
+                sorted.forEach((t, idx) => {
+                    let rankClass = "";
+                    if (liveDrawState.currentLeagueRound === 3) {
+                        if(idx < 2) rankClass = "qualify-zone"; 
+                        else if (idx === 2) { if(t.isBestThird) rankClass = "wildcard-zone"; else rankClass = "eliminate-zone"; }
+                        else rankClass = "eliminate-zone"; 
+                    }
+                    const isKr = t.name === "대한민국";
+                    const highlight = isKr ? "text-yellow-300 font-bold bg-yellow-400/20" : "";
+                    html += `<tr class="${rankClass} ${highlight}"><td class="flex items-center gap-1"><img src="https://flagcdn.com/w20/${t.code}.png" class="w-4 h-3 rounded-[1px]">${t.name}</td><td class="text-center opacity-60">${t.played}</td><td class="text-center font-bold">${t.pts}</td><td class="text-center opacity-60">${t.gd>0?'+'+t.gd:t.gd}</td></tr>`;
+                });
+                html += `</tbody></table>`;
+                container.innerHTML = html;
+            });
+            updateThirdPlaceRanking();
+            updateHappinessCircuit();
+        }
+
+        function updateThirdPlaceRanking() {
+            let thirds = [];
+            liveDrawState.groups.forEach((group, gIdx) => {
+                const sorted = [...group].sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.rank - b.rank);
+                thirds.push({ ...sorted[2], groupName: groupNames[gIdx] });
+                sorted[2].isBestThird = false; 
+            });
+            thirds.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.rank - b.rank);
+            for(let i=0; i<8; i++) { if(thirds[i]) thirds[i].isBestThird = true; }
+
+            const tbody = document.getElementById('thirdPlaceBody');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            thirds.forEach((t, idx) => {
+                const isSafe = idx < 8;
+                const style = isSafe ? "text-white border-l-4 border-emerald-500 bg-emerald-500/10 font-bold" : "text-slate-500 opacity-50 border-l-4 border-transparent line-through decoration-slate-600";
+                const isKr = t.name === "대한민국";
+                const nameClass = isKr ? "text-yellow-300 font-black" : "";
+                tbody.innerHTML += `<tr class="${style} border-b border-slate-800 last:border-0"><td class="p-1 text-center text-xs">${idx+1}</td><td class="p-1 flex items-center gap-1 ${nameClass}"><span class="text-[9px] bg-slate-800 px-1 rounded text-slate-400 w-4 text-center">${t.groupName}</span><span class="truncate w-24">${t.name}</span></td><td class="p-1 text-center font-mono text-xs font-bold">${t.pts}</td><td class="p-1 text-center font-mono text-xs">${t.gd>0?'+'+t.gd:t.gd}</td></tr>`;
+            });
+            // No widget auto-active
+        }
+
+        function updateHappinessCircuit() {
+            if(koreaGroupIndex === -1 || !liveDrawState.groups[koreaGroupIndex]) return;
+            const koreaGroup = liveDrawState.groups[koreaGroupIndex];
+            const kr = koreaGroup.find(t => t.name === "대한민국");
+            
+            const historyDiv = document.getElementById('koreaGroupMatches');
+            if(historyDiv) {
+                historyDiv.innerHTML = '';
+                
+                const schedule = liveDrawState.groupSchedule; 
+                schedule.forEach((roundMatches, rIdx) => {
+                    const groupMatches = roundMatches.filter(m => m.gIdx === koreaGroupIndex);
+                    groupMatches.forEach(m => {
+                        const div = document.createElement('div');
+                        div.className = "text-xs text-slate-300 mb-1 pb-1 border-b border-slate-700 last:border-0 flex justify-between items-center";
+                        let leftClass = m.t1.name === "대한민국" ? "text-yellow-300 font-bold" : "";
+                        let rightClass = m.t2.name === "대한민국" ? "text-yellow-300 font-bold" : "";
+                        let scoreContent = "";
+                        if (m.played) {
+                            scoreContent = `<span class="text-emerald-400 font-mono font-bold text-sm">${m.score.a} : ${m.score.b}</span>`;
+                        } else {
+                            scoreContent = `<span class="text-slate-500 text-[10px] bg-slate-800 px-1 rounded">예정</span>`;
+                        }
+                        div.innerHTML = `<div class="w-1/3 text-right truncate ${leftClass}">${m.t1.name}</div><div class="w-1/3 text-center">${scoreContent}</div><div class="w-1/3 text-left truncate ${rightClass}">${m.t2.name}</div>`;
+                        historyDiv.appendChild(div);
+                    });
+                });
+            }
+
+            let prob = 0;
+            if (liveDrawState.currentLeagueRound === 3) {
+                const sorted = [...koreaGroup].sort((a,b) => b.pts - a.pts || b.gd - a.gd);
+                const rank = sorted.indexOf(kr);
+                if(rank < 2) prob = 100; 
+                else if (rank === 2 && kr.isBestThird) prob = 100; 
+                else prob = 0;
+            } else {
+                prob = calculateKoreaProb(koreaGroup, liveDrawState.currentLeagueRound);
+            }
+
+            const probText = document.getElementById('probText');
+            const probBar = document.getElementById('probBar');
+            const comment = document.getElementById('probComment');
+            const roundBadge = document.getElementById('roundBadge');
+
+            if(probText) probText.innerText = `${prob}%`;
+            if(probBar) {
+                probBar.style.width = `${prob}%`;
+                probBar.className = `h-full rounded-full transition-all duration-700 ${prob < 30 ? 'bg-red-600' : (prob < 60 ? 'bg-yellow-500' : 'bg-emerald-500')}`;
+            }
+            if(comment) {
+                if(prob === 100) comment.innerText = "진출 확정!";
+                else if (prob === 0 && liveDrawState.currentLeagueRound === 3) comment.innerText = "탈락 확정...";
+                else if(prob >= 90) comment.innerText = "32강 진출 유력!";
+                else if(prob >= 60) comment.innerText = "가능성 높음";
+                else if(prob >= 30) comment.innerText = "쉽지 않은 상황";
+                else comment.innerText = "기적이 필요합니다";
+            }
+            if(roundBadge) roundBadge.innerText = liveDrawState.currentLeagueRound === 3 ? "종료" : `${liveDrawState.currentLeagueRound+1}차전 대기`;
+            
+            const widgetBtn = document.getElementById('widgetSimBtn');
+            const widgetBtnText = document.getElementById('widgetSimBtnText');
+            if(widgetBtn) {
+                if(liveDrawState.currentLeagueRound === 3) { widgetBtn.classList.add('hidden'); } 
+                else { widgetBtn.classList.remove('hidden'); if(widgetBtnText) widgetBtnText.innerText = `조별리그 ${liveDrawState.currentLeagueRound + 1}차전 진행`; }
+            }
+        }
+
+        function calculateKoreaProb(group, roundNum) {
+            const kr = group.find(t => t.name === "대한민국");
+            const initialGroup = group.map(t => ({...t}));
+            let qualifiedCount = 0;
+            const iterations = 500; 
+
+            for(let i=0; i<iterations; i++) {
+                const simGroup = initialGroup.map(t => ({...t})); 
+                
+                const runMatch = (idxA, idxB) => {
+                    const tA = simGroup[idxA]; const tB = simGroup[idxB];
+                    const res = getExpectedScore(tA.elo, tB.elo, false);
+                    if(res.a > res.b) tA.pts += 3; else if (res.a < res.b) tB.pts += 3; else { tA.pts += 1; tB.pts += 1; }
+                    tA.gd += (res.a - res.b); tB.gd += (res.b - res.a);
+                };
+
+                if (roundNum === 0) { runMatch(0,1); runMatch(2,3); runMatch(0,2); runMatch(1,3); runMatch(0,3); runMatch(1,2); }
+                else if (roundNum === 1) { runMatch(0,2); runMatch(1,3); runMatch(0,3); runMatch(1,2); }
+                else if (roundNum === 2) { runMatch(0,3); runMatch(1,2); }
+
+                simGroup.sort((a,b) => b.pts - a.pts || b.gd - a.gd);
+                const rank = simGroup.findIndex(t => t.name === "대한민국");
+                
+                if (rank < 2) qualifiedCount++; 
+                else if (rank === 2) {
+                    if(simGroup[rank].pts >= 4) qualifiedCount++;
+                    else if(simGroup[rank].pts === 3) qualifiedCount += 0.6;
+                }
+            }
+            return Math.round((qualifiedCount / iterations) * 100);
+        }
+
+        // --- Draw Flow ---
+        function startLiveDraw() {
+            if(isDrawing) return;
+            initGrid();
+            let success = false, attempts = 0, finalGroups = [];
+            while (!success && attempts < 1000) { attempts++; try { finalGroups = generateOneSimulation(); success = true; } catch (e) {} }
+            
+            const schedule = generateSchedule(finalGroups);
+            
+            liveDrawState = { active: true, groups: finalGroups, currentPot: 0, currentGroupIndex: 0, currentStep: 0, totalSteps: 48, currentLeagueRound: 0, koreaGroupMatchesLog: [], groupSchedule: schedule };
+            for(let i=0; i<12; i++) { if(finalGroups[i].some(t => t.name === "대한민국")) koreaGroupIndex = i; }
+            
+            const initC = document.getElementById('initialControls'); if(initC) initC.style.display = 'none';
+            const drawC = document.getElementById('drawController'); if(drawC) drawC.style.display = 'flex';
+            const drawG = document.getElementById('drawControlsGroup'); if(drawG) drawG.classList.remove('hidden');
+            const leagueG = document.getElementById('leagueControlsGroup'); if(leagueG) leagueG.classList.add('hidden');
+            const tournG = document.getElementById('tournamentControlsGroup'); if(tournG) tournG.classList.add('hidden');
+            const widget = document.getElementById('happinessWidget'); if(widget) widget.classList.remove('active');
+            
+            updateStatusText();
+            updateHappinessCircuit(); // Initial Update for Schedule
+        }
+
+        function updateStatusText() {
+            const pot = liveDrawState.currentPot + 1;
+            const group = groupNames[liveDrawState.currentGroupIndex];
+            const txt = document.getElementById('drawStatusText');
+            if(txt) txt.innerHTML = `<span class="text-slate-400 font-normal">Next:</span> <span class="text-emerald-400">POT ${pot}</span> <span class="text-white">→ Group ${group}</span>`;
+        }
+
+        async function drawNextStep() {
+            if(!liveDrawState.active) return;
+            const btn = document.getElementById('lotteryBtn'); if(btn) btn.disabled = true;
+            const targetTeam = liveDrawState.groups[liveDrawState.currentGroupIndex][liveDrawState.currentPot];
+            const groupName = groupNames[liveDrawState.currentGroupIndex];
+            await spinLottery(targetTeam, liveDrawState.currentPot + 1);
+            const ul = document.getElementById(`group-${groupName}-list`);
+            if(ul) {
+                const li = createTeamElement(targetTeam);
+                const placeholder = ul.children[liveDrawState.currentPot];
+                if(placeholder) ul.replaceChild(li, placeholder); else ul.appendChild(li);
+            }
+            const card = document.getElementById(`group-card-${groupName}`);
+            if(card) card.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+            
+            liveDrawState.currentGroupIndex++;
+            if(liveDrawState.currentGroupIndex >= 12) { liveDrawState.currentGroupIndex = 0; liveDrawState.currentPot++; }
+            liveDrawState.currentStep++;
+
+            if(liveDrawState.currentStep >= 48) {
+                const dc = document.getElementById('drawControlsGroup'); if(dc) dc.classList.add('hidden');
+                const lc = document.getElementById('leagueControlsGroup'); if(lc) lc.classList.remove('hidden'); if(lc) lc.classList.add('flex');
+                
+                document.getElementById('happinessWidget').classList.add('active');
+                document.getElementById('widgetToggle').classList.add('hidden-btn');
+
+                updateLeagueTableDisplay(); 
+            } else { updateStatusText(); if(btn) btn.disabled = false; }
+        }
+
+        function startSingleDraw() {
+            initGrid();
+            let success = false, attempts = 0, finalGroups = [];
+            while (!success && attempts < 1000) { attempts++; try { finalGroups = generateOneSimulation(); success = true; } catch (e) {} }
+            
+            const schedule = generateSchedule(finalGroups);
+            
+            liveDrawState = { active: true, groups: finalGroups, currentPot: 4, currentGroupIndex: 0, currentStep: 48, totalSteps: 48, currentLeagueRound: 0, koreaGroupMatchesLog: [], groupSchedule: schedule };
+            for(let i=0; i<12; i++) { if(finalGroups[i].some(t => t.name === "대한민국")) koreaGroupIndex = i; }
+            
+            const initC = document.getElementById('initialControls'); if(initC) initC.style.display = 'none';
+            const drawC = document.getElementById('drawController'); if(drawC) drawC.style.display = 'flex';
+            const drawG = document.getElementById('drawControlsGroup'); if(drawG) drawG.classList.add('hidden');
+            const leagueG = document.getElementById('leagueControlsGroup'); if(leagueG) leagueG.classList.remove('hidden'); if(leagueG) leagueG.classList.add('flex');
+            
+            document.getElementById('happinessWidget').classList.add('active');
+            document.getElementById('widgetToggle').classList.add('hidden-btn');
+
+            updateLeagueTableDisplay();
+        }
+
+        function startTournament() {
+            if(!liveDrawState.groups || liveDrawState.groups.length === 0) return;
+            switchTab('tournament');
+            const container = document.getElementById('tournamentBracket');
+            const lc = document.getElementById('leagueControlsGroup'); if(lc) lc.classList.add('hidden');
+            const tc = document.getElementById('tournamentControlsGroup'); if(tc) tc.classList.remove('hidden'); if(tc) tc.classList.add('flex');
+            const widget = document.getElementById('happinessWidget'); if(widget) widget.classList.remove('active');
+            if(container) container.innerHTML = '<div class="text-center text-emerald-400 py-10"><i class="fas fa-circle-notch fa-spin text-4xl mb-4"></i><br>대진표 생성 중...</div>';
+            setTimeout(() => { initTournamentStructure(); }, 800);
+        }
+
+        function initTournamentStructure() {
+            let qualifiers = [], thirdPlaces = [];
+            liveDrawState.groups.forEach((group, idx) => {
+                const sorted = [...group].sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.rank - b.rank);
+                qualifiers.push({ ...sorted[0], group: groupNames[idx], pos: 1 });
+                qualifiers.push({ ...sorted[1], group: groupNames[idx], pos: 2 });
+                thirdPlaces.push({ ...sorted[2], group: groupNames[idx], pos: 3 });
+            });
+            thirdPlaces.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.rank - b.rank);
+            qualifiers.push(...thirdPlaces.slice(0, 8));
+            qualifiers.sort((a,b) => b.elo - a.elo); 
+            const prepareRound = (count) => Array(count).fill(null).map(() => ({ p1: null, p2: null, winner: null, score: null, pk: null }));
+            let round32 = [], top16 = qualifiers.slice(0, 16), bot16 = qualifiers.slice(16).reverse();
+            for(let i=0; i<16; i++) round32.push({ p1: top16[i], p2: bot16[i], winner: null, score: null, pk: null });
+            tournamentState = { active: true, rounds: [{ name: "32강", matches: round32 }, { name: "16강", matches: prepareRound(8) }, { name: "8강", matches: prepareRound(4) }, { name: "4강", matches: prepareRound(2) }, { name: "결승", matches: prepareRound(1) }], currentRoundIndex: 0, currentMatchIndex: 0 };
+            renderBracket(); updateTournamentStatus();
+        }
+
+        function runNextMatch() {
+            if(!tournamentState.active) return;
+            const round = tournamentState.rounds[tournamentState.currentRoundIndex];
+            if(tournamentState.currentMatchIndex >= round.matches.length) return;
+            const match = round.matches[tournamentState.currentMatchIndex];
+            if(!match.p1 || !match.p2) { tournamentState.currentMatchIndex++; return; }
+            const res = getExpectedScore(match.p1.elo, match.p2.elo, true);
+            match.score = `${res.a} : ${res.b}`; let winner = res.a > res.b ? match.p1 : match.p2;
+            if(res.a === res.b) { let pkA=0, pkB=0; while(pkA===pkB) { pkA=3+Math.floor(Math.random()*3); pkB=3+Math.floor(Math.random()*3); if(pkA===pkB) pkA++; } match.pk = `(PK ${pkA}:${pkB})`; winner = pkA>pkB?match.p1:match.p2; }
+            match.winner = winner;
+            if(tournamentState.currentRoundIndex < 4) {
+                const nextRound = tournamentState.rounds[tournamentState.currentRoundIndex + 1];
+                const nextMatchIdx = Math.floor(tournamentState.currentMatchIndex / 2);
+                if(!nextRound.matches[nextMatchIdx]) nextRound.matches[nextMatchIdx] = { p1: null, p2: null, winner: null, score: null, pk: null };
+                if(tournamentState.currentMatchIndex % 2 === 0) nextRound.matches[nextMatchIdx].p1 = winner; else nextRound.matches[nextMatchIdx].p2 = winner;
+            }
+            tournamentState.currentMatchIndex++;
+            if(tournamentState.currentMatchIndex >= round.matches.length) {
+                if(tournamentState.currentRoundIndex < 4) { tournamentState.currentRoundIndex++; tournamentState.currentMatchIndex = 0; }
+                else { tournamentState.active = false; document.getElementById('nextMatchBtn').classList.add('hidden'); showWinnerCeremony(winner); }
+            }
+            renderBracket(); updateTournamentStatus();
+            const activeCard = document.querySelector('.match-card.active-match'); if(activeCard) activeCard.scrollIntoView({behavior: "smooth", block: "center"});
+        }
+
+        function showWinnerCeremony(team) {
+            fireConfetti();
+            const modal = document.getElementById('winnerModal');
+            document.getElementById('winnerFlag').src = `https://flagcdn.com/w640/${team.code}.png`;
+            document.getElementById('winnerName').innerText = team.name;
+            modal.classList.remove('hidden');
+            const starsContainer = document.getElementById('starsContainer');
+            starsContainer.innerHTML = '';
+            for(let i=0; i<(team.stars||0); i++) { const s = document.createElement('i'); s.className = 'fas fa-star text-yellow-400 text-xl'; starsContainer.appendChild(s); }
+            setTimeout(() => { const newStar = document.createElement('i'); newStar.className = 'fas fa-star text-yellow-200 text-3xl star-pop drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]'; starsContainer.appendChild(newStar); }, 800);
+        }
+
+        function fireConfetti() {
+            const canvas = document.getElementById('confetti-canvas'); const ctx = canvas.getContext('2d'); canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            const pieces = []; const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f', '#fff'];
+            for(let i=0; i<300; i++) { pieces.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height-canvas.height, color: colors[Math.floor(Math.random()*colors.length)], size: Math.random()*10+5, speed: Math.random()*5+2, angle: Math.random()*360 }); }
+            function draw() { ctx.clearRect(0, 0, canvas.width, canvas.height); pieces.forEach(p => { ctx.fillStyle = p.color; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.angle*Math.PI/180); ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size); ctx.restore(); p.y += p.speed; p.angle += 5; if(p.y > canvas.height) p.y = -10; }); confettiAnimationId = requestAnimationFrame(draw); }
+            draw();
+        }
+
+        function updateTournamentStatus() {
+            const statusDiv = document.getElementById('tournamentStatusText');
+            if(!tournamentState.active) { if(statusDiv) statusDiv.innerText = "Finished"; return; }
+            const rName = tournamentState.rounds[tournamentState.currentRoundIndex].name;
+            const mIdx = tournamentState.currentMatchIndex + 1;
+            const total = tournamentState.rounds[tournamentState.currentRoundIndex].matches.length;
+            if(statusDiv) statusDiv.innerText = `${rName} - Match ${mIdx}/${total}`;
+        }
+
+        function renderBracket() {
+            const container = document.getElementById('tournamentBracket');
+            if(!container) return;
+            let html = '';
+            tournamentState.rounds.forEach((round, rIdx) => {
+                if(round.matches.length === 0 || (!round.matches[0].p1 && !round.matches[0].p2 && rIdx > 0)) return;
+                let gridCols = rIdx >= 2 ? "md:grid-cols-1" : "md:grid-cols-2";
+                html += `<div class="bg-slate-800 p-4 rounded-lg border border-slate-700 mb-4"><h3 class="text-xl font-bold text-white mb-4 border-b border-slate-600 pb-2">${round.name}</h3><div class="grid grid-cols-1 ${gridCols} gap-4">`;
+                round.matches.forEach((match, mIdx) => {
+                    const isPlayed = match.winner !== null;
+                    const isNext = (rIdx === tournamentState.currentRoundIndex && mIdx === tournamentState.currentMatchIndex);
+                    let activeClass = isNext ? "active-match ring-2 ring-emerald-500" : (isPlayed ? "finished opacity-60" : "");
+                    let scoreDisplay = match.score ? match.score : "vs";
+                    let pkDisplay = match.pk ? `<span class="text-xs text-yellow-400 ml-2">${match.pk}</span>` : "";
+                    let p1Name = match.p1 ? match.p1.name : "TBD"; let p2Name = match.p2 ? match.p2.name : "TBD";
+                    let p1Img = match.p1 ? `<img src="https://flagcdn.com/w20/${match.p1.code}.png" class="w-5 inline mr-1">` : "";
+                    let p2Img = match.p2 ? `<img src="https://flagcdn.com/w20/${match.p2.code}.png" class="w-5 inline mr-1">` : "";
+                    html += `<div class="match-card ${activeClass} bg-slate-700/50 p-3 rounded"><div class="team-row ${match.winner === match.p1 ? 'winner' : (isPlayed ? 'loser' : '')} flex justify-between text-sm mb-1"><div>${p1Img}${p1Name}</div></div><div class="text-center font-mono font-bold text-white text-lg my-1 border-y border-white/10 py-1">${scoreDisplay} ${pkDisplay}</div><div class="team-row ${match.winner === match.p2 ? 'winner' : (isPlayed ? 'loser' : '')} flex justify-between text-sm mt-1"><div>${p2Img}${p2Name}</div></div></div>`;
+                });
+                html += `</div></div>`;
+            });
+            container.innerHTML = html;
+        }
+        // Batch sim same as before
+        async function runBatchSimulation(iterations) {
+            const progressBar = document.getElementById('progressBar'); const progressText = document.getElementById('progressText');
+            document.getElementById('batchProgress').classList.remove('hidden');
+            let koreaStats = { pot1: {}, pot3: {}, pot4: {}, totalCount: 0, maxDifficulty: -1, minDifficulty: 99999, worstGroup: null, bestGroup: null };
+            for (let i = 0; i < iterations; i++) {
+                if (i % 20 === 0) await new Promise(r => setTimeout(r, 10));
+                let success = false, groups = [];
+                while(!success) { try { groups = generateOneSimulation(); success = true; } catch(e) {} }
+                let kGroup = groups.find(g => g.some(t => t.name === "대한민국"));
+                const p1 = kGroup[0], p3 = kGroup[2], p4 = kGroup[3];
+                const p1Stats = kGroup.find(t=>pots.pot1.some(p=>p.name===t.name));
+                statsAdd(koreaStats.pot1, p1Stats);
+                statsAdd(koreaStats.pot3, kGroup.find(t=>pots.pot3.some(p=>p.name===t.name)));
+                statsAdd(koreaStats.pot4, kGroup.find(t=>pots.pot4.some(p=>p.name===t.name)));
+                let rankSum = p1.rank + p3.rank + p4.rank;
+                if(rankSum < koreaStats.minDifficulty) { koreaStats.minDifficulty = rankSum; koreaStats.worstGroup = kGroup; }
+                if(rankSum > koreaStats.maxDifficulty) { koreaStats.maxDifficulty = rankSum; koreaStats.bestGroup = kGroup; }
+                progressBar.style.width = `${(i/iterations)*100}%`; progressText.innerText = `${i+1}/${iterations}`;
+            }
+            document.getElementById('reportResults').classList.remove('hidden');
+            document.getElementById('batchProgress').classList.add('hidden');
+            const renderCard = (id, teams) => {
+                const div = document.getElementById(id);
+                div.innerHTML = teams.filter(t=>t.name!=="대한민국").map(t => `<div class="flex justify-between text-sm text-slate-300 border-b border-white/10 p-2"><div class="flex items-center"><img src="https://flagcdn.com/w40/${t.code}.png" class="w-4 h-3 mr-2">${t.name}</div><span class="font-mono text-xs opacity-70">FIFA ${t.rank}위</span></div>`).join('');
+            };
+            if(koreaStats.worstGroup) renderCard('worstCaseContent', koreaStats.worstGroup);
+            if(koreaStats.bestGroup) renderCard('bestCaseContent', koreaStats.bestGroup);
+            renderTable(koreaStats);
+        }
+        function statsAdd(obj, team) { obj[team.name] = (obj[team.name] || 0) + 1; if(!obj[team.name+"_meta"]) obj[team.name+"_meta"] = team; }
+        function renderTable(stats) {
+            const tbody = document.getElementById('statsTableBody'); tbody.innerHTML = '';
+            const addToTable = (potNum, dataObj) => {
+                let items = [];
+                for(let key in dataObj) { if(key.endsWith("_meta")) continue; items.push({ name: key, count: dataObj[key], meta: dataObj[key+"_meta"] }); }
+                items.sort((a,b) => b.count - a.count);
+                items.forEach(item => {
+                    const row = document.createElement('tr');
+                    let potColor = potNum === 1 ? "text-blue-400" : (potNum === 3 ? "text-emerald-400" : "text-orange-400");
+                    row.className = "hover:bg-slate-700/50 transition-colors border-b border-slate-700/50";
+                    row.innerHTML = `<td class="px-6 py-4 font-bold ${potColor}">POT ${potNum}</td><td class="px-6 py-4 font-medium text-white flex items-center"><img src="https://flagcdn.com/w40/${item.meta.code}.png" class="flag-icon mr-3">${item.name}</td><td class="px-6 py-4 text-slate-400 font-mono text-xs">${item.meta.rank}위</td><td class="px-6 py-4 text-right font-mono text-slate-200">${item.count}</td>`;
+                    tbody.appendChild(row);
+                });
+            };
+            addToTable(1, stats.pot1); addToTable(3, stats.pot3); addToTable(4, stats.pot4);
+        }
+        initGrid();
+    </script>
+</body>
+</html>
