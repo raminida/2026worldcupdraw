@@ -62,7 +62,7 @@
         .happiness-widget {
             position: fixed;
             top: 70px;
-            right: -100%; 
+            right: -360px;
             width: 360px; 
             max-width: 90%;
             background: rgba(15, 23, 42, 0.98);
@@ -70,7 +70,7 @@
             border-left: 4px solid #34d399;
             border-radius: 12px 0 0 12px;
             padding: 16px;
-            z-index: 40;
+            z-index: 100; /* Increased z-index */
             backdrop-filter: blur(10px);
             box-shadow: -10px 10px 30px rgba(0,0,0,0.5);
             transition: right 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -85,17 +85,16 @@
         @media (max-width: 768px) {
             .happiness-widget {
                 top: 60px;
-                border-radius: 0 0 0 12px;
-                border-top: 1px solid #334155;
                 max-height: 75vh;
             }
         }
 
+        /* Toggle Button - Fixed Handle */
         .widget-toggle-btn {
             position: fixed;
             top: 130px;
-            right: 0;
-            z-index: 41;
+            right: 0; 
+            z-index: 101; /* Higher than widget */
             background: #34d399;
             color: #0f172a;
             padding: 12px 14px 12px 18px;
@@ -103,12 +102,20 @@
             box-shadow: -2px 2px 10px rgba(0,0,0,0.3);
             cursor: pointer;
             font-weight: bold;
-            transition: right 0.3s;
+            transition: right 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex !important; /* Always show */
         }
+        
         .widget-toggle-btn:active { transform: scale(0.95); }
-        .widget-toggle-btn.hidden-btn { right: 360px; background: #334155; color: white; }
+
+        .widget-toggle-btn.open {
+            right: 360px; 
+            background: #334155;
+            color: white;
+        }
+
         @media (max-width: 768px) {
-            .widget-toggle-btn.hidden-btn { right: 90%; }
+            .widget-toggle-btn.open { right: 90%; }
         }
 
         .lang-btn {
@@ -134,18 +141,21 @@
             flex-direction: row;
             overflow-x: auto;
             padding: 40px 20px;
-            min-height: 60vh;
+            min-height: 70vh; 
             align-items: center; 
+            -webkit-overflow-scrolling: touch; 
         }
+        
         .round-column {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-width: 220px;
-            margin-right: 30px;
+            min-width: 200px;
+            margin-right: 25px;
             position: relative;
             transition: all 0.5s ease;
         }
+
         .round-column.collapsed {
             min-width: 0;
             width: 0;
@@ -153,56 +163,70 @@
             opacity: 0;
             overflow: hidden;
         }
+        
         .round-header {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-weight: bold;
             color: #94a3b8;
             position: absolute;
             top: -40px;
             width: 100%;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
+        
         .match-node {
             background: rgba(30, 41, 59, 0.95);
             border: 1px solid #475569;
-            border-radius: 6px;
-            padding: 6px;
+            border-radius: 8px; 
+            padding: 8px;
             position: relative;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
             margin-bottom: 0; 
             transition: all 0.3s;
         }
+
         .round-column:not(:last-child) .match-node::after {
             content: '';
             position: absolute;
-            right: -32px; 
+            right: -25px; 
             top: 50%;
-            width: 32px;
+            width: 25px;
             height: 2px;
             background: #475569;
             z-index: -1;
         }
+        
         .match-node.active-match { 
             border-color: #34d399; 
-            box-shadow: 0 0 15px rgba(52, 211, 153, 0.6); 
-            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); 
+            transform: scale(1.02);
             z-index: 10;
             background: #1e293b;
         }
+        
         .team-slot {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 3px 6px;
+            padding: 4px 8px;
             border-radius: 4px;
-            font-size: 0.75rem;
-            height: 26px;
+            font-size: 0.8rem; 
+            height: 30px;
             background: rgba(0,0,0,0.2);
-            margin: 2px 0;
+            margin: 3px 0;
         }
         .team-slot.winner { background: rgba(16, 185, 129, 0.2); font-weight: bold; color: #34d399; }
-        .score-display { font-family: 'VT323', monospace; font-size: 0.9rem; font-weight: bold; color: #fbbf24; }
+        .score-display { font-family: 'VT323', monospace; font-size: 1rem; font-weight: bold; color: #fbbf24; }
+
+        @media (min-width: 768px) {
+            .round-column { min-width: 280px; margin-right: 50px; }
+            .round-column:not(:last-child) .match-node::after { right: -50px; width: 50px; }
+            .match-node { padding: 12px; border-radius: 10px; }
+            .team-slot { height: 36px; font-size: 0.95rem; margin: 4px 0; }
+            .round-header { font-size: 1.2rem; top: -50px; }
+            .score-display { font-size: 1.2rem; }
+        }
 
         .sticky-footer {
             background: linear-gradient(0deg, rgba(15, 23, 42, 1) 20%, rgba(15, 23, 42, 0.95) 80%, rgba(15, 23, 42, 0) 100%);
@@ -240,9 +264,11 @@
             font-size: 0.9rem;
         }
 
-        /* Stat Bar */
-        .stat-bar-container { background: #334155; border-radius: 4px; height: 20px; width: 100%; overflow: hidden; display: flex; }
-        .stat-bar-segment { height: 100%; transition: width 0.5s; font-size: 10px; color: #0f172a; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+        /* Separate Bar Charts for Report */
+        .stat-row { margin-bottom: 12px; }
+        .stat-label { display: flex; justify-content: space-between; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 4px; font-family: 'Noto Sans KR', sans-serif; }
+        .stat-track { width: 100%; background-color: #1e293b; border-radius: 6px; height: 16px; overflow: hidden; border: 1px solid #334155; }
+        .stat-fill { height: 100%; border-radius: 6px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -255,7 +281,8 @@
         <p class="text-slate-400 mt-1 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase" data-key="headerSub">Simulator Final - 불양TV 버전</p>
     </header>
 
-    <div id="widgetToggle" class="widget-toggle-btn hidden" onclick="toggleWidget()"><i class="fas fa-chart-bar text-xl"></i></div>
+    <!-- Toggle Button (Always visible) -->
+    <div id="widgetToggle" class="widget-toggle-btn" onclick="toggleWidget()"><i class="fas fa-chart-bar text-xl"></i></div>
 
     <div id="happinessWidget" class="happiness-widget">
         <div class="flex justify-between items-center mb-2 border-b border-slate-700 pb-2 sticky top-0 bg-slate-900/95 z-10 pt-1">
@@ -329,8 +356,8 @@
         </section>
 
         <section id="section-tournament" class="container mx-auto px-2 md:px-4 py-4 hidden h-full overflow-y-auto custom-scrollbar">
-            <div class="max-w-full mx-auto pb-32 relative">
-                <div id="r32CollapseBtn" class="hidden absolute top-2 left-2 z-20 bg-slate-700 text-white px-3 py-1 rounded text-xs cursor-pointer hover:bg-slate-600" onclick="toggleR32()"><i class="fas fa-chevron-left mr-1"></i><span data-key="collapse32">32강 접기</span></div>
+            <div class="max-w-full mx-auto pb-48 relative">
+                <div id="r32CollapseBtn" class="hidden absolute top-2 left-2 z-20 bg-slate-700 text-white px-3 py-1 rounded text-xs md:text-sm cursor-pointer hover:bg-slate-600 shadow-lg" onclick="toggleR32()"><i class="fas fa-chevron-left mr-1"></i><span data-key="collapse32">32강 접기</span></div>
                 <div id="tournamentBracket" class="bracket-container">
                      <div class="text-center text-slate-500 py-20 w-full" data-key="tournamentWait"><i class="fas fa-lock text-4xl mb-4 opacity-50"></i><br>조별리그가 완료되어야 합니다.</div>
                 </div>
@@ -359,8 +386,10 @@
                 <div id="reportResults" class="hidden space-y-6">
                      <!-- Stats Summary -->
                      <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
-                        <h3 class="text-emerald-400 font-bold mb-3 border-b border-slate-700 pb-2"><i class="fas fa-chart-bar mr-2"></i><span data-key="roundStats">라운드별 진출 횟수</span></h3>
-                        <div class="space-y-3" id="roundStatsContainer"></div>
+                        <h3 class="text-emerald-400 font-bold mb-4 border-b border-slate-700 pb-2"><i class="fas fa-chart-bar mr-2"></i><span data-key="roundStats">라운드별 진출 횟수</span></h3>
+                        <div class="space-y-4" id="roundStatsContainer">
+                            <!-- Vertical Bars injected here -->
+                        </div>
                      </div>
 
                      <!-- Group Analysis -->
@@ -494,7 +523,8 @@
                 nextMatchShort: "다음",
                 startLive: "실시간 추첨 시작",
                 startResult: "결과만 보기",
-                close: "닫기"
+                close: "닫기",
+                r32: "32강", r16: "16강", qf: "8강", sf: "4강", final: "결승", winner: "우승", groupOut: "조별 탈락"
             },
             en: {
                 title: "2026 World Cup Simulator",
@@ -531,7 +561,8 @@
                 nextMatchShort: "Next",
                 startLive: "Start Live Draw",
                 startResult: "Quick Result",
-                close: "Close"
+                close: "Close",
+                r32: "Round of 32", r16: "Round of 16", qf: "Quarter-Finals", sf: "Semi-Finals", final: "Final", winner: "Winner", groupOut: "Group Stage Exit"
             }
         };
 
@@ -725,7 +756,10 @@
 
         function generateOneSimulation() {
             let simGroups = Array(12).fill(null).map(() => []);
-            let pot1 = [...pots.pot1];
+            
+            const deepCopyPot = (potArr) => potArr.map(t => ({...t}));
+
+            let pot1 = deepCopyPot(pots.pot1);
             let fixedHosts = pot1.filter(t => t.fixedGroup !== undefined);
             let randomPot1 = pot1.filter(t => t.fixedGroup === undefined);
             fixedHosts.forEach(host => simGroups[host.fixedGroup].push(host));
@@ -734,7 +768,7 @@
             for (let i=0; i<12; i++) { if (simGroups[i].length === 0) emptyGroupIndices.push(i); }
             for (let i=0; i<randomPot1.length; i++) { simGroups[emptyGroupIndices[i]].push(randomPot1[i]); }
             const fillPot = (potName) => {
-                let teams = shuffle([...pots[potName]]);
+                let teams = shuffle(deepCopyPot(pots[potName]));
                 let availableGroupIndices = [0,1,2,3,4,5,6,7,8,9,10,11];
                 if (!solveBipartite(simGroups, teams, availableGroupIndices)) throw new Error("Deadlock");
             };
@@ -780,7 +814,10 @@
         function toggleWidget() {
             const widget = document.getElementById('happinessWidget');
             const btn = document.getElementById('widgetToggle');
-            if(widget && btn) { widget.classList.toggle('active'); btn.classList.toggle('hidden-btn'); }
+            if(widget && btn) { 
+                widget.classList.toggle('active'); 
+                btn.classList.toggle('open');
+            }
         }
 
         function updateLeagueTableDisplay() {
@@ -914,11 +951,10 @@
                 bestGroup: { score: -1, group: [] }
             };
 
-            // Async wrapper to allow UI update
             await new Promise(resolve => setTimeout(resolve, 100));
 
             for(let i=0; i<iterations; i++) {
-                // 1. Draw
+                // 1. Draw - Fresh Copy
                 let groups = generateOneSimulation();
                 
                 // 2. Play Group Stage
@@ -947,7 +983,6 @@
                 thirdPlaces.sort((a,b) => (b.pts||0) - (a.pts||0) || (b.gd||0) - (a.gd||0));
                 qualifiers.push(...thirdPlaces.slice(0, 8)); // Top 8 thirds
                 
-                // Group Difficulty Stats for Target
                 if(targetGroup) {
                     let rankSum = 0;
                     targetGroup.forEach(t => { if(t.code !== simTargetCode) rankSum += t.rank; });
@@ -955,19 +990,14 @@
                     if(rankSum > stats.bestGroup.score) { stats.bestGroup = { score: rankSum, group: targetGroup.map(t => ({...t})) }; }
                 }
 
-                // Check Target Survival
                 let targetInR32 = qualifiers.find(t => t.code === simTargetCode);
                 if(!targetInR32) { stats.rounds.group++; continue; } 
                 stats.rounds.r32++;
 
-                // 4. Knockout Sim
-                // Simplified Bracket: Just sort by ELO to create a seeded feel or Random?
-                // Using a randomized bracket based on pool
-                let currentRoundTeams = qualifiers.sort((a,b) => b.elo - a.elo); // Simple seeding
+                let currentRoundTeams = qualifiers.sort((a,b) => b.elo - a.elo); 
                 
                 const runKnockoutRound = (teams, roundName) => {
                     let winners = [];
-                    // Pair 0 vs Last, 1 vs Last-1 etc for ease
                     for(let j=0; j<teams.length/2; j++) {
                         let t1 = teams[j]; 
                         let t2 = teams[teams.length-1-j];
@@ -976,7 +1006,6 @@
                         let winner = res.a > res.b ? t1 : t2;
                         if(res.a === res.b) winner = Math.random() > 0.5 ? t1 : t2;
 
-                        // Nemesis Logic
                         if(t1.code === simTargetCode && winner !== t1) stats.nemesis[t2.name] = (stats.nemesis[t2.name]||0) + 1;
                         if(t2.code === simTargetCode && winner !== t2) stats.nemesis[t1.name] = (stats.nemesis[t1.name]||0) + 1;
 
@@ -987,52 +1016,43 @@
 
                 let r16Teams = runKnockoutRound(currentRoundTeams, "R32");
                 if(r16Teams.find(t => t.code === simTargetCode)) stats.rounds.r16++;
-                
                 let qfTeams = runKnockoutRound(r16Teams, "R16");
                 if(qfTeams.find(t => t.code === simTargetCode)) stats.rounds.qf++;
-
                 let sfTeams = runKnockoutRound(qfTeams, "QF");
                 if(sfTeams.find(t => t.code === simTargetCode)) stats.rounds.sf++;
-
                 let finalTeams = runKnockoutRound(sfTeams, "SF");
                 if(finalTeams.find(t => t.code === simTargetCode)) stats.rounds.final++;
-
                 let champion = runKnockoutRound(finalTeams, "Final")[0];
                 if(champion.code === simTargetCode) stats.rounds.winner++;
-                
                 stats.winners[champion.name] = (stats.winners[champion.name] || 0) + 1;
             }
 
-            // Render Results
             loading.classList.add('hidden');
             results.classList.remove('hidden');
             btn.classList.remove('hidden');
 
-            // 1. Round Stats Bar
             const total = iterations;
             const r = stats.rounds;
-            const makeBar = (label, val, color) => {
+            const makeRow = (label, val, color) => {
                 const pct = Math.round((val/total)*100);
-                if(pct === 0) return '';
-                return `<div class="stat-bar-segment ${color}" style="width:${pct}%">${label} ${pct}%</div>`;
+                return `
+                <div class="stat-row">
+                    <div class="stat-label"><span>${label}</span><span>${val}회 (${pct}%)</span></div>
+                    <div class="stat-track"><div class="stat-fill ${color}" style="width:${pct}%"></div></div>
+                </div>`;
             };
-            document.getElementById('roundStatsContainer').innerHTML = `
-                <div class="stat-bar-container">
-                    ${makeBar("우승", r.winner, "bg-yellow-400")}
-                    ${makeBar("결승", r.final - r.winner, "bg-gray-300")}
-                    ${makeBar("4강", r.sf - r.final, "bg-orange-400")}
-                    ${makeBar("8강", r.qf - r.sf, "bg-purple-400")}
-                    ${makeBar("16강", r.r16 - r.qf, "bg-blue-400")}
-                    ${makeBar("32강", r.r32 - r.r16, "bg-emerald-400")}
-                    ${makeBar("탈락", total - r.r32, "bg-slate-600 text-white")}
-                </div>
-                <div class="flex justify-between text-xs text-slate-400 mt-1">
-                    <span>Group Stage: ${total - r.r32}회 탈락</span>
-                    <span>Winner: ${r.winner}회</span>
-                </div>
-            `;
+            
+            let html = '';
+            html += makeRow(translations[currentLang].winner, r.winner, "bg-yellow-400");
+            html += makeRow(translations[currentLang].final, r.final - r.winner, "bg-gray-300");
+            html += makeRow(translations[currentLang].sf, r.sf - r.final, "bg-orange-400");
+            html += makeRow(translations[currentLang].qf, r.qf - r.sf, "bg-purple-400");
+            html += makeRow(translations[currentLang].r16, r.r16 - r.qf, "bg-blue-400");
+            html += makeRow(translations[currentLang].r32, r.r32 - r.r16, "bg-emerald-400");
+            html += makeRow(translations[currentLang].groupOut, total - r.r32, "bg-slate-600");
+            
+            document.getElementById('roundStatsContainer').innerHTML = html;
 
-            // 2. Groups
             const renderGroup = (id, groupObj) => {
                 const div = document.getElementById(id);
                 div.innerHTML = groupObj.group.map(t => {
@@ -1043,17 +1063,14 @@
             renderGroup('worstCaseContent', stats.worstGroup);
             renderGroup('bestCaseContent', stats.bestGroup);
 
-            // 3. Nemesis
             const nemesisList = Object.entries(stats.nemesis).sort((a,b) => b[1]-a[1]).slice(0, 10);
             const nList = document.getElementById('nemesisList');
             nList.innerHTML = nemesisList.length ? nemesisList.map((n, i) => `<li class="flex justify-between border-b border-slate-700/50 pb-1"><span>${i+1}. ${n[0]}</span> <span class="text-red-400 font-mono">${n[1]}회</span></li>`).join('') : '<li class="text-slate-500 italic">No Nemesis (Undefeated or Group Exit)</li>';
 
-            // 4. Winners
             const winnerList = Object.entries(stats.winners).sort((a,b) => b[1]-a[1]).slice(0, 5);
             document.getElementById('winnerList').innerHTML = winnerList.map((w, i) => `<li class="flex justify-between border-b border-slate-700/50 pb-1"><span>${i+1}. ${w[0]}</span> <span class="text-yellow-400 font-mono">${w[1]}회</span></li>`).join('');
         }
 
-        // --- Init ---
         function startLiveDraw() {
             if(isDrawing) return;
             initGrid();
@@ -1067,6 +1084,7 @@
             document.getElementById('leagueControlsGroup').classList.add('hidden');
             document.getElementById('tournamentControlsGroup').classList.add('hidden');
             document.getElementById('happinessWidget').classList.remove('active');
+            document.getElementById('widgetToggle').classList.remove('open');
             updateStatusText(); updateHappinessCircuit();
         }
 
@@ -1097,8 +1115,12 @@
             if(liveDrawState.currentStep >= 48) {
                 document.getElementById('drawControlsGroup').classList.add('hidden');
                 document.getElementById('leagueControlsGroup').classList.remove('hidden'); document.getElementById('leagueControlsGroup').classList.add('flex');
-                document.getElementById('happinessWidget').classList.add('active');
-                document.getElementById('widgetToggle').classList.add('hidden-btn');
+                
+                const widget = document.getElementById('happinessWidget');
+                const toggle = document.getElementById('widgetToggle');
+                widget.classList.add('active');
+                toggle.classList.add('open');
+                
                 updateLeagueTableDisplay(); 
             } else { updateStatusText(); if(btn) btn.disabled = false; }
         }
@@ -1137,8 +1159,12 @@
             document.getElementById('drawController').style.display = 'flex';
             document.getElementById('drawControlsGroup').classList.add('hidden');
             document.getElementById('leagueControlsGroup').classList.remove('hidden'); document.getElementById('leagueControlsGroup').classList.add('flex');
-            document.getElementById('happinessWidget').classList.add('active');
-            document.getElementById('widgetToggle').classList.add('hidden-btn');
+            
+            const widget = document.getElementById('happinessWidget');
+            const toggle = document.getElementById('widgetToggle');
+            widget.classList.add('active');
+            toggle.classList.add('open');
+
              liveDrawState.groups.forEach((group, idx) => {
                 const ul = document.getElementById(`group-${groupNames[idx]}-list`);
                 if(ul) { ul.innerHTML = ''; group.forEach(team => ul.appendChild(createTeamElement(team))); }
@@ -1152,55 +1178,98 @@
             const container = document.getElementById('tournamentBracket');
             document.getElementById('leagueControlsGroup').classList.add('hidden');
             document.getElementById('tournamentControlsGroup').classList.remove('hidden'); document.getElementById('tournamentControlsGroup').classList.add('flex');
-            document.getElementById('happinessWidget').classList.remove('active');
+            
+            const widget = document.getElementById('happinessWidget');
+            const toggle = document.getElementById('widgetToggle');
+            widget.classList.remove('active');
+            toggle.classList.remove('open');
+
             if(container) container.innerHTML = '<div class="text-center text-emerald-400 py-10"><i class="fas fa-circle-notch fa-spin text-4xl mb-4"></i><br>Generating...</div>';
             setTimeout(() => { initTournamentStructure(); }, 800);
         }
 
         function initTournamentStructure() {
-            let qualifiers = [], thirdPlaces = [];
+            // Build Pool of Qualified Teams (Map by Code to ensure uniqueness)
+            const qualifiedTeams = new Map();
+            const thirdPlaceCandidates = [];
+
             liveDrawState.groups.forEach((group, idx) => {
                 const sorted = [...group].sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.rank - b.rank);
-                qualifiers.push({ ...sorted[0], group: groupNames[idx], pos: 1 });
-                qualifiers.push({ ...sorted[1], group: groupNames[idx], pos: 2 });
-                thirdPlaces.push({ ...sorted[2], group: groupNames[idx], pos: 3 });
+                
+                // 1st Place
+                const t1 = { ...sorted[0], group: groupNames[idx], pos: 1 };
+                qualifiedTeams.set(`${groupNames[idx]}1`, t1);
+                qualifiedTeams.set(t1.code, t1); // Lookup by code
+
+                // 2nd Place
+                const t2 = { ...sorted[1], group: groupNames[idx], pos: 2 };
+                qualifiedTeams.set(`${groupNames[idx]}2`, t2);
+                qualifiedTeams.set(t2.code, t2);
+
+                // 3rd Candidate
+                const t3 = { ...sorted[2], group: groupNames[idx], pos: 3 };
+                thirdPlaceCandidates.push(t3);
             });
-            thirdPlaces.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.rank - b.rank);
-            qualifiers.push(...thirdPlaces.slice(0, 8));
-            qualifiers.sort((a,b) => b.elo - a.elo); 
+
+            // Sort & Pick Top 8 Thirds
+            thirdPlaceCandidates.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.rank - b.rank);
+            const top8Thirds = thirdPlaceCandidates.slice(0, 8);
             
-            const getTeam = (gName, rank) => {
-                 const groupIdx = groupNames.indexOf(gName);
-                 const group = liveDrawState.groups[groupIdx];
-                 const sorted = [...group].sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.rank - b.rank);
-                 const t = sorted[rank-1]; t.group = gName; t.pos = rank; return t;
+            // Add Thirds to Map (Using WC1..WC8 or just code)
+            // We'll use a pool for random assignment
+            const thirdsPool = shuffle([...top8Thirds]);
+
+            // Helper to safely get team
+            const registeredCodes = new Set();
+
+            const getTeam = (key) => {
+                const t = qualifiedTeams.get(key);
+                if (t) {
+                    if (registeredCodes.has(t.code)) return null; // Prevent Duplicate
+                    registeredCodes.add(t.code);
+                    return t;
+                }
+                return null;
             };
-            const thirdsPool = shuffle([...qualifiers.slice(24)]); 
-            const get3rd = () => { const t = thirdsPool.pop() || { name: "TBD", code: "placeholder" }; if(!t.group) { t.group = "?"; t.pos = 3; } return t; };
+
+            const get3rd = () => {
+                // Find a 3rd place team that isn't already used
+                while(thirdsPool.length > 0) {
+                    const t = thirdsPool.pop();
+                    if(!registeredCodes.has(t.code)) {
+                        registeredCodes.add(t.code);
+                        return t;
+                    }
+                }
+                return { name: "TBD", code: "placeholder" };
+            };
+
+            // Construct Round 32 Matches with Anti-Duplicate Check
+            const round32 = [
+                { id: 73, p1: getTeam('A2'), p2: getTeam('B2'), venue: "6/28 LA", winner: null },
+                { id: 74, p1: getTeam('E1'), p2: get3rd(), venue: "6/29 Boston", winner: null },
+                { id: 75, p1: getTeam('F1'), p2: getTeam('C2'), venue: "6/29 Monterrey", winner: null },
+                { id: 76, p1: getTeam('C1'), p2: getTeam('F2'), venue: "6/29 Houston", winner: null },
+                { id: 77, p1: getTeam('I1'), p2: get3rd(), venue: "6/30 NY/NJ", winner: null },
+                { id: 78, p1: getTeam('E2'), p2: getTeam('I2'), venue: "6/30 Dallas", winner: null },
+                { id: 79, p1: getTeam('A1'), p2: get3rd(), venue: "6/30 Mexico City", winner: null },
+                { id: 80, p1: getTeam('L1'), p2: get3rd(), venue: "7/1 Atlanta", winner: null },
+                { id: 81, p1: getTeam('D1'), p2: get3rd(), venue: "7/1 SF Bay", winner: null },
+                { id: 82, p1: getTeam('G1'), p2: get3rd(), venue: "7/1 Seattle", winner: null },
+                { id: 83, p1: getTeam('K2'), p2: getTeam('L2'), venue: "7/2 Toronto", winner: null },
+                { id: 84, p1: getTeam('H1'), p2: getTeam('J2'), venue: "7/2 LA", winner: null },
+                { id: 85, p1: getTeam('B1'), p2: get3rd(), venue: "7/2 Vancouver", winner: null },
+                { id: 86, p1: getTeam('J1'), p2: getTeam('H2'), venue: "7/3 Miami", winner: null },
+                { id: 87, p1: getTeam('K1'), p2: get3rd(), venue: "7/3 KC", winner: null },
+                { id: 88, p1: getTeam('D2'), p2: getTeam('G2'), venue: "7/3 Dallas", winner: null }
+            ];
 
             const prepareRound = (count, startId, venues) => Array(count).fill(null).map((_, i) => ({ id: startId + i, p1: null, p2: null, venue: venues[i], winner: null }));
             const r16Venues = ["7/4 Philadelphia", "7/4 Houston", "7/5 NY/NJ", "7/5 Mexico City", "7/6 Dallas", "7/6 Seattle", "7/7 Atlanta", "7/7 Vancouver"];
             const qfVenues = ["7/9 Boston", "7/10 LA", "7/11 Miami", "7/11 KC"];
             const sfVenues = ["7/14 Dallas", "7/15 Atlanta"];
             const fVenues = ["7/19 NY/NJ"];
-            const round32 = [
-                { id: 73, p1: getTeam('A', 2), p2: getTeam('B', 2), venue: "6/28 LA", winner: null },
-                { id: 74, p1: getTeam('E', 1), p2: get3rd(), venue: "6/29 Boston", winner: null },
-                { id: 75, p1: getTeam('F', 1), p2: getTeam('C', 2), venue: "6/29 Monterrey", winner: null },
-                { id: 76, p1: getTeam('C', 1), p2: getTeam('F', 2), venue: "6/29 Houston", winner: null },
-                { id: 77, p1: getTeam('I', 1), p2: get3rd(), venue: "6/30 NY/NJ", winner: null },
-                { id: 78, p1: getTeam('E', 2), p2: getTeam('I', 2), venue: "6/30 Dallas", winner: null },
-                { id: 79, p1: getTeam('A', 1), p2: get3rd(), venue: "6/30 Mexico City", winner: null },
-                { id: 80, p1: getTeam('L', 1), p2: get3rd(), venue: "7/1 Atlanta", winner: null },
-                { id: 81, p1: getTeam('D', 1), p2: get3rd(), venue: "7/1 SF Bay", winner: null },
-                { id: 82, p1: getTeam('G', 1), p2: get3rd(), venue: "7/1 Seattle", winner: null },
-                { id: 83, p1: getTeam('K', 2), p2: getTeam('L', 2), venue: "7/2 Toronto", winner: null },
-                { id: 84, p1: getTeam('H', 1), p2: getTeam('J', 2), venue: "7/2 LA", winner: null },
-                { id: 85, p1: getTeam('B', 1), p2: get3rd(), venue: "7/2 Vancouver", winner: null },
-                { id: 86, p1: getTeam('J', 1), p2: getTeam('H', 2), venue: "7/3 Miami", winner: null },
-                { id: 87, p1: getTeam('K', 1), p2: get3rd(), venue: "7/3 KC", winner: null },
-                { id: 88, p1: getTeam('D', 2), p2: getTeam('G', 2), venue: "7/3 Dallas", winner: null }
-            ];
+            
             tournamentState = { active: true, rounds: [ { name: "32강", matches: round32 }, { name: "16강", matches: prepareRound(8, 89, r16Venues) }, { name: "8강", matches: prepareRound(4, 97, qfVenues) }, { name: "4강", matches: prepareRound(2, 101, sfVenues) }, { name: "결승", matches: prepareRound(1, 103, fVenues) } ], currentRoundIndex: 0, currentMatchIndex: 0 };
             renderBracket(); updateTournamentStatus();
         }
@@ -1268,19 +1337,40 @@
                     let p1Class = match.p1 && match.p1.code === targetTeamCode ? "text-yellow-300 font-bold" : "text-white";
                     let p2Class = match.p2 && match.p2.code === targetTeamCode ? "text-yellow-300 font-bold" : "text-white";
                     if(match.winner === match.p1) p1Class += " text-emerald-400"; if(match.winner === match.p2) p2Class += " text-emerald-400";
-                    let p1Info = match.p1 && match.p1.group ? `<span class="text-[9px] text-gray-400 ml-1">(${match.p1.rank}위/${match.p1.group}${match.p1.pos})</span>` : "";
-                    let p2Info = match.p2 && match.p2.group ? `<span class="text-[9px] text-gray-400 ml-1">(${match.p2.rank}위/${match.p2.group}${match.p2.pos})</span>` : "";
-                    html += `<div class="match-node ${activeClass}"><div class="flex justify-between text-[10px] text-slate-500 mb-1"><span>M${match.id}</span><span>${match.venue}</span></div>
-                            <div class="team-slot ${match.winner === match.p1 ? 'winner' : ''}"><div class="${p1Class} flex items-center truncate">${match.p1 ? `<img src="https://flagcdn.com/w20/${match.p1.code}.png" class="w-4 h-3 mr-1 inline">` : ''}${match.p1 ? getTeamName(match.p1) : 'TBD'}${p1Info}</div><div class="score-display">${match.score ? match.score.split(':')[0] : ''}</div></div>
-                            <div class="team-slot ${match.winner === match.p2 ? 'winner' : ''}"><div class="${p2Class} flex items-center truncate">${match.p2 ? `<img src="https://flagcdn.com/w20/${match.p2.code}.png" class="w-4 h-3 mr-1 inline">` : ''}${match.p2 ? getTeamName(match.p2) : 'TBD'}${p2Info}</div><div class="score-display">${match.score ? match.score.split(':')[1] : ''}</div></div>${match.pk ? `<div class="text-center text-[10px] text-yellow-500">${match.pk}</div>` : ''}</div>`;
+                    let p1Info = match.p1 && match.p1.group ? `<span class="text-[9px] md:text-xs text-gray-400 ml-1">(${match.p1.rank}위/${match.p1.group}${match.p1.pos})</span>` : "";
+                    let p2Info = match.p2 && match.p2.group ? `<span class="text-[9px] md:text-xs text-gray-400 ml-1">(${match.p2.rank}위/${match.p2.group}${match.p2.pos})</span>` : "";
+                    html += `<div class="match-node ${activeClass}"><div class="flex justify-between text-[10px] md:text-xs text-slate-500 mb-1"><span>M${match.id}</span><span>${match.venue}</span></div>
+                            <div class="team-slot ${match.winner === match.p1 ? 'winner' : ''}"><div class="${p1Class} flex items-center truncate">${match.p1 ? `<img src="https://flagcdn.com/w20/${match.p1.code}.png" class="w-4 h-3 md:w-5 md:h-4 mr-1 inline">` : ''}${match.p1 ? getTeamName(match.p1) : 'TBD'}${p1Info}</div><div class="score-display">${match.score ? match.score.split(':')[0] : ''}</div></div>
+                            <div class="team-slot ${match.winner === match.p2 ? 'winner' : ''}"><div class="${p2Class} flex items-center truncate">${match.p2 ? `<img src="https://flagcdn.com/w20/${match.p2.code}.png" class="w-4 h-3 md:w-5 md:h-4 mr-1 inline">` : ''}${match.p2 ? getTeamName(match.p2) : 'TBD'}${p2Info}</div><div class="score-display">${match.score ? match.score.split(':')[1] : ''}</div></div>${match.pk ? `<div class="text-center text-[10px] md:text-xs text-yellow-500">${match.pk}</div>` : ''}</div>`;
                 }); html += `</div>`;
             }); container.innerHTML = html;
         }
 
         function switchTab(tabId) {
             ['draw', 'tournament', 'report'].forEach(t => { const btn = document.getElementById(`tab-${t}`); const section = document.getElementById(`section-${t}`); if (t === tabId) { btn.classList.remove('tab-inactive', 'hidden'); btn.classList.add('tab-active'); section.classList.remove('hidden'); } else { btn.classList.remove('tab-active'); btn.classList.add('tab-inactive'); section.classList.add('hidden'); } });
-            if(tabId === 'tournament' && tournamentState.active) { document.getElementById('drawControlsGroup').classList.add('hidden'); document.getElementById('leagueControlsGroup').classList.add('hidden'); document.getElementById('tournamentControlsGroup').classList.remove('hidden'); document.getElementById('tournamentControlsGroup').classList.add('flex'); document.getElementById('widgetToggle').classList.add('hidden'); document.getElementById('happinessWidget').classList.remove('active'); }
-            else if (tabId === 'draw') { document.getElementById('widgetToggle').classList.remove('hidden'); if(liveDrawState.currentStep >= 48) { document.getElementById('drawControlsGroup').classList.add('hidden'); document.getElementById('leagueControlsGroup').classList.remove('hidden'); document.getElementById('leagueControlsGroup').classList.add('flex'); } else { document.getElementById('drawControlsGroup').classList.remove('hidden'); document.getElementById('leagueControlsGroup').classList.add('hidden'); document.getElementById('tournamentControlsGroup').classList.add('hidden'); } }
+            if(tabId === 'tournament' && tournamentState.active) { 
+                document.getElementById('drawControlsGroup').classList.add('hidden'); 
+                document.getElementById('leagueControlsGroup').classList.add('hidden'); 
+                document.getElementById('tournamentControlsGroup').classList.remove('hidden'); 
+                document.getElementById('tournamentControlsGroup').classList.add('flex'); 
+                
+                document.getElementById('happinessWidget').classList.remove('active');
+                document.getElementById('widgetToggle').classList.remove('open');
+            }
+            else if (tabId === 'draw') { 
+                if(liveDrawState.currentStep >= 48) { 
+                    document.getElementById('drawControlsGroup').classList.add('hidden'); 
+                    document.getElementById('leagueControlsGroup').classList.remove('hidden'); 
+                    document.getElementById('leagueControlsGroup').classList.add('flex'); 
+                    
+                    document.getElementById('happinessWidget').classList.add('active');
+                    document.getElementById('widgetToggle').classList.add('open');
+                } else { 
+                    document.getElementById('drawControlsGroup').classList.remove('hidden'); 
+                    document.getElementById('leagueControlsGroup').classList.add('hidden'); 
+                    document.getElementById('tournamentControlsGroup').classList.add('hidden'); 
+                } 
+            }
         }
         function resetDraw() { location.reload(); }
         initGrid(); populateCountrySelect();
