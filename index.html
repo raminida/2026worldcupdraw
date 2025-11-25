@@ -380,7 +380,7 @@
 
                 <div id="simLoading" class="hidden text-center py-12">
                     <i class="fas fa-circle-notch fa-spin text-4xl text-emerald-400 mb-4"></i>
-                    <div class="text-slate-400 animate-pulse">Running 100 Simulations...</div>
+                    <div class="text-slate-400 animate-pulse mt-2 font-bold text-lg">Initializing...</div>
                 </div>
 
                 <div id="reportResults" class="hidden space-y-6">
@@ -936,11 +936,19 @@
         async function runBatchSimulation() {
             const btn = document.getElementById('batchSimBtn');
             const loading = document.getElementById('simLoading');
+            const loadingText = document.querySelector('#simLoading .text-slate-400');
             const results = document.getElementById('reportResults');
             
             btn.classList.add('hidden');
             loading.classList.remove('hidden');
             results.classList.add('hidden');
+
+            // Fake Loading Animation (5 seconds)
+            const steps = 20;
+            for(let k=0; k<=steps; k++) {
+                loadingText.innerText = `Simulating... ${Math.round((k/steps)*100)}%`;
+                await new Promise(r => setTimeout(r, 250)); // 250ms * 20 = 5000ms = 5 seconds
+            }
 
             const iterations = 100;
             let stats = {
@@ -950,8 +958,6 @@
                 worstGroup: { score: 9999, group: [] },
                 bestGroup: { score: -1, group: [] }
             };
-
-            await new Promise(resolve => setTimeout(resolve, 100));
 
             for(let i=0; i<iterations; i++) {
                 // 1. Draw - Fresh Copy
@@ -1347,29 +1353,83 @@
         }
 
         function switchTab(tabId) {
-            ['draw', 'tournament', 'report'].forEach(t => { const btn = document.getElementById(`tab-${t}`); const section = document.getElementById(`section-${t}`); if (t === tabId) { btn.classList.remove('tab-inactive', 'hidden'); btn.classList.add('tab-active'); section.classList.remove('hidden'); } else { btn.classList.remove('tab-active'); btn.classList.add('tab-inactive'); section.classList.add('hidden'); } });
-            if(tabId === 'tournament' && tournamentState.active) { 
-                document.getElementById('drawControlsGroup').classList.add('hidden'); 
-                document.getElementById('leagueControlsGroup').classList.add('hidden'); 
-                document.getElementById('tournamentControlsGroup').classList.remove('hidden'); 
-                document.getElementById('tournamentControlsGroup').classList.add('flex'); 
-                
-                document.getElementById('happinessWidget').classList.remove('active');
-                document.getElementById('widgetToggle').classList.remove('open');
-            }
-            else if (tabId === 'draw') { 
-                if(liveDrawState.currentStep >= 48) { 
-                    document.getElementById('drawControlsGroup').classList.add('hidden'); 
-                    document.getElementById('leagueControlsGroup').classList.remove('hidden'); 
-                    document.getElementById('leagueControlsGroup').classList.add('flex'); 
-                    
-                    document.getElementById('happinessWidget').classList.add('active');
-                    document.getElementById('widgetToggle').classList.add('open');
+            // 1. Handle Tab Buttons & Sections
+            ['draw', 'tournament', 'report'].forEach(t => { 
+                const btn = document.getElementById(`tab-${t}`); 
+                const section = document.getElementById(`section-${t}`); 
+                if (t === tabId) { 
+                    btn.classList.remove('tab-inactive', 'hidden'); 
+                    btn.classList.add('tab-active'); 
+                    section.classList.remove('hidden'); 
                 } else { 
-                    document.getElementById('drawControlsGroup').classList.remove('hidden'); 
-                    document.getElementById('leagueControlsGroup').classList.add('hidden'); 
-                    document.getElementById('tournamentControlsGroup').classList.add('hidden'); 
+                    btn.classList.remove('tab-active'); 
+                    btn.classList.add('tab-inactive'); 
+                    section.classList.add('hidden'); 
                 } 
+            });
+            
+            const footer = document.getElementById('drawController');
+            const initial = document.getElementById('initialControls');
+            const toggleBtn = document.getElementById('widgetToggle');
+            const widget = document.getElementById('happinessWidget');
+
+            if (tabId === 'report') {
+                // Hide ALL controls
+                if(footer) footer.style.display = 'none';
+                if(initial) initial.style.display = 'none';
+                if(toggleBtn) toggleBtn.style.display = 'none';
+                if(widget) widget.classList.remove('active');
+                if(toggleBtn) toggleBtn.classList.remove('open');
+            } 
+            else {
+                // Logic for Draw/Tournament Tabs
+                
+                // 1. Determine if we are in "Initial State" or "Running State"
+                const isRunning = liveDrawState.active || tournamentState.active;
+
+                if (!isRunning) {
+                    // Not started yet -> Show Initial, Hide Footer
+                    if(initial) initial.style.display = 'flex'; 
+                    if(footer) footer.style.display = 'none';
+                    if(toggleBtn) toggleBtn.style.display = 'none';
+                } else {
+                    // Started -> Show Footer, Hide Initial
+                    if(initial) initial.style.display = 'none';
+                    if(footer) footer.style.display = 'flex';
+                    if(toggleBtn) toggleBtn.style.display = 'flex';
+                }
+
+                // 2. Specific Tab Logic
+                if(tabId === 'tournament' && tournamentState.active) { 
+                    document.getElementById('drawControlsGroup').classList.add('hidden'); 
+                    document.getElementById('leagueControlsGroup').classList.add('hidden'); 
+                    document.getElementById('tournamentControlsGroup').classList.remove('hidden'); 
+                    document.getElementById('tournamentControlsGroup').classList.add('flex'); 
+                    
+                    if(widget) widget.classList.remove('active');
+                    if(toggleBtn) toggleBtn.classList.remove('open');
+                }
+                else if (tabId === 'draw') { 
+                    if(liveDrawState.currentStep >= 48) { 
+                        // League Phase
+                        document.getElementById('drawControlsGroup').classList.add('hidden'); 
+                        document.getElementById('leagueControlsGroup').classList.remove('hidden'); 
+                        document.getElementById('leagueControlsGroup').classList.add('flex'); 
+                        
+                        if(widget && isRunning) widget.classList.add('active');
+                        if(toggleBtn && isRunning) {
+                            toggleBtn.style.display = 'flex';
+                            toggleBtn.classList.add('open');
+                        }
+                    } else { 
+                        // Draw Phase
+                        document.getElementById('drawControlsGroup').classList.remove('hidden'); 
+                        document.getElementById('leagueControlsGroup').classList.add('hidden'); 
+                        document.getElementById('tournamentControlsGroup').classList.add('hidden'); 
+                        if(widget) widget.classList.remove('active');
+                        if(toggleBtn) toggleBtn.classList.remove('open');
+                    } 
+                }
             }
         }
         function resetDraw() { location.reload(); }
