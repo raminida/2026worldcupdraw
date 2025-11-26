@@ -728,7 +728,8 @@
 
         function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
         
-        function solveBipartite(groups, teams, groupIndices) {
+        // Updated solveBipartite with Min 1 UEFA Rule Enforcement
+        function solveBipartite(groups, teams, groupIndices, futureUEFA = 0) {
             if (teams.length === 0) return true;
             let team = teams[0]; let remainingTeams = teams.slice(1);
             if (team.conf === 'UEFA') {
@@ -738,16 +739,39 @@
                     return uefaA - uefaB;
                 });
             } else { shuffle(groupIndices); }
+
             for (let i = 0; i < groupIndices.length; i++) {
                 let gIdx = groupIndices[i];
                 const confCounts = {}; groups[gIdx].forEach(t => { confCounts[t.conf] = (confCounts[t.conf] || 0) + 1; });
                 let isValid = true;
-                if (team.conf === 'UEFA') { if ((confCounts['UEFA'] || 0) >= 2) isValid = false; } else { if ((confCounts[team.conf] || 0) >= 1) isValid = false; }
+                
+                if (team.conf === 'UEFA') { 
+                    // Rule 1: Max 2 UEFA teams per group
+                    if ((confCounts['UEFA'] || 0) >= 2) isValid = false; 
+                    
+                    // Rule 2: Min 1 UEFA team per group (Lookahead)
+                    // If we place this team in a group that ALREADY has a UEFA team,
+                    // we must ensure we have enough remaining UEFA teams to cover all empty groups.
+                    if (isValid && (confCounts['UEFA'] || 0) > 0) {
+                        const groupsWithZeroUEFA = groups.filter(g => !g.some(t => t.conf === 'UEFA')).length;
+                        const currentPotUEFA = teams.filter(t => t.conf === 'UEFA').length;
+                        const totalAvailableUEFA = currentPotUEFA + futureUEFA;
+                        
+                        // If we use this team for a non-zero group, we have totalAvailableUEFA - 1 left.
+                        // If remaining teams are just enough or fewer than zero-groups, we CANNOT waste this team here.
+                        if (totalAvailableUEFA <= groupsWithZeroUEFA) {
+                            isValid = false;
+                        }
+                    }
+
+                } else { 
+                    if ((confCounts[team.conf] || 0) >= 1) isValid = false; 
+                }
                 
                 if (isValid) {
                     groups[gIdx].push(team);
                     let remainingIndices = groupIndices.filter(val => val !== gIdx);
-                    if (solveBipartite(groups, remainingTeams, remainingIndices)) return true;
+                    if (solveBipartite(groups, remainingTeams, remainingIndices, futureUEFA)) return true;
                     groups[gIdx].pop();
                 }
             }
@@ -758,6 +782,7 @@
             let simGroups = Array(12).fill(null).map(() => []);
             
             const deepCopyPot = (potArr) => potArr.map(t => ({...t}));
+            const countUEFA = (arr) => arr.filter(t => t.conf === 'UEFA').length;
 
             let pot1 = deepCopyPot(pots.pot1);
             let fixedHosts = pot1.filter(t => t.fixedGroup !== undefined);
@@ -767,12 +792,23 @@
             let emptyGroupIndices = [];
             for (let i=0; i<12; i++) { if (simGroups[i].length === 0) emptyGroupIndices.push(i); }
             for (let i=0; i<randomPot1.length; i++) { simGroups[emptyGroupIndices[i]].push(randomPot1[i]); }
-            const fillPot = (potName) => {
+            
+            // Calculate future UEFA counts for lookahead
+            const uefaP2 = countUEFA(pots.pot2);
+            const uefaP3 = countUEFA(pots.pot3);
+            const uefaP4 = countUEFA(pots.pot4);
+
+            const fillPot = (potName, futureUEFAVal) => {
                 let teams = shuffle(deepCopyPot(pots[potName]));
                 let availableGroupIndices = [0,1,2,3,4,5,6,7,8,9,10,11];
-                if (!solveBipartite(simGroups, teams, availableGroupIndices)) throw new Error("Deadlock");
+                if (!solveBipartite(simGroups, teams, availableGroupIndices, futureUEFAVal)) throw new Error("Deadlock");
             };
-            fillPot('pot2'); fillPot('pot3'); fillPot('pot4');
+            
+            // Pass future counts: Pot 2 sees (P3+P4), Pot 3 sees (P4), Pot 4 sees 0
+            fillPot('pot2', uefaP3 + uefaP4); 
+            fillPot('pot3', uefaP4); 
+            fillPot('pot4', 0);
+
             simGroups.forEach(g => g.forEach(t => { t.pts = 0; t.gf = 0; t.ga = 0; t.gd = 0; t.played = 0; }));
             return simGroups;
         }
