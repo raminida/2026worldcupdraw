@@ -347,10 +347,15 @@
     <main class="flex-grow relative overflow-hidden w-full">
         <section id="section-draw" class="container mx-auto px-2 md:px-4 py-4 h-full overflow-y-auto">
             <div id="fixedInfo" class="text-center mb-6 text-xs md:text-sm text-slate-400 flex justify-center items-center gap-2 flex-wrap bg-slate-800/50 p-2 rounded-lg border border-slate-700/50 mx-auto max-w-xl">
-                <span class="bg-slate-900/80 px-2 py-1 rounded border border-slate-700 text-[10px]" data-key="fixed">고정</span> 
-                <span class="flex items-center"><img src="https://flagcdn.com/w40/mx.png" class="w-4 h-3 mr-1 inline"> A1</span>
-                <span class="flex items-center"><img src="https://flagcdn.com/w40/ca.png" class="w-4 h-3 mr-1 inline"> B1</span>
-                <span class="flex items-center"><img src="https://flagcdn.com/w40/us.png" class="w-4 h-3 mr-1 inline"> D1</span>
+                <span class="bg-slate-900/80 px-2 py-1 rounded border border-slate-700 text-[10px] text-emerald-400 font-bold" data-key="fixed">FIXED</span> 
+                <span class="flex items-center text-slate-300"><img src="https://flagcdn.com/w40/mx.png" class="w-4 h-3 mr-1 inline"> A1</span>
+                <span class="flex items-center text-slate-300"><img src="https://flagcdn.com/w40/ca.png" class="w-4 h-3 mr-1 inline"> B1</span>
+                <span class="flex items-center text-slate-300"><img src="https://flagcdn.com/w40/us.png" class="w-4 h-3 mr-1 inline"> D1</span>
+                <span class="border-l border-slate-600 mx-1 h-3"></span>
+                <span class="flex items-center text-yellow-500" title="Rank 4"><img src="https://flagcdn.com/w40/gb-eng.png" class="w-4 h-3 mr-1 inline"> C1</span>
+                <span class="flex items-center text-yellow-500" title="Rank 3"><img src="https://flagcdn.com/w40/fr.png" class="w-4 h-3 mr-1 inline"> E1</span>
+                <span class="flex items-center text-yellow-500" title="Rank 1"><img src="https://flagcdn.com/w40/es.png" class="w-4 h-3 mr-1 inline"> G1</span>
+                <span class="flex items-center text-yellow-500" title="Rank 2"><img src="https://flagcdn.com/w40/ar.png" class="w-4 h-3 mr-1 inline"> L1</span>
             </div>
             <div id="groupsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 pb-32"></div>
         </section>
@@ -570,62 +575,68 @@
         let targetTeamCode = 'kr';
         let simTargetCode = 'kr';
         
+        // Hosts fixed: MX(0), CA(1), US(3)
+        // Fixed Top Seeds to spread bracket:
+        // Rank 1 (Spain) -> Group G (6) [Start of 2nd Half]
+        // Rank 2 (Argentina) -> Group L (11) [End of 2nd Half]
+        // Rank 3 (France) -> Group E (4) [End of 1st Half]
+        // Rank 4 (England) -> Group C (2) [Start of 1st Half - filling gap]
         const pots = {
             pot1: [
-                { name: "스페인", nameEn: "Spain", conf: "UEFA", rank: 1, elo: 2160, code: "es", tier: "S", stars: 1 },
-                { name: "아르헨티나", nameEn: "Argentina", conf: "CONMEBOL", rank: 2, elo: 2140, code: "ar", tier: "S", stars: 3 },
-                { name: "프랑스", nameEn: "France", conf: "UEFA", rank: 3, elo: 2120, code: "fr", tier: "S", stars: 2 },
-                { name: "잉글랜드", nameEn: "England", conf: "UEFA", rank: 4, elo: 2080, code: "gb-eng", tier: "S", stars: 1 },
-                { name: "브라질", nameEn: "Brazil", conf: "CONMEBOL", rank: 5, elo: 2070, code: "br", tier: "S", stars: 5 },
-                { name: "포르투갈", nameEn: "Portugal", conf: "UEFA", rank: 6, elo: 2040, code: "pt", tier: "A", stars: 0 },
-                { name: "네덜란드", nameEn: "Netherlands", conf: "UEFA", rank: 7, elo: 2020, code: "nl", tier: "A", stars: 0 },
-                { name: "벨기에", nameEn: "Belgium", conf: "UEFA", rank: 8, elo: 1980, code: "be", tier: "A", stars: 0 },
-                { name: "독일", nameEn: "Germany", conf: "UEFA", rank: 9, elo: 2050, code: "de", tier: "S", stars: 4 },
-                { name: "멕시코", nameEn: "Mexico", conf: "CONCACAF", host: true, fixedGroup: 0, rank: 15, elo: 1850, code: "mx", tier: "B", stars: 0 },
-                { name: "미국", nameEn: "USA", conf: "CONCACAF", host: true, fixedGroup: 3, rank: 18, elo: 1840, code: "us", tier: "B", stars: 0 },
-                { name: "캐나다", nameEn: "Canada", conf: "CONCACAF", host: true, fixedGroup: 1, rank: 35, elo: 1750, code: "ca", tier: "B", stars: 0 }
+                { name: "스페인", nameEn: "Spain", conf: "UEFA", rank: 1, elo: 2160, delta: 45, code: "es", tier: "S", stars: 1, fixedGroup: 6 }, 
+                { name: "아르헨티나", nameEn: "Argentina", conf: "CONMEBOL", rank: 2, elo: 2140, delta: 15, code: "ar", tier: "S", stars: 3, fixedGroup: 11 },
+                { name: "프랑스", nameEn: "France", conf: "UEFA", rank: 3, elo: 2120, delta: -5, code: "fr", tier: "S", stars: 2, fixedGroup: 4 },
+                { name: "잉글랜드", nameEn: "England", conf: "UEFA", rank: 4, elo: 2080, delta: 10, code: "gb-eng", tier: "S", stars: 1, fixedGroup: 2 },
+                { name: "브라질", nameEn: "Brazil", conf: "CONMEBOL", rank: 5, elo: 2070, delta: -25, code: "br", tier: "S", stars: 5 }, 
+                { name: "포르투갈", nameEn: "Portugal", conf: "UEFA", rank: 6, elo: 2040, delta: 5, code: "pt", tier: "A", stars: 0 },
+                { name: "네덜란드", nameEn: "Netherlands", conf: "UEFA", rank: 7, elo: 2020, delta: 15, code: "nl", tier: "A", stars: 0 },
+                { name: "벨기에", nameEn: "Belgium", conf: "UEFA", rank: 8, elo: 1980, delta: -30, code: "be", tier: "A", stars: 0 }, 
+                { name: "독일", nameEn: "Germany", conf: "UEFA", rank: 9, elo: 2050, delta: 35, code: "de", tier: "S", stars: 4 }, 
+                { name: "멕시코", nameEn: "Mexico", conf: "CONCACAF", host: true, fixedGroup: 0, rank: 15, elo: 1850, delta: -15, code: "mx", tier: "B", stars: 0 },
+                { name: "미국", nameEn: "USA", conf: "CONCACAF", host: true, fixedGroup: 3, rank: 18, elo: 1840, delta: -10, code: "us", tier: "B", stars: 0 },
+                { name: "캐나다", nameEn: "Canada", conf: "CONCACAF", host: true, fixedGroup: 1, rank: 35, elo: 1750, delta: 20, code: "ca", tier: "B", stars: 0 }
             ],
             pot2: [
-                { name: "크로아티아", nameEn: "Croatia", conf: "UEFA", rank: 10, elo: 1950, code: "hr", tier: "A", stars: 0 },
-                { name: "모로코", nameEn: "Morocco", conf: "CAF", rank: 11, elo: 1930, code: "ma", tier: "A", stars: 0 },
-                { name: "콜롬비아", nameEn: "Colombia", conf: "CONMEBOL", rank: 12, elo: 2010, code: "co", tier: "A", stars: 0 },
-                { name: "우루과이", nameEn: "Uruguay", conf: "CONMEBOL", rank: 14, elo: 1980, code: "uy", tier: "A", stars: 2 },
-                { name: "일본", nameEn: "Japan", conf: "AFC", rank: 16, elo: 1900, code: "jp", tier: "B", stars: 0 },
-                { name: "스위스", nameEn: "Switzerland", conf: "UEFA", rank: 17, elo: 1890, code: "ch", tier: "B", stars: 0 },
-                { name: "세네갈", nameEn: "Senegal", conf: "CAF", rank: 19, elo: 1800, code: "sn", tier: "B", stars: 0 },
-                { name: "이란", nameEn: "Iran", conf: "AFC", rank: 20, elo: 1830, code: "ir", tier: "B", stars: 0 },
-                { name: "대한민국", nameEn: "South Korea", conf: "AFC", rank: 22, elo: 1740, code: "kr", tier: "C", stars: 0 }, 
-                { name: "오스트리아", nameEn: "Austria", conf: "UEFA", rank: 23, elo: 1880, code: "at", tier: "B", stars: 0 }, 
-                { name: "에콰도르", nameEn: "Ecuador", conf: "CONMEBOL", rank: 24, elo: 1870, code: "ec", tier: "B", stars: 0 },
-                { name: "호주", nameEn: "Australia", conf: "AFC", rank: 25, elo: 1760, code: "au", tier: "C", stars: 0 }        
+                { name: "크로아티아", nameEn: "Croatia", conf: "UEFA", rank: 10, elo: 1950, delta: -10, code: "hr", tier: "A", stars: 0 },
+                { name: "모로코", nameEn: "Morocco", conf: "CAF", rank: 11, elo: 1930, delta: 5, code: "ma", tier: "A", stars: 0 },
+                { name: "콜롬비아", nameEn: "Colombia", conf: "CONMEBOL", rank: 12, elo: 2010, delta: 55, code: "co", tier: "A", stars: 0 }, 
+                { name: "우루과이", nameEn: "Uruguay", conf: "CONMEBOL", rank: 14, elo: 1980, delta: 20, code: "uy", tier: "A", stars: 2 },
+                { name: "일본", nameEn: "Japan", conf: "AFC", rank: 16, elo: 1900, delta: 30, code: "jp", tier: "B", stars: 0 }, 
+                { name: "스위스", nameEn: "Switzerland", conf: "UEFA", rank: 17, elo: 1890, delta: 5, code: "ch", tier: "B", stars: 0 },
+                { name: "세네갈", nameEn: "Senegal", conf: "CAF", rank: 19, elo: 1800, delta: -5, code: "sn", tier: "B", stars: 0 },
+                { name: "이란", nameEn: "Iran", conf: "AFC", rank: 20, elo: 1830, delta: 10, code: "ir", tier: "B", stars: 0 },
+                { name: "대한민국", nameEn: "South Korea", conf: "AFC", rank: 22, elo: 1740, delta: -5, code: "kr", tier: "C", stars: 0 }, 
+                { name: "오스트리아", nameEn: "Austria", conf: "UEFA", rank: 23, elo: 1880, delta: 25, code: "at", tier: "B", stars: 0 }, 
+                { name: "에콰도르", nameEn: "Ecuador", conf: "CONMEBOL", rank: 24, elo: 1870, delta: 15, code: "ec", tier: "B", stars: 0 },
+                { name: "호주", nameEn: "Australia", conf: "AFC", rank: 25, elo: 1760, delta: -10, code: "au", tier: "C", stars: 0 }        
             ],
             pot3: [
-                { name: "노르웨이", nameEn: "Norway", conf: "UEFA", rank: 29, elo: 1820, code: "no", tier: "A", buff: true }, 
-                { name: "파나마", nameEn: "Panama", conf: "CONCACAF", rank: 30, elo: 1680, code: "pa", tier: "C" },
-                { name: "이집트", nameEn: "Egypt", conf: "CAF", rank: 34, elo: 1720, code: "eg", tier: "C" },
-                { name: "알제리", nameEn: "Algeria", conf: "CAF", rank: 35, elo: 1740, code: "dz", tier: "C" },
-                { name: "스코틀랜드", nameEn: "Scotland", conf: "UEFA", rank: 36, elo: 1780, code: "gb-sct", tier: "C" },
-                { name: "파라과이", nameEn: "Paraguay", conf: "CONMEBOL", rank: 39, elo: 1710, code: "py", tier: "C" },
-                { name: "튀니지", nameEn: "Tunisia", conf: "CAF", rank: 40, elo: 1690, code: "tn", tier: "C" },
-                { name: "코트디부아르", nameEn: "Ivory Coast", conf: "CAF", rank: 42, elo: 1750, code: "ci", tier: "C" },
-                { name: "우즈베키스탄", nameEn: "Uzbekistan", conf: "AFC", rank: 50, elo: 1650, code: "uz", tier: "D" }, 
-                { name: "카타르", nameEn: "Qatar", conf: "AFC", rank: 51, elo: 1640, code: "qa", tier: "C" },       
-                { name: "사우디아라비아", nameEn: "Saudi Arabia", conf: "AFC", rank: 60, elo: 1630, code: "sa", tier: "C" }, 
-                { name: "남아공", nameEn: "South Africa", conf: "CAF", rank: 61, elo: 1620, code: "za", tier: "D" }        
+                { name: "노르웨이", nameEn: "Norway", conf: "UEFA", rank: 29, elo: 1820, delta: 0, code: "no", tier: "A", buff: true }, 
+                { name: "파나마", nameEn: "Panama", conf: "CONCACAF", rank: 30, elo: 1680, delta: 10, code: "pa", tier: "C" },
+                { name: "이집트", nameEn: "Egypt", conf: "CAF", rank: 34, elo: 1720, delta: -5, code: "eg", tier: "C" },
+                { name: "알제리", nameEn: "Algeria", conf: "CAF", rank: 35, elo: 1740, delta: 5, code: "dz", tier: "C" },
+                { name: "스코틀랜드", nameEn: "Scotland", conf: "UEFA", rank: 36, elo: 1780, delta: -20, code: "gb-sct", tier: "C" },
+                { name: "파라과이", nameEn: "Paraguay", conf: "CONMEBOL", rank: 39, elo: 1710, delta: 5, code: "py", tier: "C" },
+                { name: "튀니지", nameEn: "Tunisia", conf: "CAF", rank: 40, elo: 1690, delta: -10, code: "tn", tier: "C" },
+                { name: "코트디부아르", nameEn: "Ivory Coast", conf: "CAF", rank: 42, elo: 1750, delta: 20, code: "ci", tier: "C" }, 
+                { name: "우즈베키스탄", nameEn: "Uzbekistan", conf: "AFC", rank: 50, elo: 1650, delta: 20, code: "uz", tier: "D" }, 
+                { name: "카타르", nameEn: "Qatar", conf: "AFC", rank: 51, elo: 1640, delta: 15, code: "qa", tier: "C" },       
+                { name: "사우디아라비아", nameEn: "Saudi Arabia", conf: "AFC", rank: 60, elo: 1630, delta: -15, code: "sa", tier: "C" }, 
+                { name: "남아공", nameEn: "South Africa", conf: "CAF", rank: 61, elo: 1620, delta: 10, code: "za", tier: "D" }        
             ],
             pot4: [
-                { name: "이탈리아", nameEn: "Italy", conf: "UEFA", rank: 12, elo: 2030, code: "it", tier: "A", stars: 4 }, 
-                { name: "덴마크", nameEn: "Denmark", conf: "UEFA", rank: 21, elo: 1920, code: "dk", tier: "B" },   
-                { name: "튀르키예", nameEn: "Turkey", conf: "UEFA", rank: 25, elo: 1850, code: "tr", tier: "B" }, 
-                { name: "우크라이나", nameEn: "Ukraine", conf: "UEFA", rank: 28, elo: 1860, code: "ua", tier: "C" },
-                { name: "콩고민주공화국", nameEn: "DR Congo", conf: "CAF", rank: 56, elo: 1580, code: "cd", tier: "D" }, 
-                { name: "이라크", nameEn: "Iraq", conf: "AFC", rank: 58, elo: 1550, code: "iq", tier: "D" },        
-                { name: "요르단", nameEn: "Jordan", conf: "AFC", rank: 66, elo: 1540, code: "jo", tier: "D" },
-                { name: "카보베르데", nameEn: "Cape Verde", conf: "CAF", rank: 68, elo: 1520, code: "cv", tier: "D" },
-                { name: "가나", nameEn: "Ghana", conf: "CAF", rank: 72, elo: 1500, code: "gh", tier: "C" },
-                { name: "퀴라소", nameEn: "Curacao", conf: "CONCACAF", rank: 82, elo: 1450, code: "cw", tier: "D" },
-                { name: "아이티", nameEn: "Haiti", conf: "CONCACAF", rank: 84, elo: 1440, code: "ht", tier: "D" },
-                { name: "뉴질랜드", nameEn: "New Zealand", conf: "OFC", rank: 86, elo: 1500, code: "nz", tier: "D" }
+                { name: "이탈리아", nameEn: "Italy", conf: "UEFA", rank: 12, elo: 2030, delta: 0, code: "it", tier: "A", stars: 4 }, 
+                { name: "덴마크", nameEn: "Denmark", conf: "UEFA", rank: 21, elo: 1920, delta: -5, code: "dk", tier: "B" },   
+                { name: "튀르키예", nameEn: "Turkey", conf: "UEFA", rank: 25, elo: 1850, delta: 10, code: "tr", tier: "B" }, 
+                { name: "우크라이나", nameEn: "Ukraine", conf: "UEFA", rank: 28, elo: 1860, delta: 5, code: "ua", tier: "C" },
+                { name: "콩고민주공화국", nameEn: "DR Congo", conf: "CAF", rank: 56, elo: 1580, delta: 15, code: "cd", tier: "D" }, 
+                { name: "이라크", nameEn: "Iraq", conf: "AFC", rank: 58, elo: 1550, delta: 10, code: "iq", tier: "D" },        
+                { name: "요르단", nameEn: "Jordan", conf: "AFC", rank: 66, elo: 1540, delta: 25, code: "jo", tier: "D" }, 
+                { name: "카보베르데", nameEn: "Cape Verde", conf: "CAF", rank: 68, elo: 1520, delta: 5, code: "cv", tier: "D" },
+                { name: "가나", nameEn: "Ghana", conf: "CAF", rank: 72, elo: 1500, delta: -15, code: "gh", tier: "C" },
+                { name: "퀴라소", nameEn: "Curacao", conf: "CONCACAF", rank: 82, elo: 1450, delta: 0, code: "cw", tier: "D" },
+                { name: "아이티", nameEn: "Haiti", conf: "CONCACAF", rank: 84, elo: 1440, delta: 0, code: "ht", tier: "D" },
+                { name: "뉴질랜드", nameEn: "New Zealand", conf: "OFC", rank: 86, elo: 1500, delta: 0, code: "nz", tier: "D" }
             ]
         };
         pots.pot2 = pots.pot2.filter(t => t.name !== "이탈리아");
@@ -692,13 +703,19 @@
             if(tournamentState.active) renderBracket();
         }
 
-        function getExpectedScore(eloA, eloB, isTournament = false) {
+        function getExpectedScore(teamA, teamB, isTournament = false) {
+            const eloA = teamA.elo + ((teamA.delta || 0) * 1.5);
+            const eloB = teamB.elo + ((teamB.delta || 0) * 1.5);
+
             const eloDiff = eloA - eloB;
             const winProbA = 1 / (1 + Math.pow(10, (-eloDiff / 400)));
+            
             let baseGoals = isTournament ? 2.2 : 2.6; 
             if (Math.abs(eloDiff) > 400) baseGoals += 1.0; 
+            
             let lambdaA = baseGoals * winProbA * (0.5 + Math.random());
             let lambdaB = baseGoals * (1 - winProbA) * (0.5 + Math.random());
+            
             const poisson = (lambda) => { let L = Math.exp(-lambda), p = 1.0, k = 0; do { k++; p *= Math.random(); } while (p > L); return k - 1; };
             return { a: poisson(lambdaA), b: poisson(lambdaB) };
         }
@@ -728,7 +745,6 @@
 
         function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
         
-        // Updated solveBipartite with Min 1 UEFA Rule Enforcement
         function solveBipartite(groups, teams, groupIndices, futureUEFA = 0) {
             if (teams.length === 0) return true;
             let team = teams[0]; let remainingTeams = teams.slice(1);
@@ -746,22 +762,13 @@
                 let isValid = true;
                 
                 if (team.conf === 'UEFA') { 
-                    // Rule 1: Max 2 UEFA teams per group
                     if ((confCounts['UEFA'] || 0) >= 2) isValid = false; 
                     
-                    // Rule 2: Min 1 UEFA team per group (Lookahead)
-                    // If we place this team in a group that ALREADY has a UEFA team,
-                    // we must ensure we have enough remaining UEFA teams to cover all empty groups.
                     if (isValid && (confCounts['UEFA'] || 0) > 0) {
                         const groupsWithZeroUEFA = groups.filter(g => !g.some(t => t.conf === 'UEFA')).length;
                         const currentPotUEFA = teams.filter(t => t.conf === 'UEFA').length;
                         const totalAvailableUEFA = currentPotUEFA + futureUEFA;
-                        
-                        // If we use this team for a non-zero group, we have totalAvailableUEFA - 1 left.
-                        // If remaining teams are just enough or fewer than zero-groups, we CANNOT waste this team here.
-                        if (totalAvailableUEFA <= groupsWithZeroUEFA) {
-                            isValid = false;
-                        }
+                        if (totalAvailableUEFA <= groupsWithZeroUEFA) isValid = false;
                     }
 
                 } else { 
@@ -793,7 +800,6 @@
             for (let i=0; i<12; i++) { if (simGroups[i].length === 0) emptyGroupIndices.push(i); }
             for (let i=0; i<randomPot1.length; i++) { simGroups[emptyGroupIndices[i]].push(randomPot1[i]); }
             
-            // Calculate future UEFA counts for lookahead
             const uefaP2 = countUEFA(pots.pot2);
             const uefaP3 = countUEFA(pots.pot3);
             const uefaP4 = countUEFA(pots.pot4);
@@ -804,7 +810,6 @@
                 if (!solveBipartite(simGroups, teams, availableGroupIndices, futureUEFAVal)) throw new Error("Deadlock");
             };
             
-            // Pass future counts: Pot 2 sees (P3+P4), Pot 3 sees (P4), Pot 4 sees 0
             fillPot('pot2', uefaP3 + uefaP4); 
             fillPot('pot3', uefaP4); 
             fillPot('pot4', 0);
@@ -831,7 +836,7 @@
             const roundIdx = liveDrawState.currentLeagueRound;
             const matches = liveDrawState.groupSchedule[roundIdx];
             matches.forEach(m => {
-                const res = getExpectedScore(m.t1.elo, m.t2.elo, false);
+                const res = getExpectedScore(m.t1, m.t2, false);
                 m.t1.played++; m.t2.played++;
                 m.t1.gf += res.a; m.t1.ga += res.b; m.t1.gd += (res.a - res.b);
                 m.t2.gf += res.b; m.t2.ga += res.a; m.t2.gd += (res.b - res.a);
@@ -955,7 +960,8 @@
                 const simGroup = initialGroup.map(t => ({...t})); 
                 const runMatch = (idxA, idxB) => {
                     const tA = simGroup[idxA]; const tB = simGroup[idxB];
-                    const res = getExpectedScore(tA.elo, tB.elo, false);
+                    // Pass Objects here too for prob calc
+                    const res = getExpectedScore(tA, tB, false);
                     if(res.a > res.b) tA.pts += 3; else if (res.a < res.b) tB.pts += 3; else { tA.pts += 1; tB.pts += 1; }
                     tA.gd += (res.a - res.b); tB.gd += (res.b - res.a);
                 };
@@ -979,7 +985,6 @@
             loading.classList.remove('hidden');
             results.classList.add('hidden');
 
-            // Fake Loading Animation (5 seconds)
             const steps = 20;
             for(let k=0; k<=steps; k++) {
                 loadingText.innerText = `Simulating... ${Math.round((k/steps)*100)}%`;
@@ -996,7 +1001,6 @@
             };
 
             for(let i=0; i<iterations; i++) {
-                // 1. Draw - Fresh Copy with Retry Logic
                 let groups = null;
                 let drawSuccess = false;
                 let attempts = 0;
@@ -1009,21 +1013,19 @@
                     }
                 }
                 
-                if(!drawSuccess) continue; // Skip if completely failed
+                if(!drawSuccess) continue; 
 
-                // 2. Play Group Stage
                 groups.forEach(group => {
                     const matches = [ [0,1], [2,3], [0,2], [1,3], [0,3], [1,2] ];
                     matches.forEach(pair => {
                         const t1 = group[pair[0]]; const t2 = group[pair[1]];
-                        const res = getExpectedScore(t1.elo, t2.elo, false);
+                        const res = getExpectedScore(t1, t2, false);
                         t1.pts = (t1.pts||0) + (res.a > res.b ? 3 : (res.a === res.b ? 1 : 0));
                         t2.pts = (t2.pts||0) + (res.b > res.a ? 3 : (res.a === res.b ? 1 : 0));
                         t1.gd = (t1.gd||0) + (res.a - res.b); t2.gd = (t2.gd||0) + (res.b - res.a);
                     });
                 });
 
-                // 3. Determine Qualifiers
                 let qualifiers = [], thirdPlaces = [];
                 let targetGroup = null;
                 groups.forEach((group, idx) => {
@@ -1035,7 +1037,7 @@
                     thirdPlaces.push({ ...sorted[2], group: groupNames[idx], pos: 3 });
                 });
                 thirdPlaces.sort((a,b) => (b.pts||0) - (a.pts||0) || (b.gd||0) - (a.gd||0));
-                qualifiers.push(...thirdPlaces.slice(0, 8)); // Top 8 thirds
+                qualifiers.push(...thirdPlaces.slice(0, 8)); 
                 
                 if(targetGroup) {
                     let rankSum = 0;
@@ -1048,7 +1050,7 @@
                 if(!targetInR32) { stats.rounds.group++; continue; } 
                 stats.rounds.r32++;
 
-                let currentRoundTeams = qualifiers.sort((a,b) => b.elo - a.elo); 
+                let currentRoundTeams = qualifiers.sort((a,b) => (b.elo + (b.delta||0)) - (a.elo + (a.delta||0))); 
                 
                 const runKnockoutRound = (teams, roundName) => {
                     let winners = [];
@@ -1056,7 +1058,7 @@
                         let t1 = teams[j]; 
                         let t2 = teams[teams.length-1-j];
                         
-                        let res = getExpectedScore(t1.elo, t2.elo, true);
+                        let res = getExpectedScore(t1, t2, true);
                         let winner = res.a > res.b ? t1 : t2;
                         if(res.a === res.b) winner = Math.random() > 0.5 ? t1 : t2;
 
@@ -1336,7 +1338,7 @@
             
             if(!match.p1 || !match.p2) { tournamentState.currentMatchIndex++; return; }
 
-            const res = getExpectedScore(match.p1.elo, match.p2.elo, true);
+            const res = getExpectedScore(match.p1, match.p2, true);
             match.score = `${res.a} : ${res.b}`; let winner = res.a > res.b ? match.p1 : match.p2;
             if(res.a === res.b) { let pkA=0, pkB=0; while(pkA===pkB) { pkA=3+Math.floor(Math.random()*3); pkB=3+Math.floor(Math.random()*3); if(pkA===pkB) pkA++; } match.pk = `(PK ${pkA}:${pkB})`; winner = pkA>pkB?match.p1:match.p2; }
             match.winner = winner;
