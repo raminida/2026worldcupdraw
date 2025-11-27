@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2026 World Cup Simulator (Balanced)</title>
+    <title>2026 World Cup Simulator (Real Balanced)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -332,7 +332,7 @@
     <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-700 p-4 text-center shadow-lg relative z-10">
         <button onclick="toggleLanguage()" id="langBtn" class="lang-btn"><i class="fas fa-globe mr-2"></i>Language: EN</button>
         <h1 class="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-white to-emerald-400 drop-shadow-lg" data-key="title">2026 FIFA WORLD CUP™</h1>
-        <p class="text-slate-400 mt-1 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase" data-key="headerSub">Simulator Final - Balanced</p>
+        <p class="text-slate-400 mt-1 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase" data-key="headerSub">Simulator Final - Nerfed & Balanced</p>
     </header>
 
     <!-- Toggle Button -->
@@ -672,10 +672,10 @@
             pot2: [
                 { name: "크로아티아", nameEn: "Croatia", conf: "UEFA", rank: 10, elo: 1933, delta: 47, code: "hr", tier: "A", stars: 0 },
                 { name: "모로코", nameEn: "Morocco", conf: "CAF", rank: 11, elo: 1828, delta: 26, code: "ma", tier: "A", stars: 0 },
-                { name: "콜롬비아", nameEn: "Colombia", conf: "CONMEBOL", rank: 12, elo: 1950, delta: 10, code: "co", tier: "A", stars: 0 }, // Nerfed: Elo 1998->1950, Delta 21->10
+                { name: "콜롬비아", nameEn: "Colombia", conf: "CONMEBOL", rank: 12, elo: 1900, delta: 5, code: "co", tier: "A", stars: 0 }, // Super Nerfed: 1998->1900
                 { name: "우루과이", nameEn: "Uruguay", conf: "CONMEBOL", rank: 14, elo: 1890, delta: -58, code: "uy", tier: "A", stars: 2 },
                 { name: "일본", nameEn: "Japan", conf: "AFC", rank: 16, elo: 1878, delta: -35, code: "jp", tier: "B", stars: 0 }, 
-                { name: "스위스", nameEn: "Switzerland", conf: "UEFA", rank: 17, elo: 1897, delta: 40, code: "ch", tier: "B", stars: 0 }, // Nerfed: Delta 83->40
+                { name: "스위스", nameEn: "Switzerland", conf: "UEFA", rank: 17, elo: 1850, delta: 20, code: "ch", tier: "B", stars: 0 }, // Super Nerfed: 1897->1850
                 { name: "세네갈", nameEn: "Senegal", conf: "CAF", rank: 19, elo: 1803, delta: 33, code: "sn", tier: "B", stars: 0 },
                 { name: "이란", nameEn: "Iran", conf: "AFC", rank: 20, elo: 1754, delta: -83, code: "ir", tier: "B", stars: 0 },
                 { name: "대한민국", nameEn: "South Korea", conf: "AFC", rank: 22, elo: 1784, delta: 10, code: "kr", tier: "C", stars: 0 }, 
@@ -684,7 +684,7 @@
                 { name: "호주", nameEn: "Australia", conf: "AFC", rank: 25, elo: 1774, delta: 55, code: "au", tier: "C", stars: 0 }        
             ],
             pot3: [
-                { name: "노르웨이", nameEn: "Norway", conf: "UEFA", rank: 29, elo: 1922, delta: 45, code: "no", tier: "A", buff: true }, // Nerfed: Delta 116->45
+                { name: "노르웨이", nameEn: "Norway", conf: "UEFA", rank: 29, elo: 1840, delta: 30, code: "no", tier: "A", buff: true }, // Super Nerfed: 1922->1840
                 { name: "파나마", nameEn: "Panama", conf: "CONCACAF", rank: 30, elo: 1742, delta: 16, code: "pa", tier: "C" },
                 { name: "이집트", nameEn: "Egypt", conf: "CAF", rank: 34, elo: 1645, delta: -12, code: "eg", tier: "C" },
                 { name: "알제리", nameEn: "Algeria", conf: "CAF", rank: 35, elo: 1718, delta: 33, code: "dz", tier: "C" },
@@ -700,7 +700,7 @@
             pot4: [
                 { name: "이탈리아", nameEn: "Italy", conf: "UEFA", rank: 12, elo: 1859, delta: -71, code: "it", tier: "A", stars: 4 }, 
                 { name: "덴마크", nameEn: "Denmark", conf: "UEFA", rank: 21, elo: 1864, delta: 8, code: "dk", tier: "B" },   
-                { name: "튀르키예", nameEn: "Turkey", conf: "UEFA", rank: 25, elo: 1830, delta: 40, code: "tr", tier: "B" }, // Nerfed: Delta 106->40
+                { name: "튀르키예", nameEn: "Turkey", conf: "UEFA", rank: 25, elo: 1780, delta: -20, code: "tr", tier: "B" }, // Ultra Nerfed: 1880->1780, Delta -20
                 { name: "우크라이나", nameEn: "Ukraine", conf: "UEFA", rank: 28, elo: 1802, delta: 0, code: "ua", tier: "C" },
                 { name: "콩고민주공화국", nameEn: "DR Congo", conf: "CAF", rank: 56, elo: 1616, delta: 75, code: "cd", tier: "D" }, 
                 { name: "이라크", nameEn: "Iraq", conf: "AFC", rank: 58, elo: 1597, delta: -70, code: "iq", tier: "D" },        
