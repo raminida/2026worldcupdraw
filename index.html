@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2026 World Cup Simulator (Global)</title>
+    <title>2026 World Cup Simulator (Balanced)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=VT323&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
         
         body {
             font-family: 'Noto Sans KR', sans-serif;
@@ -40,6 +40,8 @@
             backdrop-filter: blur(5px);
             background-color: rgba(30, 41, 59, 0.9);
             border: 1px solid rgba(51, 65, 85, 0.5);
+            display: flex;
+            flex-direction: column;
         }
         
         .team-highlight {
@@ -70,7 +72,7 @@
             border-left: 4px solid #34d399;
             border-radius: 12px 0 0 12px;
             padding: 16px;
-            z-index: 100; /* Increased z-index */
+            z-index: 100;
             backdrop-filter: blur(10px);
             box-shadow: -10px 10px 30px rgba(0,0,0,0.5);
             transition: right 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -89,12 +91,12 @@
             }
         }
 
-        /* Toggle Button - Fixed Handle */
+        /* Toggle Button */
         .widget-toggle-btn {
             position: fixed;
             top: 130px;
             right: 0; 
-            z-index: 101; /* Higher than widget */
+            z-index: 101;
             background: #34d399;
             color: #0f172a;
             padding: 12px 14px 12px 18px;
@@ -103,7 +105,7 @@
             cursor: pointer;
             font-weight: bold;
             transition: right 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: flex !important; /* Always show */
+            display: flex !important;
         }
         
         .widget-toggle-btn:active { transform: scale(0.95); }
@@ -186,6 +188,25 @@
             transition: all 0.3s;
         }
 
+        .match-node.live-match {
+            border-color: #fbbf24;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+            animation: pulseBorder 0.5s infinite;
+        }
+        @keyframes pulseBorder {
+            0% { border-color: #fbbf24; transform: scale(1); }
+            50% { border-color: #f59e0b; transform: scale(1.02); }
+            100% { border-color: #fbbf24; transform: scale(1); }
+        }
+        
+        /* Goal Flash Animation */
+        @keyframes goalFlash {
+            0% { color: #fbbf24; transform: scale(1); }
+            50% { color: #fff; transform: scale(1.5); text-shadow: 0 0 10px #fbbf24; }
+            100% { color: #fbbf24; transform: scale(1); }
+        }
+        .goal-scored { animation: goalFlash 0.4s ease-out; }
+
         .round-column:not(:last-child) .match-node::after {
             content: '';
             position: absolute;
@@ -217,7 +238,38 @@
             margin: 3px 0;
         }
         .team-slot.winner { background: rgba(16, 185, 129, 0.2); font-weight: bold; color: #34d399; }
-        .score-display { font-family: 'VT323', monospace; font-size: 1rem; font-weight: bold; color: #fbbf24; }
+        
+        /* Score Font */
+        .score-display { 
+            font-family: 'Noto Sans KR', sans-serif !important; 
+            font-size: 1.6rem; 
+            font-weight: 900; 
+            color: #fbbf24; 
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
+            min-width: 30px;
+            text-align: center;
+            line-height: 1;
+        }
+
+        /* PK Display */
+        .pk-display {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.75rem;
+            color: #cbd5e1;
+            margin-top: 6px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 6px;
+            border-radius: 4px;
+            text-align: center;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+        
+        .pk-o { color: #34d399; } 
+        .pk-x { color: #ef4444; } 
 
         @media (min-width: 768px) {
             .round-column { min-width: 280px; margin-right: 50px; }
@@ -225,7 +277,7 @@
             .match-node { padding: 12px; border-radius: 10px; }
             .team-slot { height: 36px; font-size: 0.95rem; margin: 4px 0; }
             .round-header { font-size: 1.2rem; top: -50px; }
-            .score-display { font-size: 1.2rem; }
+            .score-display { font-size: 1.8rem; }
         }
 
         .sticky-footer {
@@ -240,6 +292,9 @@
         .qualify-zone { border-left: 4px solid #34d399; background: linear-gradient(90deg, rgba(52, 211, 153, 0.1) 0%, transparent 100%); }
         .wildcard-zone { border-left: 4px solid #34d399; background: linear-gradient(90deg, rgba(52, 211, 153, 0.1) 0%, transparent 100%); } 
         .eliminate-zone { border-left: 4px solid #ef4444; background: linear-gradient(90deg, rgba(239, 68, 68, 0.1) 0%, transparent 100%); }
+
+        .tooltip { display: none; } 
+        .group-desc { display: none; }
 
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
         
@@ -264,7 +319,6 @@
             font-size: 0.9rem;
         }
 
-        /* Separate Bar Charts for Report */
         .stat-row { margin-bottom: 12px; }
         .stat-label { display: flex; justify-content: space-between; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 4px; font-family: 'Noto Sans KR', sans-serif; }
         .stat-track { width: 100%; background-color: #1e293b; border-radius: 6px; height: 16px; overflow: hidden; border: 1px solid #334155; }
@@ -278,10 +332,10 @@
     <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-700 p-4 text-center shadow-lg relative z-10">
         <button onclick="toggleLanguage()" id="langBtn" class="lang-btn"><i class="fas fa-globe mr-2"></i>Language: EN</button>
         <h1 class="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-white to-emerald-400 drop-shadow-lg" data-key="title">2026 FIFA WORLD CUP™</h1>
-        <p class="text-slate-400 mt-1 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase" data-key="headerSub">Simulator Final - 불양TV 버전</p>
+        <p class="text-slate-400 mt-1 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase" data-key="headerSub">Simulator Final - Balanced</p>
     </header>
 
-    <!-- Toggle Button (Always visible) -->
+    <!-- Toggle Button -->
     <div id="widgetToggle" class="widget-toggle-btn" onclick="toggleWidget()"><i class="fas fa-chart-bar text-xl"></i></div>
 
     <div id="happinessWidget" class="happiness-widget">
@@ -385,7 +439,7 @@
 
                 <div id="simLoading" class="hidden text-center py-12">
                     <i class="fas fa-circle-notch fa-spin text-4xl text-emerald-400 mb-4"></i>
-                    <div class="text-slate-400 animate-pulse mt-2 font-bold text-lg">Initializing...</div>
+                    <div class="text-slate-400 animate-pulse mt-2 font-bold text-lg">Running 100 World Cups...</div>
                 </div>
 
                 <div id="reportResults" class="hidden space-y-6">
@@ -400,11 +454,11 @@
                      <!-- Group Analysis -->
                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
-                            <h3 class="text-red-400 font-bold mb-2 text-sm"><i class="fas fa-skull mr-2"></i><span data-key="worstGroup">최악의 조 (죽음의 조)</span></h3>
+                            <h3 class="text-red-400 font-bold mb-2 text-sm"><i class="fas fa-skull mr-2"></i><span data-key="worstGroup">타겟 국가 최악의 조 (Worst)</span></h3>
                             <div id="worstCaseContent" class="bg-slate-900/50 p-2 rounded"></div>
                         </div>
                         <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
-                            <h3 class="text-yellow-400 font-bold mb-2 text-sm"><i class="fas fa-gift mr-2"></i><span data-key="bestGroup">최고의 조 (꿀조)</span></h3>
+                            <h3 class="text-yellow-400 font-bold mb-2 text-sm"><i class="fas fa-gift mr-2"></i><span data-key="bestGroup">타겟 국가 최고의 조 (Best)</span></h3>
                             <div id="bestCaseContent" class="bg-slate-900/50 p-2 rounded"></div>
                         </div>
                      </div>
@@ -517,8 +571,8 @@
                 selectTargetSim: "시뮬레이션 타겟 국가",
                 run100: "시뮬레이션 100회 가동",
                 roundStats: "라운드별 진출 횟수",
-                worstGroup: "최악의 조 (죽음의 조)",
-                bestGroup: "최고의 조 (꿀조)",
+                worstGroup: "타겟 국가 최악의 조 (Worst)",
+                bestGroup: "타겟 국가 최고의 조 (Best)",
                 nemesis: "담당일진 (탈락시킨 팀)",
                 topWinners: "우승국 TOP 5",
                 roundProceed: "라운드 진행",
@@ -555,8 +609,8 @@
                 selectTargetSim: "Simulation Target Team",
                 run100: "Run 100 Simulations",
                 roundStats: "Survival Count by Round",
-                worstGroup: "Group of Death",
-                bestGroup: "Easiest Group",
+                worstGroup: "Target's Group of Death",
+                bestGroup: "Target's Easiest Group",
                 nemesis: "Nemesis (Eliminated By)",
                 topWinners: "Top 5 Winners",
                 roundProceed: "Play Round",
@@ -574,75 +628,93 @@
         let currentLang = 'ko';
         let targetTeamCode = 'kr';
         let simTargetCode = 'kr';
-        
-        // POTs Data - now including 'delta' (1 Year Elo Change approx)
-        // All 48 teams have updated deltas based on user input
-        const pots = {
-            pot1: [
-                { name: "스페인", nameEn: "Spain", conf: "UEFA", rank: 1, elo: 2160, delta: -6, code: "es", tier: "S", stars: 1, fixedGroup: 6 }, 
-                { name: "아르헨티나", nameEn: "Argentina", conf: "CONMEBOL", rank: 2, elo: 2140, delta: 5, code: "ar", tier: "S", stars: 3, fixedGroup: 11 },
-                { name: "프랑스", nameEn: "France", conf: "UEFA", rank: 3, elo: 2120, delta: 7, code: "fr", tier: "S", stars: 2, fixedGroup: 4 },
-                { name: "잉글랜드", nameEn: "England", conf: "UEFA", rank: 4, elo: 2080, delta: 36, code: "gb-eng", tier: "S", stars: 1, fixedGroup: 2 },
-                { name: "브라질", nameEn: "Brazil", conf: "CONMEBOL", rank: 5, elo: 2070, delta: -18, code: "br", tier: "S", stars: 5 },
-                { name: "포르투갈", nameEn: "Portugal", conf: "UEFA", rank: 6, elo: 2040, delta: -17, code: "pt", tier: "A", stars: 0 },
-                { name: "네덜란드", nameEn: "Netherlands", conf: "UEFA", rank: 7, elo: 2020, delta: 21, code: "nl", tier: "A", stars: 0 },
-                { name: "벨기에", nameEn: "Belgium", conf: "UEFA", rank: 8, elo: 1980, delta: -1, code: "be", tier: "A", stars: 0 },
-                { name: "독일", nameEn: "Germany", conf: "UEFA", rank: 9, elo: 2050, delta: -61, code: "de", tier: "S", stars: 4 },
-                { name: "멕시코", nameEn: "Mexico", conf: "CONCACAF", host: true, fixedGroup: 0, rank: 15, elo: 1850, delta: 66, code: "mx", tier: "B", stars: 0 },
-                { name: "미국", nameEn: "USA", conf: "CONCACAF", host: true, fixedGroup: 3, rank: 18, elo: 1840, delta: -12, code: "us", tier: "B", stars: 0 },
-                { name: "캐나다", nameEn: "Canada", conf: "CONCACAF", host: true, fixedGroup: 1, rank: 35, elo: 1750, delta: 11, code: "ca", tier: "B", stars: 0 }
-            ],
-            pot2: [
-                { name: "크로아티아", nameEn: "Croatia", conf: "UEFA", rank: 10, elo: 1950, delta: 47, code: "hr", tier: "A", stars: 0 },
-                { name: "모로코", nameEn: "Morocco", conf: "CAF", rank: 11, elo: 1930, delta: 26, code: "ma", tier: "A", stars: 0 },
-                { name: "콜롬비아", nameEn: "Colombia", conf: "CONMEBOL", rank: 12, elo: 2010, delta: 21, code: "co", tier: "A", stars: 0 },
-                { name: "우루과이", nameEn: "Uruguay", conf: "CONMEBOL", rank: 14, elo: 1980, delta: -58, code: "uy", tier: "A", stars: 2 },
-                { name: "일본", nameEn: "Japan", conf: "AFC", rank: 16, elo: 1900, delta: -11, code: "jp", tier: "B", stars: 0 },
-                { name: "스위스", nameEn: "Switzerland", conf: "UEFA", rank: 17, elo: 1890, delta: 83, code: "ch", tier: "B", stars: 0 },
-                { name: "세네갈", nameEn: "Senegal", conf: "CAF", rank: 19, elo: 1800, delta: 33, code: "sn", tier: "B", stars: 0 },
-                { name: "이란", nameEn: "Iran", conf: "AFC", rank: 20, elo: 1830, delta: -83, code: "ir", tier: "B", stars: 0 },
-                { name: "대한민국", nameEn: "South Korea", conf: "AFC", rank: 22, elo: 1740, delta: 10, code: "kr", tier: "C", stars: 0 }, 
-                { name: "오스트리아", nameEn: "Austria", conf: "UEFA", rank: 23, elo: 1880, delta: -53, code: "at", tier: "B", stars: 0 }, 
-                { name: "에콰도르", nameEn: "Ecuador", conf: "CONMEBOL", rank: 24, elo: 1870, delta: 23, code: "ec", tier: "B", stars: 0 },
-                { name: "호주", nameEn: "Australia", conf: "AFC", rank: 25, elo: 1760, delta: 55, code: "au", tier: "C", stars: 0 }        
-            ],
-            pot3: [
-                { name: "노르웨이", nameEn: "Norway", conf: "UEFA", rank: 29, elo: 1820, delta: 116, code: "no", tier: "A", buff: true }, 
-                { name: "파나마", nameEn: "Panama", conf: "CONCACAF", rank: 30, elo: 1680, delta: 16, code: "pa", tier: "C" },
-                { name: "이집트", nameEn: "Egypt", conf: "CAF", rank: 34, elo: 1720, delta: -12, code: "eg", tier: "C" },
-                { name: "알제리", nameEn: "Algeria", conf: "CAF", rank: 35, elo: 1740, delta: 33, code: "dz", tier: "C" },
-                { name: "스코틀랜드", nameEn: "Scotland", conf: "UEFA", rank: 36, elo: 1780, delta: 31, code: "gb-sct", tier: "C" },
-                { name: "파라과이", nameEn: "Paraguay", conf: "CONMEBOL", rank: 39, elo: 1710, delta: 58, code: "py", tier: "C" },
-                { name: "튀니지", nameEn: "Tunisia", conf: "CAF", rank: 40, elo: 1690, delta: 52, code: "tn", tier: "C" },
-                { name: "코트디부아르", nameEn: "Ivory Coast", conf: "CAF", rank: 42, elo: 1750, delta: 28, code: "ci", tier: "C" },
-                { name: "우즈베키스탄", nameEn: "Uzbekistan", conf: "AFC", rank: 50, elo: 1650, delta: 50, code: "uz", tier: "D" }, 
-                { name: "카타르", nameEn: "Qatar", conf: "AFC", rank: 51, elo: 1640, delta: -65, code: "qa", tier: "C" },       
-                { name: "사우디아라비아", nameEn: "Saudi Arabia", conf: "AFC", rank: 60, elo: 1630, delta: 42, code: "sa", tier: "C" }, 
-                { name: "남아공", nameEn: "South Africa", conf: "CAF", rank: 61, elo: 1620, delta: -46, code: "za", tier: "D" }        
-            ],
-            pot4: [
-                { name: "이탈리아", nameEn: "Italy", conf: "UEFA", rank: 12, elo: 2030, delta: -71, code: "it", tier: "A", stars: 4 }, 
-                { name: "덴마크", nameEn: "Denmark", conf: "UEFA", rank: 21, elo: 1920, delta: 8, code: "dk", tier: "B" },   
-                { name: "튀르키예", nameEn: "Turkey", conf: "UEFA", rank: 25, elo: 1850, delta: 106, code: "tr", tier: "B" }, 
-                { name: "우크라이나", nameEn: "Ukraine", conf: "UEFA", rank: 28, elo: 1860, delta: 0, code: "ua", tier: "C" },
-                { name: "콩고민주공화국", nameEn: "DR Congo", conf: "CAF", rank: 56, elo: 1580, delta: 75, code: "cd", tier: "D" }, 
-                { name: "이라크", nameEn: "Iraq", conf: "AFC", rank: 58, elo: 1550, delta: -70, code: "iq", tier: "D" },        
-                { name: "요르단", nameEn: "Jordan", conf: "AFC", rank: 66, elo: 1540, delta: -8, code: "jo", tier: "D" },
-                { name: "카보베르데", nameEn: "Cape Verde", conf: "CAF", rank: 68, elo: 1520, delta: 89, code: "cv", tier: "D" },
-                { name: "가나", nameEn: "Ghana", conf: "CAF", rank: 72, elo: 1500, delta: 80, code: "gh", tier: "C" },
-                { name: "퀴라소", nameEn: "Curacao", conf: "CONCACAF", rank: 82, elo: 1450, delta: 131, code: "cw", tier: "D" },
-                { name: "아이티", nameEn: "Haiti", conf: "CONCACAF", rank: 84, elo: 1440, delta: 4, code: "ht", tier: "D" },
-                { name: "뉴질랜드", nameEn: "New Zealand", conf: "OFC", rank: 86, elo: 1500, delta: 2, code: "nz", tier: "D" }
-            ]
-        };
-        pots.pot2 = pots.pot2.filter(t => t.name !== "이탈리아");
+        let isMatchAnimating = false;
 
-        const groupNames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
-
+        // Global State Variables
         let isDrawing = false;
         let liveDrawState = { active: false, groups: [], currentPot: 0, currentGroupIndex: 0, currentStep: 0, totalSteps: 48, currentLeagueRound: 0, groupSchedule: [] };
         let tournamentState = { active: false, rounds: [], currentRoundIndex: 0, currentMatchIndex: 0 };
         let confettiAnimationId = null;
+
+        const groupNames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+
+        const groupLogistics = {
+            A: { slots: ["966km", "3967km", "639km", "4566km"] },
+            B: { slots: ["3354km", "5059km", "1468km", "2296km"] },
+            C: { slots: ["2008km", "1506km", "1804km", "1766km"] },
+            D: { slots: ["3091km", "559km", "1285km", "1836km"] },
+            E: { slots: ["3327km", "1100km", "2802km", "2641km"] },
+            F: { slots: ["1726km", "1402km", "1588km", "1030km"] },
+            G: { slots: ["1929km", "1737km", "192km", "3091km"] },
+            H: { slots: ["2083km", "2432km", "2369km", "2501km"] },
+            I: { slots: ["573km", "554km", "981km", "595km"] },
+            J: { slots: ["4843km", "729km", "2382km", "3101km"] },
+            K: { slots: ["3726km", "1128km", "2835km", "2755km"] },
+            L: { slots: ["554km", "1131km", "2483km", "2791km"] }
+        };
+
+        // --- Nerfed & Balanced Pots Data ---
+        const pots = {
+            pot1: [
+                { name: "스페인", nameEn: "Spain", conf: "UEFA", rank: 1, elo: 2171, delta: -6, code: "es", tier: "S", stars: 1, fixedGroup: 6 }, 
+                { name: "아르헨티나", nameEn: "Argentina", conf: "CONMEBOL", rank: 2, elo: 2113, delta: 5, code: "ar", tier: "S", stars: 3, fixedGroup: 11 },
+                { name: "프랑스", nameEn: "France", conf: "UEFA", rank: 3, elo: 2062, delta: 7, code: "fr", tier: "S", stars: 2, fixedGroup: 4 },
+                { name: "잉글랜드", nameEn: "England", conf: "UEFA", rank: 4, elo: 2042, delta: 36, code: "gb-eng", tier: "S", stars: 1, fixedGroup: 2 },
+                { name: "브라질", nameEn: "Brazil", conf: "CONMEBOL", rank: 5, elo: 1978, delta: -18, code: "br", tier: "S", stars: 5 },
+                { name: "포르투갈", nameEn: "Portugal", conf: "UEFA", rank: 6, elo: 1976, delta: -17, code: "pt", tier: "A", stars: 0 },
+                { name: "네덜란드", nameEn: "Netherlands", conf: "UEFA", rank: 7, elo: 1959, delta: 21, code: "nl", tier: "A", stars: 0 },
+                { name: "벨기에", nameEn: "Belgium", conf: "UEFA", rank: 8, elo: 1849, delta: -1, code: "be", tier: "A", stars: 0 },
+                { name: "독일", nameEn: "Germany", conf: "UEFA", rank: 9, elo: 1910, delta: -61, code: "de", tier: "S", stars: 4 },
+                { name: "멕시코", nameEn: "Mexico", conf: "CONCACAF", host: true, fixedGroup: 0, rank: 15, elo: 1835, delta: 66, code: "mx", tier: "B", stars: 0 },
+                { name: "미국", nameEn: "USA", conf: "CONCACAF", host: true, fixedGroup: 3, rank: 18, elo: 1747, delta: -12, code: "us", tier: "B", stars: 0 },
+                { name: "캐나다", nameEn: "Canada", conf: "CONCACAF", host: true, fixedGroup: 1, rank: 35, elo: 1802, delta: 11, code: "ca", tier: "B", stars: 0 }
+            ],
+            pot2: [
+                { name: "크로아티아", nameEn: "Croatia", conf: "UEFA", rank: 10, elo: 1933, delta: 47, code: "hr", tier: "A", stars: 0 },
+                { name: "모로코", nameEn: "Morocco", conf: "CAF", rank: 11, elo: 1828, delta: 26, code: "ma", tier: "A", stars: 0 },
+                { name: "콜롬비아", nameEn: "Colombia", conf: "CONMEBOL", rank: 12, elo: 1950, delta: 10, code: "co", tier: "A", stars: 0 }, // Nerfed: Elo 1998->1950, Delta 21->10
+                { name: "우루과이", nameEn: "Uruguay", conf: "CONMEBOL", rank: 14, elo: 1890, delta: -58, code: "uy", tier: "A", stars: 2 },
+                { name: "일본", nameEn: "Japan", conf: "AFC", rank: 16, elo: 1878, delta: -35, code: "jp", tier: "B", stars: 0 }, 
+                { name: "스위스", nameEn: "Switzerland", conf: "UEFA", rank: 17, elo: 1897, delta: 40, code: "ch", tier: "B", stars: 0 }, // Nerfed: Delta 83->40
+                { name: "세네갈", nameEn: "Senegal", conf: "CAF", rank: 19, elo: 1803, delta: 33, code: "sn", tier: "B", stars: 0 },
+                { name: "이란", nameEn: "Iran", conf: "AFC", rank: 20, elo: 1754, delta: -83, code: "ir", tier: "B", stars: 0 },
+                { name: "대한민국", nameEn: "South Korea", conf: "AFC", rank: 22, elo: 1784, delta: 10, code: "kr", tier: "C", stars: 0 }, 
+                { name: "오스트리아", nameEn: "Austria", conf: "UEFA", rank: 23, elo: 1818, delta: -53, code: "at", tier: "B", stars: 0 }, 
+                { name: "에콰도르", nameEn: "Ecuador", conf: "CONMEBOL", rank: 24, elo: 1933, delta: 23, code: "ec", tier: "B", stars: 0 },
+                { name: "호주", nameEn: "Australia", conf: "AFC", rank: 25, elo: 1774, delta: 55, code: "au", tier: "C", stars: 0 }        
+            ],
+            pot3: [
+                { name: "노르웨이", nameEn: "Norway", conf: "UEFA", rank: 29, elo: 1922, delta: 45, code: "no", tier: "A", buff: true }, // Nerfed: Delta 116->45
+                { name: "파나마", nameEn: "Panama", conf: "CONCACAF", rank: 30, elo: 1742, delta: 16, code: "pa", tier: "C" },
+                { name: "이집트", nameEn: "Egypt", conf: "CAF", rank: 34, elo: 1645, delta: -12, code: "eg", tier: "C" },
+                { name: "알제리", nameEn: "Algeria", conf: "CAF", rank: 35, elo: 1718, delta: 33, code: "dz", tier: "C" },
+                { name: "스코틀랜드", nameEn: "Scotland", conf: "UEFA", rank: 36, elo: 1790, delta: 31, code: "gb-sct", tier: "C" },
+                { name: "파라과이", nameEn: "Paraguay", conf: "CONMEBOL", rank: 39, elo: 1833, delta: 58, code: "py", tier: "C" },
+                { name: "튀니지", nameEn: "Tunisia", conf: "CAF", rank: 40, elo: 1650, delta: 52, code: "tn", tier: "C" },
+                { name: "코트디부아르", nameEn: "Ivory Coast", conf: "CAF", rank: 42, elo: 1607, delta: 28, code: "ci", tier: "C" },
+                { name: "우즈베키스탄", nameEn: "Uzbekistan", conf: "AFC", rank: 50, elo: 1735, delta: 50, code: "uz", tier: "D" }, 
+                { name: "카타르", nameEn: "Qatar", conf: "AFC", rank: 51, elo: 1488, delta: -65, code: "qa", tier: "C" },       
+                { name: "사우디아라비아", nameEn: "Saudi Arabia", conf: "AFC", rank: 60, elo: 1578, delta: 42, code: "sa", tier: "C" }, 
+                { name: "남아공", nameEn: "South Africa", conf: "CAF", rank: 61, elo: 1530, delta: -46, code: "za", tier: "D" }        
+            ],
+            pot4: [
+                { name: "이탈리아", nameEn: "Italy", conf: "UEFA", rank: 12, elo: 1859, delta: -71, code: "it", tier: "A", stars: 4 }, 
+                { name: "덴마크", nameEn: "Denmark", conf: "UEFA", rank: 21, elo: 1864, delta: 8, code: "dk", tier: "B" },   
+                { name: "튀르키예", nameEn: "Turkey", conf: "UEFA", rank: 25, elo: 1880, delta: 40, code: "tr", tier: "B" }, // Nerfed: Delta 106->40
+                { name: "우크라이나", nameEn: "Ukraine", conf: "UEFA", rank: 28, elo: 1802, delta: 0, code: "ua", tier: "C" },
+                { name: "콩고민주공화국", nameEn: "DR Congo", conf: "CAF", rank: 56, elo: 1616, delta: 75, code: "cd", tier: "D" }, 
+                { name: "이라크", nameEn: "Iraq", conf: "AFC", rank: 58, elo: 1597, delta: -70, code: "iq", tier: "D" },        
+                { name: "요르단", nameEn: "Jordan", conf: "AFC", rank: 66, elo: 1610, delta: -8, code: "jo", tier: "D" },
+                { name: "카보베르데", nameEn: "Cape Verde", conf: "CAF", rank: 68, elo: 1560, delta: 89, code: "cv", tier: "D" },
+                { name: "가나", nameEn: "Ghana", conf: "CAF", rank: 72, elo: 1509, delta: 80, code: "gh", tier: "C" },
+                { name: "퀴라소", nameEn: "Curacao", conf: "CONCACAF", rank: 82, elo: 1467, delta: 131, code: "cw", tier: "D" },
+                { name: "아이티", nameEn: "Haiti", conf: "CONCACAF", rank: 84, elo: 1542, delta: 4, code: "ht", tier: "D" },
+                { name: "뉴질랜드", nameEn: "New Zealand", conf: "OFC", rank: 86, elo: 1586, delta: 2, code: "nz", tier: "D" }
+            ]
+        };
+
+        // Async Helpers
+        const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
         function getTeamName(team) { return currentLang === 'en' ? (team.nameEn || team.name) : team.name; }
 
@@ -699,13 +771,23 @@
             if(tournamentState.active) renderBracket();
         }
 
-        function getExpectedScore(teamA, teamB, isTournament = false) {
-            const eloA = teamA.elo + ((teamA.delta || 0) * 1.5);
-            const eloB = teamB.elo + ((teamB.delta || 0) * 1.5);
+        // Updated Function: Accepts Team Objects to apply Delta (Form)
+        function getExpectedScore(tA, tB, isTournament = false) {
+            // Apply 1-Year Delta as a "Form" Bonus/Penalty to Elo
+            const formMultiplier = isTournament ? 1.3 : 1.5;
 
-            const eloDiff = eloA - eloB;
-            const winProbA = 1 / (1 + Math.pow(10, (-eloDiff / 400)));
+            let formA = tA.delta || 0;
+            let formB = tB.delta || 0;
+
+            if(formA > 50) formA = 50 + (formA - 50) * 0.5;
+            if(formB > 50) formB = 50 + (formB - 50) * 0.5;
             
+            const effectiveEloA = tA.elo + (formA * formMultiplier);
+            const effectiveEloB = tB.elo + (formB * formMultiplier);
+
+            const eloDiff = effectiveEloA - effectiveEloB;
+            
+            const winProbA = 1 / (1 + Math.pow(10, (-eloDiff / 400)));
             let baseGoals = isTournament ? 2.2 : 2.6; 
             if (Math.abs(eloDiff) > 400) baseGoals += 1.0; 
             
@@ -724,7 +806,12 @@
                 const groupDiv = document.createElement('div');
                 groupDiv.id = `group-card-${name}`;
                 groupDiv.className = 'group-card rounded-lg p-3 md:p-4 flex flex-col h-full relative';
-                groupDiv.innerHTML = `<div class="border-b border-slate-600 pb-2 mb-2 flex justify-between items-center"><span class="text-lg md:text-xl font-black text-white italic">GROUP ${name}</span></div><div class="flex-grow" id="group-${name}-content"><ul class="space-y-2" id="group-${name}-list"></ul></div>`;
+                
+                const logistic = groupLogistics[name];
+
+                groupDiv.innerHTML = `<div class="border-b border-slate-600 pb-2 mb-2 flex justify-between items-center"><span class="text-lg md:text-xl font-black text-white italic">GROUP ${name}</span></div>
+                <div class="flex-grow" id="group-${name}-content"><ul class="space-y-2" id="group-${name}-list"></ul></div>`;
+                
                 const ul = groupDiv.querySelector('ul');
                 for(let i=1; i<=4; i++) ul.innerHTML += `<li class="h-9 bg-slate-700/30 rounded border border-slate-700/30 flex items-center px-3 text-xs text-slate-500">POT ${i}</li>`;
                 grid.appendChild(groupDiv);
@@ -741,7 +828,6 @@
 
         function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
         
-        // Updated solveBipartite with Min 1 UEFA Rule Enforcement & Iraq Special Constraint
         function solveBipartite(groups, teams, groupIndices, futureUEFA = 0) {
             if (teams.length === 0) return true;
             let team = teams[0]; let remainingTeams = teams.slice(1);
@@ -759,29 +845,19 @@
                 let isValid = true;
                 
                 if (team.conf === 'UEFA') { 
-                    // Rule 1: Max 2 UEFA teams per group
                     if ((confCounts['UEFA'] || 0) >= 2) isValid = false; 
-                    
-                    // Rule 2: Min 1 UEFA team per group (Lookahead)
                     if (isValid && (confCounts['UEFA'] || 0) > 0) {
                         const groupsWithZeroUEFA = groups.filter(g => !g.some(t => t.conf === 'UEFA')).length;
                         const currentPotUEFA = teams.filter(t => t.conf === 'UEFA').length;
                         const totalAvailableUEFA = currentPotUEFA + futureUEFA;
-                        
-                        if (totalAvailableUEFA <= groupsWithZeroUEFA) {
-                            isValid = false;
-                        }
+                        if (totalAvailableUEFA <= groupsWithZeroUEFA) isValid = false;
                     }
-
                 } else { 
                     if ((confCounts[team.conf] || 0) >= 1) isValid = false; 
                 }
 
-                // Special Constraint for Iraq (IPO Path 2: No AFC, CONMEBOL, CONCACAF)
                 if (isValid && team.code === 'iq') {
-                    if ((confCounts['CONMEBOL'] || 0) > 0 || (confCounts['CONCACAF'] || 0) > 0) {
-                        isValid = false;
-                    }
+                    if ((confCounts['CONMEBOL'] || 0) > 0 || (confCounts['CONCACAF'] || 0) > 0) isValid = false;
                 }
                 
                 if (isValid) {
@@ -796,7 +872,6 @@
 
         function generateOneSimulation() {
             let simGroups = Array(12).fill(null).map(() => []);
-            
             const deepCopyPot = (potArr) => potArr.map(t => ({...t}));
             const countUEFA = (arr) => arr.filter(t => t.conf === 'UEFA').length;
 
@@ -809,15 +884,12 @@
             for (let i=0; i<12; i++) { if (simGroups[i].length === 0) emptyGroupIndices.push(i); }
             for (let i=0; i<randomPot1.length; i++) { simGroups[emptyGroupIndices[i]].push(randomPot1[i]); }
             
-            // Calculate future UEFA counts for lookahead
             const uefaP2 = countUEFA(pots.pot2);
             const uefaP3 = countUEFA(pots.pot3);
             const uefaP4 = countUEFA(pots.pot4);
 
             const fillPot = (potName, futureUEFAVal) => {
                 let teams = shuffle(deepCopyPot(pots[potName]));
-                
-                // Optimization: Move Iraq to front of Pot 4 to place it first (Fail Fast)
                 if(potName === 'pot4') {
                     teams.sort((a,b) => (a.code === 'iq' ? -1 : b.code === 'iq' ? 1 : 0));
                 }
@@ -826,7 +898,6 @@
                 if (!solveBipartite(simGroups, teams, availableGroupIndices, futureUEFAVal)) throw new Error("Deadlock");
             };
             
-            // Pass future counts: Pot 2 sees (P3+P4), Pot 3 sees (P4), Pot 4 sees 0
             fillPot('pot2', uefaP3 + uefaP4); 
             fillPot('pot3', uefaP4); 
             fillPot('pot4', 0);
@@ -846,6 +917,160 @@
                 schedule[2].push({ gIdx, t1: group[1], t2: group[2], played: false, score: null });
             });
             return schedule;
+        }
+
+        // --- WEIGHTED PK LOGIC v3 ---
+        function simulatePK(teamA, teamB) {
+            // Outcomes based on provided distribution
+            // High Freq: 4-3, 4-2, 5-4
+            // Mid Freq: 3-2, 3-1, 5-3, 6-5, 4-1, 7-6, 3-0
+            // Low Freq: 8-7, 2-1, 9-8, 2-0, 10-9, 11-10, 12-11, 13-12, 14-13, 1-0
+            
+            const scenarios = [
+                { w: 4, l: 3, weight: 25 }, // 4-3 (Highest)
+                { w: 4, l: 2, weight: 20 }, // 4-2
+                { w: 5, l: 4, weight: 15 }, // 5-4
+                { w: 3, l: 2, weight: 8 },
+                { w: 3, l: 1, weight: 6 },
+                { w: 5, l: 3, weight: 6 },
+                { w: 6, l: 5, weight: 5 }, // Sudden Death Start
+                { w: 4, l: 1, weight: 4 },
+                { w: 7, l: 6, weight: 3 },
+                { w: 3, l: 0, weight: 3 },
+                { w: 8, l: 7, weight: 2 },
+                { w: 2, l: 1, weight: 1 },
+                { w: 9, l: 8, weight: 1 },
+                { w: 2, l: 0, weight: 0.5 },
+                { w: 10, l: 9, weight: 0.5 }
+            ];
+
+            // Weighted Random Selection
+            let totalWeight = scenarios.reduce((sum, s) => sum + s.weight, 0);
+            let rand = Math.random() * totalWeight;
+            let chosen = scenarios[0];
+            for(let s of scenarios) {
+                if(rand < s.weight) { chosen = s; break; }
+                rand -= s.weight;
+            }
+
+            // Determine Winner
+            // Elo based probability
+            const winProbA = 0.5 + ((teamA.elo - teamB.elo) * 0.0005);
+            let winner = Math.random() < winProbA ? teamA : teamB;
+            let scoreA = winner === teamA ? chosen.w : chosen.l;
+            let scoreB = winner === teamB ? chosen.w : chosen.l;
+
+            // Generate Kicks Sequence to Match Score
+            let kicksA = [];
+            let kicksB = [];
+
+            // Fill with O's based on score
+            for(let i=0; i<scoreA; i++) kicksA.push('O');
+            for(let i=0; i<scoreB; i++) kicksB.push('O');
+
+            // Calculate Misses (X) needed
+            const targetScoreW = chosen.w;
+            const targetScoreL = chosen.l;
+
+            let finalKicksW = [];
+            let finalKicksL = [];
+
+            if (targetScoreW <= 5) {
+                // Fill O's
+                for(let i=0; i<targetScoreW; i++) finalKicksW.push('O');
+                for(let i=0; i<targetScoreL; i++) finalKicksL.push('O');
+                // Fill X's to reach realistic kick count (usually 4 or 5)
+                let rounds = 5;
+                if (targetScoreW === 3 && targetScoreL === 0) rounds = 3; 
+                else if (targetScoreW === 3 && targetScoreL === 1) rounds = 4;
+                
+                while(finalKicksW.length < rounds) finalKicksW.push('X');
+                while(finalKicksL.length < rounds) finalKicksL.push('X');
+                
+                shuffle(finalKicksW);
+                shuffle(finalKicksL);
+            } else {
+                // Sudden Death (>5)
+                // First 5 must be tie. Let's say 4-4 or 5-5.
+                let tieScore = 4; // Common tie
+                if (Math.random() > 0.5) tieScore = 5;
+                
+                for(let i=0; i<tieScore; i++) { finalKicksW.push('O'); finalKicksL.push('O'); }
+                while(finalKicksW.length < 5) { finalKicksW.push('X'); finalKicksL.push('X'); }
+                shuffle(finalKicksW); shuffle(finalKicksL);
+
+                // Add sudden death kicks (Winner O, Loser O ... until Winner O, Loser X)
+                let extra = targetScoreW - tieScore;
+                for(let i=0; i<extra-1; i++) { finalKicksW.push('O'); finalKicksL.push('O'); }
+                finalKicksW.push('O'); finalKicksL.push('X'); // The deciding kick
+            }
+
+            // Assign to A/B
+            if (winner === teamA) {
+                kicksA = finalKicksW; kicksB = finalKicksL;
+            } else {
+                kicksA = finalKicksL; kicksB = finalKicksW;
+            }
+
+            return { scoreA, scoreB, kicksA, kicksB, winner, rounds: kicksA.length };
+        }
+
+        async function playScoreAnimation(node, result) {
+            const scoreAEl = node.querySelectorAll('.score-display')[0];
+            const scoreBEl = node.querySelectorAll('.score-display')[1];
+            
+            const finalA = result.scoreA;
+            const finalB = result.scoreB;
+
+            node.classList.add('live-match');
+
+            const maxScore = Math.max(finalA, finalB);
+            if (maxScore > 0) {
+                let currA = 0; let currB = 0;
+                while(currA < finalA || currB < finalB) {
+                    if(currA < finalA && currB < finalB) { if(Math.random() > 0.5) currA++; else currB++; } 
+                    else if(currA < finalA) currA++; else currB++;
+                    scoreAEl.innerText = currA; scoreBEl.innerText = currB;
+                    scoreAEl.classList.add('goal-scored'); setTimeout(() => scoreAEl.classList.remove('goal-scored'), 200);
+                    scoreBEl.classList.add('goal-scored'); setTimeout(() => scoreBEl.classList.remove('goal-scored'), 200);
+                    await sleep(300 + Math.random()*200);
+                }
+            }
+            scoreAEl.innerText = finalA; scoreBEl.innerText = finalB;
+
+            if (result.isPK) {
+                let pkDisplay = node.querySelector('.pk-display');
+                if(!pkDisplay) {
+                    pkDisplay = document.createElement('div');
+                    pkDisplay.className = 'pk-display';
+                    node.appendChild(pkDisplay);
+                }
+                
+                pkDisplay.innerText = "PK...";
+                await sleep(600);
+
+                const { kicksA, kicksB, pkA, pkB } = result;
+
+                // --- VISUAL FIX: Always slice first 5 kicks ---
+                let displayKicksA = kicksA.slice(0, 5);
+                let displayKicksB = kicksB.slice(0, 5);
+                
+                let html = `<span class="${pkA > pkB ? 'text-yellow-400' : 'text-slate-400'} tracking-widest mr-2 flex gap-1">`;
+                displayKicksA.forEach(k => html += k === 'O' ? '<span class="pk-o">O</span>' : '<span class="pk-x">X</span>');
+                
+                html += `</span> <span class="text-white mx-1 text-[10px] font-mono border border-slate-600 px-1 rounded bg-slate-800">${pkA}:${pkB}</span> <span class="${pkB > pkA ? 'text-yellow-400' : 'text-slate-400'} tracking-widest ml-2 flex gap-1">`;
+                
+                displayKicksB.forEach(k => html += k === 'O' ? '<span class="pk-o">O</span>' : '<span class="pk-x">X</span>');
+                html += `</span>`;
+                pkDisplay.innerHTML = html;
+            } 
+            else if (result.isET) {
+                let pkDisplay = node.querySelector('.pk-display');
+                if(!pkDisplay) { pkDisplay = document.createElement('div'); pkDisplay.className = 'pk-display'; node.appendChild(pkDisplay); }
+                pkDisplay.innerText = "(ET)";
+            }
+
+            node.classList.remove('live-match');
         }
 
         function simulateLeagueRound() {
@@ -872,10 +1097,7 @@
         function toggleWidget() {
             const widget = document.getElementById('happinessWidget');
             const btn = document.getElementById('widgetToggle');
-            if(widget && btn) { 
-                widget.classList.toggle('active'); 
-                btn.classList.toggle('open');
-            }
+            if(widget && btn) { widget.classList.toggle('active'); btn.classList.toggle('open'); }
         }
 
         function updateLeagueTableDisplay() {
@@ -901,7 +1123,29 @@
                         else rankClass = "eliminate-zone"; 
                     }
                     const highlight = t.code === targetTeamCode ? "team-highlight" : "";
-                    html += `<tr class="${rankClass} ${highlight}"><td class="flex items-center gap-1"><img src="https://flagcdn.com/w20/${t.code}.png" class="w-4 h-3 rounded-[1px]">${getTeamName(t)}</td><td class="text-center opacity-60">${t.played}</td><td class="text-center font-bold">${t.pts}</td><td class="text-center opacity-60">${t.gd>0?'+'+t.gd:t.gd}</td></tr>`;
+                    
+                    let originalPotIdx = 0;
+                    if (pots.pot1.some(p => p.code === t.code)) originalPotIdx = 0;
+                    else if (pots.pot2.some(p => p.code === t.code)) originalPotIdx = 1;
+                    else if (pots.pot3.some(p => p.code === t.code)) originalPotIdx = 2;
+                    else originalPotIdx = 3;
+
+                    const slotInfo = groupLogistics[name] ? groupLogistics[name].slots[originalPotIdx] : "";
+
+                    html += `<tr class="${rankClass} ${highlight}">
+                        <td class="flex items-center gap-1 relative">
+                            <img src="https://flagcdn.com/w20/${t.code}.png" class="w-4 h-3 rounded-[1px]">
+                            <span class="truncate max-w-[80px]">${getTeamName(t)}</span>
+                            <div class="tooltip ml-1 cursor-help text-slate-400"><i class="fas fa-plane"></i>
+                                <span class="tooltiptext bg-slate-800 border border-slate-600 text-white text-[10px] rounded p-1 shadow-lg">
+                                    ${slotInfo}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="text-center opacity-60">${t.played}</td>
+                        <td class="text-center font-bold">${t.pts}</td>
+                        <td class="text-center opacity-60">${t.gd>0?'+'+t.gd:t.gd}</td>
+                    </tr>`;
                 });
                 container.innerHTML = html + `</tbody></table>`;
             });
@@ -991,162 +1235,388 @@
             return Math.round((qualifiedCount / iterations) * 100);
         }
 
-        async function runBatchSimulation() {
-            const btn = document.getElementById('batchSimBtn');
-            const loading = document.getElementById('simLoading');
-            const loadingText = document.querySelector('#simLoading .text-slate-400');
-            const results = document.getElementById('reportResults');
-            
-            btn.classList.add('hidden');
-            loading.classList.remove('hidden');
-            results.classList.add('hidden');
+        function toggleR32() { const col = document.getElementById('col-r32'); const btn = document.getElementById('r32CollapseBtn'); if(col) { col.classList.toggle('collapsed'); btn.innerHTML = col.classList.contains('collapsed') ? `<i class="fas fa-chevron-right mr-1"></i>${translations[currentLang].expand32}` : `<i class="fas fa-chevron-left mr-1"></i>${translations[currentLang].collapse32}`; } }
+        function updateTournamentStatus() { const statusDiv = document.getElementById('tournamentStatusText'); if(!tournamentState.active) { if(statusDiv) statusDiv.innerText = "Finished"; return; } statusDiv.innerText = `${tournamentState.rounds[tournamentState.currentRoundIndex].name} - Match ${tournamentState.currentMatchIndex + 1}/${tournamentState.rounds[tournamentState.currentRoundIndex].matches.length}`; }
 
-            // Fake Loading Animation (5 seconds)
-            const steps = 20;
-            for(let k=0; k<=steps; k++) {
-                loadingText.innerText = `Simulating... ${Math.round((k/steps)*100)}%`;
-                await new Promise(r => setTimeout(r, 250)); // 250ms * 20 = 5000ms = 5 seconds
+        async function runNextMatch() {
+            if(!tournamentState.active || isMatchAnimating) return;
+            isMatchAnimating = true;
+
+            const round = tournamentState.rounds[tournamentState.currentRoundIndex];
+            if(tournamentState.currentMatchIndex >= round.matches.length) {
+                isMatchAnimating = false;
+                return;
+            }
+            const match = round.matches[tournamentState.currentMatchIndex];
+            
+            if(!match.p1 || !match.p2) { tournamentState.currentMatchIndex++; isMatchAnimating = false; return; }
+
+            let res = getExpectedScore(match.p1, match.p2, true);
+            let scoreA = res.a;
+            let scoreB = res.b;
+            let isET = false;
+            let isPK = false;
+            let pkData = null;
+
+            if(scoreA === scoreB) {
+                isET = true;
+                const eloA = match.p1.elo + ((match.p1.delta || 0) * 1.3);
+                const eloB = match.p2.elo + ((match.p2.delta || 0) * 1.3);
+                const eloDiff = eloA - eloB;
+                const winProbA = 1 / (1 + Math.pow(10, (-eloDiff / 400)));
+                const baseGoalsET = 0.7; 
+                const lambdaA = baseGoalsET * winProbA * (0.5 + Math.random());
+                const lambdaB = baseGoalsET * (1 - winProbA) * (0.5 + Math.random());
+                const poisson = (lambda) => { let L = Math.exp(-lambda), p = 1.0, k = 0; do { k++; p *= Math.random(); } while (p > L); return k - 1; };
+                scoreA += poisson(lambdaA);
+                scoreB += poisson(lambdaB);
             }
 
-            const iterations = 100;
-            let stats = {
-                rounds: { group:0, r32:0, r16:0, qf:0, sf:0, final:0, winner:0 },
-                nemesis: {},
-                winners: {},
-                worstGroup: { score: 9999, group: [] },
-                bestGroup: { score: -1, group: [] }
-            };
-
-            for(let i=0; i<iterations; i++) {
-                // 1. Draw - Fresh Copy with Retry Logic
-                let groups = null;
-                let drawSuccess = false;
-                let attempts = 0;
-                while(!drawSuccess && attempts < 100) {
-                    try {
-                        groups = generateOneSimulation();
-                        drawSuccess = true;
-                    } catch(e) {
-                        attempts++;
-                    }
-                }
-                
-                if(!drawSuccess) continue; // Skip if completely failed
-
-                // 2. Play Group Stage
-                groups.forEach(group => {
-                    const matches = [ [0,1], [2,3], [0,2], [1,3], [0,3], [1,2] ];
-                    matches.forEach(pair => {
-                        const t1 = group[pair[0]]; const t2 = group[pair[1]];
-                        const res = getExpectedScore(t1, t2, false);
-                        t1.pts = (t1.pts||0) + (res.a > res.b ? 3 : (res.a === res.b ? 1 : 0));
-                        t2.pts = (t2.pts||0) + (res.b > res.a ? 3 : (res.a === res.b ? 1 : 0));
-                        t1.gd = (t1.gd||0) + (res.a - res.b); t2.gd = (t2.gd||0) + (res.b - res.a);
-                    });
-                });
-
-                // 3. Determine Qualifiers
-                let qualifiers = [], thirdPlaces = [];
-                let targetGroup = null;
-                groups.forEach((group, idx) => {
-                    const sorted = [...group].sort((a,b) => (b.pts||0) - (a.pts||0) || (b.gd||0) - (a.gd||0));
-                    if(group.some(t => t.code === simTargetCode)) targetGroup = group;
-                    
-                    qualifiers.push({ ...sorted[0], group: groupNames[idx], pos: 1 });
-                    qualifiers.push({ ...sorted[1], group: groupNames[idx], pos: 2 });
-                    thirdPlaces.push({ ...sorted[2], group: groupNames[idx], pos: 3 });
-                });
-                thirdPlaces.sort((a,b) => (b.pts||0) - (a.pts||0) || (b.gd||0) - (a.gd||0));
-                qualifiers.push(...thirdPlaces.slice(0, 8)); // Top 8 thirds
-                
-                if(targetGroup) {
-                    let rankSum = 0;
-                    targetGroup.forEach(t => { if(t.code !== simTargetCode) rankSum += t.rank; });
-                    if(rankSum < stats.worstGroup.score) { stats.worstGroup = { score: rankSum, group: targetGroup.map(t => ({...t})) }; }
-                    if(rankSum > stats.bestGroup.score) { stats.bestGroup = { score: rankSum, group: targetGroup.map(t => ({...t})) }; }
-                }
-
-                let targetInR32 = qualifiers.find(t => t.code === simTargetCode);
-                if(!targetInR32) { stats.rounds.group++; continue; } 
-                stats.rounds.r32++;
-
-                let currentRoundTeams = qualifiers.sort((a,b) => (b.elo + (b.delta||0)) - (a.elo + (a.delta||0))); 
-                
-                const runKnockoutRound = (teams, roundName) => {
-                    let winners = [];
-                    for(let j=0; j<teams.length/2; j++) {
-                        let t1 = teams[j]; 
-                        let t2 = teams[teams.length-1-j];
-                        
-                        let res = getExpectedScore(t1, t2, true);
-                        let winner = res.a > res.b ? t1 : t2;
-                        if(res.a === res.b) winner = Math.random() > 0.5 ? t1 : t2;
-
-                        if(t1.code === simTargetCode && winner !== t1) stats.nemesis[t2.name] = (stats.nemesis[t2.name]||0) + 1;
-                        if(t2.code === simTargetCode && winner !== t2) stats.nemesis[t1.name] = (stats.nemesis[t1.name]||0) + 1;
-
-                        winners.push(winner);
-                    }
-                    return winners;
-                };
-
-                let r16Teams = runKnockoutRound(currentRoundTeams, "R32");
-                if(r16Teams.find(t => t.code === simTargetCode)) stats.rounds.r16++;
-                let qfTeams = runKnockoutRound(r16Teams, "R16");
-                if(qfTeams.find(t => t.code === simTargetCode)) stats.rounds.qf++;
-                let sfTeams = runKnockoutRound(qfTeams, "QF");
-                if(sfTeams.find(t => t.code === simTargetCode)) stats.rounds.sf++;
-                let finalTeams = runKnockoutRound(sfTeams, "SF");
-                if(finalTeams.find(t => t.code === simTargetCode)) stats.rounds.final++;
-                let champion = runKnockoutRound(finalTeams, "Final")[0];
-                if(champion.code === simTargetCode) stats.rounds.winner++;
-                stats.winners[champion.name] = (stats.winners[champion.name] || 0) + 1;
+            let winner = scoreA > scoreB ? match.p1 : match.p2;
+            
+            if(scoreA === scoreB) {
+                isPK = true;
+                pkData = simulatePK(match.p1, match.p2);
+                winner = pkData.winner;
             }
 
-            loading.classList.add('hidden');
-            results.classList.remove('hidden');
-            btn.classList.remove('hidden');
+            const activeNode = document.querySelector('.match-node.active-match');
+            if (activeNode) {
+                await playScoreAnimation(activeNode, { scoreA, scoreB, isET, isPK, pkA: pkData?.scoreA, pkB: pkData?.scoreB, kicksA: pkData?.kicksA, kicksB: pkData?.kicksB });
+            }
 
-            const total = iterations;
-            const r = stats.rounds;
-            const makeRow = (label, val, color) => {
-                const pct = Math.round((val/total)*100);
-                return `
-                <div class="stat-row">
-                    <div class="stat-label"><span>${label}</span><span>${val}회 (${pct}%)</span></div>
-                    <div class="stat-track"><div class="stat-fill ${color}" style="width:${pct}%"></div></div>
-                </div>`;
+            match.score = `${scoreA} : ${scoreB}`;
+            match.pk = isPK ? `(PK ${pkData.scoreA}:${pkData.scoreB})` : (isET ? "(ET)" : "");
+            match.winner = winner;
+
+            const id = match.id;
+            const setWinner = (nextRoundIdx, matchIdx, playerNum) => {
+                if(tournamentState.rounds[nextRoundIdx] && tournamentState.rounds[nextRoundIdx].matches[matchIdx]) {
+                    if(playerNum === 1) tournamentState.rounds[nextRoundIdx].matches[matchIdx].p1 = winner;
+                    else tournamentState.rounds[nextRoundIdx].matches[matchIdx].p2 = winner;
+                }
             };
+            if(id==74) setWinner(1,0,1); if(id==77) setWinner(1,0,2); if(id==73) setWinner(1,1,1); if(id==75) setWinner(1,1,2);
+            if(id==76) setWinner(1,2,1); if(id==78) setWinner(1,2,2); if(id==79) setWinner(1,3,1); if(id==80) setWinner(1,3,2);
+            if(id==83) setWinner(1,4,1); if(id==84) setWinner(1,4,2); if(id==81) setWinner(1,5,1); if(id==82) setWinner(1,5,2);
+            if(id==86) setWinner(1,6,1); if(id==88) setWinner(1,6,2); if(id==85) setWinner(1,7,1); if(id==87) setWinner(1,7,2);
+            if(id>=89 && id<=96) setWinner(2, Math.floor((id-89)/2), (id-89)%2===0?1:2);
+            if(id>=97 && id<=100) setWinner(3, Math.floor((id-97)/2), (id-97)%2===0?1:2);
+            if(id>=101 && id<=102) setWinner(4, Math.floor((id-101)/2), (id-101)%2===0?1:2);
+
+            tournamentState.currentMatchIndex++;
+            if(tournamentState.currentMatchIndex >= round.matches.length) {
+                if(tournamentState.currentRoundIndex < 4) { tournamentState.currentRoundIndex++; tournamentState.currentMatchIndex = 0; }
+                else { tournamentState.active = false; document.getElementById('nextMatchBtn').classList.add('hidden'); showWinnerCeremony(winner); }
+            }
+            renderBracket(); updateTournamentStatus();
+            const newActive = document.querySelector('.match-node.active-match'); 
+            if(newActive) newActive.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
             
-            let html = '';
-            html += makeRow(translations[currentLang].winner, r.winner, "bg-yellow-400");
-            html += makeRow(translations[currentLang].final, r.final - r.winner, "bg-gray-300");
-            html += makeRow(translations[currentLang].sf, r.sf - r.final, "bg-orange-400");
-            html += makeRow(translations[currentLang].qf, r.qf - r.sf, "bg-purple-400");
-            html += makeRow(translations[currentLang].r16, r.r16 - r.qf, "bg-blue-400");
-            html += makeRow(translations[currentLang].r32, r.r32 - r.r16, "bg-emerald-400");
-            html += makeRow(translations[currentLang].groupOut, total - r.r32, "bg-slate-600");
-            
-            document.getElementById('roundStatsContainer').innerHTML = html;
-
-            const renderGroup = (id, groupObj) => {
-                const div = document.getElementById(id);
-                div.innerHTML = groupObj.group.map(t => {
-                    const isTarget = t.code === simTargetCode;
-                    return `<div class="flex justify-between text-xs p-1 ${isTarget ? 'text-yellow-300 font-bold' : 'text-slate-300'}"><div class="flex items-center"><img src="https://flagcdn.com/w20/${t.code}.png" class="w-4 h-3 mr-2">${getTeamName(t)}</div><span>Rank ${t.rank}</span></div>`;
-                }).join('');
-            };
-            renderGroup('worstCaseContent', stats.worstGroup);
-            renderGroup('bestCaseContent', stats.bestGroup);
-
-            const nemesisList = Object.entries(stats.nemesis).sort((a,b) => b[1]-a[1]).slice(0, 10);
-            const nList = document.getElementById('nemesisList');
-            nList.innerHTML = nemesisList.length ? nemesisList.map((n, i) => `<li class="flex justify-between border-b border-slate-700/50 pb-1"><span>${i+1}. ${n[0]}</span> <span class="text-red-400 font-mono">${n[1]}회</span></li>`).join('') : '<li class="text-slate-500 italic">No Nemesis (Undefeated or Group Exit)</li>';
-
-            const winnerList = Object.entries(stats.winners).sort((a,b) => b[1]-a[1]).slice(0, 5);
-            document.getElementById('winnerList').innerHTML = winnerList.map((w, i) => `<li class="flex justify-between border-b border-slate-700/50 pb-1"><span>${i+1}. ${w[0]}</span> <span class="text-yellow-400 font-mono">${w[1]}회</span></li>`).join('');
+            isMatchAnimating = false;
         }
 
+        // --- BATCH SIMULATION (DATA CENTER) ---
+        async function runBatchSimulation() {
+            const reportDiv = document.getElementById('reportResults');
+            const loadingDiv = document.getElementById('simLoading');
+            reportDiv.classList.add('hidden');
+            loadingDiv.classList.remove('hidden');
+
+            await sleep(100); // UI render
+
+            const iterations = 100;
+            const stats = { winners: {}, nemesis: {}, rounds: { r32:0, r16:0, qf:0, sf:0, final:0, winner:0, groupOut:0 } };
+            let targetGroupsCollected = []; // Collect groups containing target
+
+            // Run Monte Carlo
+            for(let i=0; i<iterations; i++) {
+                // Use CURRENT groups if available, otherwise generate fresh
+                // ** DEADLOCK FIX **: Wrap generation in try-catch loop
+                let simGroups = null;
+                let attempts = 0;
+                while(simGroups === null && attempts < 50) {
+                    try {
+                        if (i === 0 && liveDrawState.groups && liveDrawState.groups.length > 0) {
+                             simGroups = JSON.parse(JSON.stringify(liveDrawState.groups));
+                        } else {
+                             simGroups = generateOneSimulation();
+                        }
+                    } catch (e) {
+                        attempts++; // Retry silently
+                    }
+                }
+                if (!simGroups) continue; // Should not happen with retries, but safe guard
+
+                // 1. Group Stage
+                simGroups.forEach(g => {
+                    // Find Target Group for Analysis
+                    if(g.some(t => t.code === simTargetCode)) {
+                        const avg = g.reduce((a,b)=>a+b.elo,0)/4;
+                        targetGroupsCollected.push({ avgElo: avg, teams: g, id: groupNames[simGroups.indexOf(g)] });
+                    }
+
+                    const matches = [ [0,1], [2,3], [0,2], [1,3], [0,3], [1,2] ];
+                    matches.forEach(pair => {
+                        const tA = g[pair[0]]; const tB = g[pair[1]];
+                        const res = getExpectedScore(tA, tB, false);
+                        if(res.a > res.b) tA.pts += 3; else if (res.b > res.a) tB.pts += 3; else { tA.pts++; tB.pts++; }
+                        tA.gd += (res.a - res.b); tB.gd += (res.b - res.a);
+                    });
+                    g.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.elo - a.elo);
+                });
+
+                // 2. Qualifiers
+                let qualified = [];
+                let thirds = [];
+                simGroups.forEach((g, idx) => {
+                    qualified.push({...g[0], group: groupNames[idx], pos:1});
+                    qualified.push({...g[1], group: groupNames[idx], pos:2});
+                    thirds.push({...g[2], group: groupNames[idx], pos:3});
+                });
+                thirds.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.elo - a.elo);
+                const top8Thirds = thirds.slice(0, 8);
+                
+                // Check Target Status
+                let targetStage = "groupOut";
+                let tTeam = null;
+                // Find target in simGroups to see result
+                for(let g of simGroups) {
+                    const found = g.find(t => t.code === simTargetCode);
+                    if(found) {
+                        tTeam = found;
+                        const rank = g.indexOf(found);
+                        if(rank < 2) targetStage = "r32";
+                        else if (rank === 2) {
+                             if(top8Thirds.some(t => t.code === simTargetCode)) targetStage = "r32";
+                        }
+                    }
+                }
+                
+                // 3. Tournament Sim (Simplified)
+                if (targetStage !== "groupOut") {
+                    let survivors = [...qualified, ...top8Thirds];
+                    // R32 -> R16 -> QF -> SF -> F -> Winner
+                    let currentRound = survivors;
+                    let roundNames = ["r32", "r16", "qf", "sf", "final", "winner"];
+                    
+                    for(let r=0; r<5; r++) { // 5 rounds
+                        let nextRound = [];
+                        currentRound.sort(() => Math.random() - 0.5);
+                        
+                        for(let k=0; k<currentRound.length; k+=2) {
+                            const p1 = currentRound[k]; 
+                            const p2 = currentRound[k+1];
+                            const res = getExpectedScore(p1, p2, true);
+                            let winner = (res.a > res.b) ? p1 : ((res.b > res.a) ? p2 : (Math.random() > 0.5 ? p1 : p2)); 
+                            
+                            nextRound.push(winner);
+                            
+                            // Track Nemesis
+                            if(p1.code === simTargetCode) {
+                                if(winner !== p1) stats.nemesis[p2.name] = (stats.nemesis[p2.name] || 0) + 1;
+                            } else if (p2.code === simTargetCode) {
+                                if(winner !== p2) stats.nemesis[p1.name] = (stats.nemesis[p1.name] || 0) + 1;
+                            }
+                        }
+                        
+                        if(nextRound.find(t => t.code === simTargetCode)) {
+                             targetStage = roundNames[r+1];
+                        }
+                        currentRound = nextRound;
+                    }
+                    const champ = currentRound[0];
+                    stats.winners[champ.name] = (stats.winners[champ.name] || 0) + 1;
+                }
+                
+                stats.rounds[targetStage]++;
+            }
+
+            // Render Round Stats
+            const rContainer = document.getElementById('roundStatsContainer');
+            rContainer.innerHTML = '';
+            const orderedKeys = ['groupOut', 'r32', 'r16', 'qf', 'sf', 'final', 'winner'];
+            const roundLabels = { groupOut: "조별 탈락", r32: "32강", r16: "16강", qf: "8강", sf: "4강", final: "결승", winner: "우승" };
+            const maxVal = Math.max(...Object.values(stats.rounds));
+            
+            orderedKeys.forEach(key => {
+                const count = stats.rounds[key];
+                if(count >= 0) { 
+                    const percent = (count / iterations * 100).toFixed(0);
+                    const width = (count / iterations * 100); 
+                    const colorClass = key === 'groupOut' ? 'bg-red-600' : (key === 'winner' ? 'bg-yellow-500' : 'bg-emerald-500');
+                    const textClass = key === 'groupOut' ? 'text-red-400 font-bold' : (key === 'winner' ? 'text-yellow-400 font-bold' : 'text-slate-300');
+                    
+                    rContainer.innerHTML += `
+                        <div class="stat-row">
+                            <div class="stat-label"><span class="${textClass}">${roundLabels[key]}</span><span>${count}회 (${percent}%)</span></div>
+                            <div class="stat-track"><div class="stat-fill ${colorClass}" style="width: ${width}%"></div></div>
+                        </div>
+                    `;
+                }
+            });
+
+            // Render Target Specific Group Analysis
+            if (targetGroupsCollected.length > 0) {
+                targetGroupsCollected.sort((a,b) => b.avgElo - a.avgElo); // Sort Descending Elo
+                const worstG = targetGroupsCollected[0]; // Highest Avg Elo
+                const bestG = targetGroupsCollected[targetGroupsCollected.length - 1]; // Lowest Avg Elo
+
+                const renderGroupInfo = (g, containerId) => {
+                    const div = document.getElementById(containerId);
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center mb-2 border-b border-slate-700 pb-1">
+                            <span class="font-bold text-white">Group ${g.id}</span>
+                            <span class="text-xs text-slate-400">Avg Elo: ${Math.round(g.avgElo)}</span>
+                        </div>
+                        <ul class="space-y-1">
+                            ${g.teams.map(t => `<li class="flex items-center text-xs ${t.code === simTargetCode ? 'text-yellow-400 font-bold' : 'text-slate-300'}"><img src="https://flagcdn.com/w20/${t.code}.png" class="w-4 h-3 mr-2">${getTeamName(t)}</li>`).join('')}
+                        </ul>
+                    `;
+                };
+                renderGroupInfo(worstG, 'worstCaseContent');
+                renderGroupInfo(bestG, 'bestCaseContent');
+            }
+
+            // Render Top 5 Winners
+            const sortedWinners = Object.entries(stats.winners).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            const wList = document.getElementById('winnerList');
+            wList.innerHTML = '';
+            sortedWinners.forEach(([name, count], idx) => {
+                 wList.innerHTML += `<li class="flex justify-between items-center bg-slate-900/50 p-2 rounded"><span class="font-bold ${idx===0?'text-yellow-400':'text-slate-300'}">${idx+1}. ${name}</span><span class="text-emerald-400 font-mono">${count}회</span></li>`;
+            });
+
+            // Render Nemesis
+            const sortedNemesis = Object.entries(stats.nemesis).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            const nList = document.getElementById('nemesisList');
+            nList.innerHTML = '';
+            if(sortedNemesis.length === 0) nList.innerHTML = '<li class="text-center text-slate-500 italic py-2">탈락 기록 없음 (혹은 우승?)</li>';
+            else sortedNemesis.forEach(([name, count]) => {
+                nList.innerHTML += `<li class="flex justify-between items-center bg-slate-900/50 p-2 rounded"><span class="text-slate-300">${name}</span><span class="text-red-400 font-mono">${count}회</span></li>`;
+            });
+
+            loadingDiv.classList.add('hidden');
+            reportDiv.classList.remove('hidden');
+        }
+
+        function showWinnerCeremony(team) {
+            fireConfetti();
+            document.getElementById('winnerModal').classList.remove('hidden');
+            document.getElementById('winnerFlag').src = `https://flagcdn.com/w640/${team.code}.png`;
+            document.getElementById('winnerName').innerText = getTeamName(team);
+            const starsContainer = document.getElementById('starsContainer'); starsContainer.innerHTML = '';
+            for(let i=0; i<(team.stars||0); i++) { const s = document.createElement('i'); s.className = 'fas fa-star text-yellow-400 text-xl'; starsContainer.appendChild(s); }
+        }
+        function closeWinnerModal() { document.getElementById('winnerModal').classList.add('hidden'); if(confettiAnimationId) cancelAnimationFrame(confettiAnimationId); const ctx = document.getElementById('confetti-canvas').getContext('2d'); ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); }
+        function fireConfetti() { const canvas = document.getElementById('confetti-canvas'); const ctx = canvas.getContext('2d'); canvas.width = window.innerWidth; canvas.height = window.innerHeight; const pieces = []; for(let i=0; i<300; i++) pieces.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height-canvas.height, color: ['#f00', '#0f0', '#00f', '#ff0'][Math.floor(Math.random()*4)], size: Math.random()*10+5 }); function draw() { ctx.clearRect(0, 0, canvas.width, canvas.height); pieces.forEach(p => { ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y+=5, p.size, p.size); if(p.y > canvas.height) p.y = -10; }); confettiAnimationId = requestAnimationFrame(draw); } draw(); }
+        function toggleR32() { const col = document.getElementById('col-r32'); const btn = document.getElementById('r32CollapseBtn'); if(col) { col.classList.toggle('collapsed'); btn.innerHTML = col.classList.contains('collapsed') ? `<i class="fas fa-chevron-right mr-1"></i>${translations[currentLang].expand32}` : `<i class="fas fa-chevron-left mr-1"></i>${translations[currentLang].collapse32}`; } }
+        function updateTournamentStatus() { const statusDiv = document.getElementById('tournamentStatusText'); if(!tournamentState.active) { if(statusDiv) statusDiv.innerText = "Finished"; return; } statusDiv.innerText = `${tournamentState.rounds[tournamentState.currentRoundIndex].name} - Match ${tournamentState.currentMatchIndex + 1}/${tournamentState.rounds[tournamentState.currentRoundIndex].matches.length}`; }
+
+        function renderBracket() {
+            const container = document.getElementById('tournamentBracket'); if(!container) return; let html = '';
+            const showCollapse = tournamentState.currentRoundIndex > 0;
+            document.getElementById('r32CollapseBtn').classList.remove('hidden', 'block'); document.getElementById('r32CollapseBtn').classList.add(showCollapse ? 'block' : 'hidden');
+            tournamentState.rounds.forEach((round, rIdx) => {
+                const isR32 = rIdx === 0; const colId = isR32 ? 'col-r32' : `col-r${rIdx}`; const collapsedClass = (isR32 && tournamentState.currentRoundIndex > 0) ? 'collapsed' : '';
+                html += `<div id="${colId}" class="round-column ${collapsedClass}"><div class="round-header">${round.name}</div>`;
+                round.matches.forEach((match, mIdx) => {
+                    const isNext = (rIdx === tournamentState.currentRoundIndex && mIdx === tournamentState.currentMatchIndex);
+                    let activeClass = isNext ? "active-match" : (match.winner !== null ? "finished" : "");
+                    let p1Class = match.p1 && match.p1.code === targetTeamCode ? "text-yellow-300 font-bold" : "text-white";
+                    let p2Class = match.p2 && match.p2.code === targetTeamCode ? "text-yellow-300 font-bold" : "text-white";
+                    if(match.winner === match.p1) p1Class += " text-emerald-400"; if(match.winner === match.p2) p2Class += " text-emerald-400";
+                    let p1Info = match.p1 && match.p1.group ? `<span class="text-[9px] md:text-xs text-gray-400 ml-1">(${match.p1.rank}위/${match.p1.group}${match.p1.pos})</span>` : "";
+                    let p2Info = match.p2 && match.p2.group ? `<span class="text-[9px] md:text-xs text-gray-400 ml-1">(${match.p2.rank}위/${match.p2.group}${match.p2.pos})</span>` : "";
+                    html += `<div class="match-node ${activeClass}"><div class="flex justify-between text-[10px] md:text-xs text-slate-500 mb-1"><span>M${match.id}</span><span>${match.venue}</span></div>
+                            <div class="team-slot ${match.winner === match.p1 ? 'winner' : ''}"><div class="${p1Class} flex items-center truncate">${match.p1 ? `<img src="https://flagcdn.com/w20/${match.p1.code}.png" class="w-4 h-3 md:w-5 md:h-4 mr-1 inline">` : ''}${match.p1 ? getTeamName(match.p1) : 'TBD'}${p1Info}</div><div class="score-display">${match.score ? match.score.split(':')[0] : ''}</div></div>
+                            <div class="team-slot ${match.winner === match.p2 ? 'winner' : ''}"><div class="${p2Class} flex items-center truncate">${match.p2 ? `<img src="https://flagcdn.com/w20/${match.p2.code}.png" class="w-4 h-3 md:w-5 md:h-4 mr-1 inline">` : ''}${match.p2 ? getTeamName(match.p2) : 'TBD'}${p2Info}</div><div class="score-display">${match.score ? match.score.split(':')[1] : ''}</div></div>${match.pk ? `<div class="text-center text-[10px] md:text-xs text-yellow-500 pk-display">${match.pk}</div>` : ''}</div>`;
+                }); html += `</div>`;
+            }); container.innerHTML = html;
+        }
+
+        function switchTab(tabId) {
+            // 1. Handle Tab Buttons & Sections
+            ['draw', 'tournament', 'report'].forEach(t => { 
+                const btn = document.getElementById(`tab-${t}`); 
+                const section = document.getElementById(`section-${t}`); 
+                if (t === tabId) { 
+                    btn.classList.remove('tab-inactive', 'hidden'); 
+                    btn.classList.add('tab-active'); 
+                    section.classList.remove('hidden'); 
+                } else { 
+                    btn.classList.remove('tab-active'); 
+                    btn.classList.add('tab-inactive'); 
+                    section.classList.add('hidden'); 
+                } 
+            });
+            
+            const footer = document.getElementById('drawController');
+            const initial = document.getElementById('initialControls');
+            const toggleBtn = document.getElementById('widgetToggle');
+            const widget = document.getElementById('happinessWidget');
+
+            if (tabId === 'report') {
+                // Hide ALL controls
+                if(footer) footer.style.display = 'none';
+                if(initial) initial.style.display = 'none';
+                if(toggleBtn) toggleBtn.style.display = 'none';
+                if(widget) widget.classList.remove('active');
+                if(toggleBtn) toggleBtn.classList.remove('open');
+            } 
+            else {
+                // Logic for Draw/Tournament Tabs
+                
+                // 1. Determine if we are in "Initial State" or "Running State"
+                const isRunning = liveDrawState.active || tournamentState.active;
+
+                if (!isRunning) {
+                    // Not started yet -> Show Initial, Hide Footer
+                    if(initial) initial.style.display = 'flex'; 
+                    if(footer) footer.style.display = 'none';
+                    if(toggleBtn) toggleBtn.style.display = 'none';
+                } else {
+                    // Started -> Show Footer, Hide Initial
+                    if(initial) initial.style.display = 'none';
+                    if(footer) footer.style.display = 'flex';
+                    if(toggleBtn) toggleBtn.style.display = 'flex';
+                }
+
+                // 2. Specific Tab Logic
+                if(tabId === 'tournament' && tournamentState.active) { 
+                    document.getElementById('drawControlsGroup').classList.add('hidden'); 
+                    document.getElementById('leagueControlsGroup').classList.add('hidden'); 
+                    document.getElementById('tournamentControlsGroup').classList.remove('hidden'); 
+                    document.getElementById('tournamentControlsGroup').classList.add('flex'); 
+                    
+                    if(widget) widget.classList.remove('active');
+                    if(toggleBtn) toggleBtn.classList.remove('open');
+                }
+                else if (tabId === 'draw') { 
+                    if(liveDrawState.currentStep >= 48) { 
+                        // League Phase
+                        document.getElementById('drawControlsGroup').classList.add('hidden'); 
+                        document.getElementById('leagueControlsGroup').classList.remove('hidden'); 
+                        document.getElementById('leagueControlsGroup').classList.add('flex'); 
+                        
+                        if(widget && isRunning) widget.classList.add('active');
+                        if(toggleBtn && isRunning) {
+                            toggleBtn.style.display = 'flex';
+                            toggleBtn.classList.add('open');
+                        }
+                    } else { 
+                        // Draw Phase
+                        document.getElementById('drawControlsGroup').classList.remove('hidden'); 
+                        document.getElementById('leagueControlsGroup').classList.add('hidden'); 
+                        document.getElementById('tournamentControlsGroup').classList.add('hidden'); 
+                        if(widget) widget.classList.remove('active');
+                        if(toggleBtn) toggleBtn.classList.remove('open');
+                    } 
+                }
+            }
+        }
+        function resetDraw() { location.reload(); }
+        
+        // Re-declare missing functions
         function startLiveDraw() {
             if(isDrawing) return;
             initGrid();
@@ -1162,6 +1632,29 @@
             document.getElementById('happinessWidget').classList.remove('active');
             document.getElementById('widgetToggle').classList.remove('open');
             updateStatusText(); updateHappinessCircuit();
+        }
+
+        function startSingleDraw() {
+            initGrid();
+            let success = false, attempts = 0, finalGroups = [];
+            while (!success && attempts < 1000) { attempts++; try { finalGroups = generateOneSimulation(); success = true; } catch (e) {} }
+            const schedule = generateSchedule(finalGroups);
+            liveDrawState = { active: true, groups: finalGroups, currentPot: 4, currentGroupIndex: 0, currentStep: 48, totalSteps: 48, currentLeagueRound: 0, groupSchedule: schedule };
+            document.getElementById('initialControls').style.display = 'none';
+            document.getElementById('drawController').style.display = 'flex';
+            document.getElementById('drawControlsGroup').classList.add('hidden');
+            document.getElementById('leagueControlsGroup').classList.remove('hidden'); document.getElementById('leagueControlsGroup').classList.add('flex');
+            
+            const widget = document.getElementById('happinessWidget');
+            const toggle = document.getElementById('widgetToggle');
+            widget.classList.add('active');
+            toggle.classList.add('open');
+
+             liveDrawState.groups.forEach((group, idx) => {
+                const ul = document.getElementById(`group-${groupNames[idx]}-list`);
+                if(ul) { ul.innerHTML = ''; group.forEach(team => ul.appendChild(createTeamElement(team))); }
+            });
+            updateLeagueTableDisplay();
         }
 
         function updateStatusText() {
@@ -1223,29 +1716,6 @@
                     }
                 }, 100);
             });
-        }
-
-        function startSingleDraw() {
-            initGrid();
-            let success = false, attempts = 0, finalGroups = [];
-            while (!success && attempts < 1000) { attempts++; try { finalGroups = generateOneSimulation(); success = true; } catch (e) {} }
-            const schedule = generateSchedule(finalGroups);
-            liveDrawState = { active: true, groups: finalGroups, currentPot: 4, currentGroupIndex: 0, currentStep: 48, totalSteps: 48, currentLeagueRound: 0, groupSchedule: schedule };
-            document.getElementById('initialControls').style.display = 'none';
-            document.getElementById('drawController').style.display = 'flex';
-            document.getElementById('drawControlsGroup').classList.add('hidden');
-            document.getElementById('leagueControlsGroup').classList.remove('hidden'); document.getElementById('leagueControlsGroup').classList.add('flex');
-            
-            const widget = document.getElementById('happinessWidget');
-            const toggle = document.getElementById('widgetToggle');
-            widget.classList.add('active');
-            toggle.classList.add('open');
-
-             liveDrawState.groups.forEach((group, idx) => {
-                const ul = document.getElementById(`group-${groupNames[idx]}-list`);
-                if(ul) { ul.innerHTML = ''; group.forEach(team => ul.appendChild(createTeamElement(team))); }
-            });
-            updateLeagueTableDisplay();
         }
 
         function startTournament() {
@@ -1350,203 +1820,6 @@
             renderBracket(); updateTournamentStatus();
         }
 
-        function runNextMatch() {
-            if(!tournamentState.active) return;
-            const round = tournamentState.rounds[tournamentState.currentRoundIndex];
-            if(tournamentState.currentMatchIndex >= round.matches.length) return;
-            const match = round.matches[tournamentState.currentMatchIndex];
-            
-            if(!match.p1 || !match.p2) { tournamentState.currentMatchIndex++; return; }
-
-            // 1. Regular Time (90min)
-            let res = getExpectedScore(match.p1, match.p2, true);
-            let scoreA = res.a;
-            let scoreB = res.b;
-            let isET = false;
-            let isPK = false;
-
-            // 2. Extra Time (30min) if Draw
-            if(scoreA === scoreB) {
-                isET = true;
-                // Calculate ET goals - approx 1/3 of regular match intensity
-                const eloA = match.p1.elo + ((match.p1.delta || 0) * 1.5);
-                const eloB = match.p2.elo + ((match.p2.delta || 0) * 1.5);
-                const eloDiff = eloA - eloB;
-                const winProbA = 1 / (1 + Math.pow(10, (-eloDiff / 400)));
-                const baseGoalsET = 0.7; // ~30 mins
-                
-                const lambdaA = baseGoalsET * winProbA * (0.5 + Math.random());
-                const lambdaB = baseGoalsET * (1 - winProbA) * (0.5 + Math.random());
-                
-                const poisson = (lambda) => { let L = Math.exp(-lambda), p = 1.0, k = 0; do { k++; p *= Math.random(); } while (p > L); return k - 1; };
-                
-                scoreA += poisson(lambdaA);
-                scoreB += poisson(lambdaB);
-            }
-
-            // 3. Penalty Shootout if still Draw
-            let winner = scoreA > scoreB ? match.p1 : match.p2;
-            let pkText = "";
-            
-            if(scoreA === scoreB) {
-                isPK = true;
-                let pkA=0, pkB=0; 
-                // Penalties usually 5 rounds, but sim can be simple
-                while(pkA===pkB) { 
-                    pkA=3+Math.floor(Math.random()*3); 
-                    pkB=3+Math.floor(Math.random()*3); 
-                    if(pkA===pkB) pkA++; 
-                } 
-                pkText = `(PK ${pkA}:${pkB})`; 
-                winner = pkA>pkB?match.p1:match.p2;
-            } else if(isET) {
-                pkText = "(ET)";
-            }
-
-            match.score = `${scoreA} : ${scoreB}`;
-            match.pk = pkText;
-            match.winner = winner;
-
-            const id = match.id;
-            const setWinner = (nextRoundIdx, matchIdx, playerNum) => {
-                if(tournamentState.rounds[nextRoundIdx] && tournamentState.rounds[nextRoundIdx].matches[matchIdx]) {
-                    if(playerNum === 1) tournamentState.rounds[nextRoundIdx].matches[matchIdx].p1 = winner;
-                    else tournamentState.rounds[nextRoundIdx].matches[matchIdx].p2 = winner;
-                }
-            };
-            if(id==74) setWinner(1,0,1); if(id==77) setWinner(1,0,2); if(id==73) setWinner(1,1,1); if(id==75) setWinner(1,1,2);
-            if(id==76) setWinner(1,2,1); if(id==78) setWinner(1,2,2); if(id==79) setWinner(1,3,1); if(id==80) setWinner(1,3,2);
-            if(id==83) setWinner(1,4,1); if(id==84) setWinner(1,4,2); if(id==81) setWinner(1,5,1); if(id==82) setWinner(1,5,2);
-            if(id==86) setWinner(1,6,1); if(id==88) setWinner(1,6,2); if(id==85) setWinner(1,7,1); if(id==87) setWinner(1,7,2);
-            if(id>=89 && id<=96) setWinner(2, Math.floor((id-89)/2), (id-89)%2===0?1:2);
-            if(id>=97 && id<=100) setWinner(3, Math.floor((id-97)/2), (id-97)%2===0?1:2);
-            if(id>=101 && id<=102) setWinner(4, Math.floor((id-101)/2), (id-101)%2===0?1:2);
-
-            tournamentState.currentMatchIndex++;
-            if(tournamentState.currentMatchIndex >= round.matches.length) {
-                if(tournamentState.currentRoundIndex < 4) { tournamentState.currentRoundIndex++; tournamentState.currentMatchIndex = 0; }
-                else { tournamentState.active = false; document.getElementById('nextMatchBtn').classList.add('hidden'); showWinnerCeremony(winner); }
-            }
-            renderBracket(); updateTournamentStatus();
-            const activeCard = document.querySelector('.match-node.active-match'); if(activeCard) activeCard.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
-        }
-
-        function showWinnerCeremony(team) {
-            fireConfetti();
-            document.getElementById('winnerModal').classList.remove('hidden');
-            document.getElementById('winnerFlag').src = `https://flagcdn.com/w640/${team.code}.png`;
-            document.getElementById('winnerName').innerText = getTeamName(team);
-            const starsContainer = document.getElementById('starsContainer'); starsContainer.innerHTML = '';
-            for(let i=0; i<(team.stars||0); i++) { const s = document.createElement('i'); s.className = 'fas fa-star text-yellow-400 text-xl'; starsContainer.appendChild(s); }
-        }
-        function closeWinnerModal() { document.getElementById('winnerModal').classList.add('hidden'); if(confettiAnimationId) cancelAnimationFrame(confettiAnimationId); const ctx = document.getElementById('confetti-canvas').getContext('2d'); ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); }
-        function fireConfetti() { const canvas = document.getElementById('confetti-canvas'); const ctx = canvas.getContext('2d'); canvas.width = window.innerWidth; canvas.height = window.innerHeight; const pieces = []; for(let i=0; i<300; i++) pieces.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height-canvas.height, color: ['#f00', '#0f0', '#00f', '#ff0'][Math.floor(Math.random()*4)], size: Math.random()*10+5 }); function draw() { ctx.clearRect(0, 0, canvas.width, canvas.height); pieces.forEach(p => { ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y+=5, p.size, p.size); if(p.y > canvas.height) p.y = -10; }); confettiAnimationId = requestAnimationFrame(draw); } draw(); }
-        function toggleR32() { const col = document.getElementById('col-r32'); const btn = document.getElementById('r32CollapseBtn'); if(col) { col.classList.toggle('collapsed'); btn.innerHTML = col.classList.contains('collapsed') ? `<i class="fas fa-chevron-right mr-1"></i>${translations[currentLang].expand32}` : `<i class="fas fa-chevron-left mr-1"></i>${translations[currentLang].collapse32}`; } }
-        function updateTournamentStatus() { const statusDiv = document.getElementById('tournamentStatusText'); if(!tournamentState.active) { if(statusDiv) statusDiv.innerText = "Finished"; return; } statusDiv.innerText = `${tournamentState.rounds[tournamentState.currentRoundIndex].name} - Match ${tournamentState.currentMatchIndex + 1}/${tournamentState.rounds[tournamentState.currentRoundIndex].matches.length}`; }
-
-        function renderBracket() {
-            const container = document.getElementById('tournamentBracket'); if(!container) return; let html = '';
-            const showCollapse = tournamentState.currentRoundIndex > 0;
-            document.getElementById('r32CollapseBtn').classList.remove('hidden', 'block'); document.getElementById('r32CollapseBtn').classList.add(showCollapse ? 'block' : 'hidden');
-            tournamentState.rounds.forEach((round, rIdx) => {
-                const isR32 = rIdx === 0; const colId = isR32 ? 'col-r32' : `col-r${rIdx}`; const collapsedClass = (isR32 && tournamentState.currentRoundIndex > 0) ? 'collapsed' : '';
-                html += `<div id="${colId}" class="round-column ${collapsedClass}"><div class="round-header">${round.name}</div>`;
-                round.matches.forEach((match, mIdx) => {
-                    const isNext = (rIdx === tournamentState.currentRoundIndex && mIdx === tournamentState.currentMatchIndex);
-                    let activeClass = isNext ? "active-match" : (match.winner !== null ? "finished" : "");
-                    let p1Class = match.p1 && match.p1.code === targetTeamCode ? "text-yellow-300 font-bold" : "text-white";
-                    let p2Class = match.p2 && match.p2.code === targetTeamCode ? "text-yellow-300 font-bold" : "text-white";
-                    if(match.winner === match.p1) p1Class += " text-emerald-400"; if(match.winner === match.p2) p2Class += " text-emerald-400";
-                    let p1Info = match.p1 && match.p1.group ? `<span class="text-[9px] md:text-xs text-gray-400 ml-1">(${match.p1.rank}위/${match.p1.group}${match.p1.pos})</span>` : "";
-                    let p2Info = match.p2 && match.p2.group ? `<span class="text-[9px] md:text-xs text-gray-400 ml-1">(${match.p2.rank}위/${match.p2.group}${match.p2.pos})</span>` : "";
-                    html += `<div class="match-node ${activeClass}"><div class="flex justify-between text-[10px] md:text-xs text-slate-500 mb-1"><span>M${match.id}</span><span>${match.venue}</span></div>
-                            <div class="team-slot ${match.winner === match.p1 ? 'winner' : ''}"><div class="${p1Class} flex items-center truncate">${match.p1 ? `<img src="https://flagcdn.com/w20/${match.p1.code}.png" class="w-4 h-3 md:w-5 md:h-4 mr-1 inline">` : ''}${match.p1 ? getTeamName(match.p1) : 'TBD'}${p1Info}</div><div class="score-display">${match.score ? match.score.split(':')[0] : ''}</div></div>
-                            <div class="team-slot ${match.winner === match.p2 ? 'winner' : ''}"><div class="${p2Class} flex items-center truncate">${match.p2 ? `<img src="https://flagcdn.com/w20/${match.p2.code}.png" class="w-4 h-3 md:w-5 md:h-4 mr-1 inline">` : ''}${match.p2 ? getTeamName(match.p2) : 'TBD'}${p2Info}</div><div class="score-display">${match.score ? match.score.split(':')[1] : ''}</div></div>${match.pk ? `<div class="text-center text-[10px] md:text-xs text-yellow-500">${match.pk}</div>` : ''}</div>`;
-                }); html += `</div>`;
-            }); container.innerHTML = html;
-        }
-
-        function switchTab(tabId) {
-            // 1. Handle Tab Buttons & Sections
-            ['draw', 'tournament', 'report'].forEach(t => { 
-                const btn = document.getElementById(`tab-${t}`); 
-                const section = document.getElementById(`section-${t}`); 
-                if (t === tabId) { 
-                    btn.classList.remove('tab-inactive', 'hidden'); 
-                    btn.classList.add('tab-active'); 
-                    section.classList.remove('hidden'); 
-                } else { 
-                    btn.classList.remove('tab-active'); 
-                    btn.classList.add('tab-inactive'); 
-                    section.classList.add('hidden'); 
-                } 
-            });
-            
-            const footer = document.getElementById('drawController');
-            const initial = document.getElementById('initialControls');
-            const toggleBtn = document.getElementById('widgetToggle');
-            const widget = document.getElementById('happinessWidget');
-
-            if (tabId === 'report') {
-                // Hide ALL controls
-                if(footer) footer.style.display = 'none';
-                if(initial) initial.style.display = 'none';
-                if(toggleBtn) toggleBtn.style.display = 'none';
-                if(widget) widget.classList.remove('active');
-                if(toggleBtn) toggleBtn.classList.remove('open');
-            } 
-            else {
-                // Logic for Draw/Tournament Tabs
-                
-                // 1. Determine if we are in "Initial State" or "Running State"
-                const isRunning = liveDrawState.active || tournamentState.active;
-
-                if (!isRunning) {
-                    // Not started yet -> Show Initial, Hide Footer
-                    if(initial) initial.style.display = 'flex'; 
-                    if(footer) footer.style.display = 'none';
-                    if(toggleBtn) toggleBtn.style.display = 'none';
-                } else {
-                    // Started -> Show Footer, Hide Initial
-                    if(initial) initial.style.display = 'none';
-                    if(footer) footer.style.display = 'flex';
-                    if(toggleBtn) toggleBtn.style.display = 'flex';
-                }
-
-                // 2. Specific Tab Logic
-                if(tabId === 'tournament' && tournamentState.active) { 
-                    document.getElementById('drawControlsGroup').classList.add('hidden'); 
-                    document.getElementById('leagueControlsGroup').classList.add('hidden'); 
-                    document.getElementById('tournamentControlsGroup').classList.remove('hidden'); 
-                    document.getElementById('tournamentControlsGroup').classList.add('flex'); 
-                    
-                    if(widget) widget.classList.remove('active');
-                    if(toggleBtn) toggleBtn.classList.remove('open');
-                }
-                else if (tabId === 'draw') { 
-                    if(liveDrawState.currentStep >= 48) { 
-                        // League Phase
-                        document.getElementById('drawControlsGroup').classList.add('hidden'); 
-                        document.getElementById('leagueControlsGroup').classList.remove('hidden'); 
-                        document.getElementById('leagueControlsGroup').classList.add('flex'); 
-                        
-                        if(widget && isRunning) widget.classList.add('active');
-                        if(toggleBtn && isRunning) {
-                            toggleBtn.style.display = 'flex';
-                            toggleBtn.classList.add('open');
-                        }
-                    } else { 
-                        // Draw Phase
-                        document.getElementById('drawControlsGroup').classList.remove('hidden'); 
-                        document.getElementById('leagueControlsGroup').classList.add('hidden'); 
-                        document.getElementById('tournamentControlsGroup').classList.add('hidden'); 
-                        if(widget) widget.classList.remove('active');
-                        if(toggleBtn) toggleBtn.classList.remove('open');
-                    } 
-                }
-            }
-        }
-        function resetDraw() { location.reload(); }
         initGrid(); populateCountrySelect();
     </script>
 </body>
