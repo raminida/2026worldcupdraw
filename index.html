@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2026 World Cup Simulator (Real Balanced)</title>
+    <title>2026 World Cup Simulator (Official Draw)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -108,8 +108,6 @@
             display: flex !important;
         }
         
-        .widget-toggle-btn:active { transform: scale(0.95); }
-
         .widget-toggle-btn.open {
             right: 360px; 
             background: #334155;
@@ -332,7 +330,7 @@
     <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-700 p-4 text-center shadow-lg relative z-10">
         <button onclick="toggleLanguage()" id="langBtn" class="lang-btn"><i class="fas fa-globe mr-2"></i>Language: EN</button>
         <h1 class="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-white to-emerald-400 drop-shadow-lg" data-key="title">2026 FIFA WORLD CUP™</h1>
-        <p class="text-slate-400 mt-1 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase" data-key="headerSub">Simulator Final - Nerfed & Balanced</p>
+        <p class="text-slate-400 mt-1 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase" data-key="headerSub">Simulation - Final Draw Edition</p>
     </header>
 
     <!-- Toggle Button -->
@@ -401,16 +399,8 @@
     <main class="flex-grow relative overflow-hidden w-full">
         <section id="section-draw" class="container mx-auto px-2 md:px-4 py-4 h-full overflow-y-auto">
             <div id="fixedInfo" class="text-center mb-6 text-xs md:text-sm text-slate-400 flex justify-center items-center gap-2 flex-wrap bg-slate-800/50 p-2 rounded-lg border border-slate-700/50 mx-auto max-w-xl">
-                <span class="bg-slate-900/80 px-2 py-1 rounded border border-slate-700 text-[10px] text-emerald-400 font-bold" data-key="fixed">FIXED</span> 
-                <span class="flex items-center text-slate-300"><img src="https://flagcdn.com/w40/mx.png" class="w-4 h-3 mr-1 inline"> A1</span>
-                <span class="flex items-center text-slate-300"><img src="https://flagcdn.com/w40/ca.png" class="w-4 h-3 mr-1 inline"> B1</span>
-                <span class="flex items-center text-slate-300"><img src="https://flagcdn.com/w40/us.png" class="w-4 h-3 mr-1 inline"> D1</span>
-                <span class="border-l border-slate-600 mx-1 h-3"></span>
-                <span class="flex items-center text-yellow-500" title="Distributed"><img src="https://flagcdn.com/w40/gb-eng.png" class="w-4 h-3 mr-1 inline"></span>
-                <span class="flex items-center text-yellow-500" title="Distributed"><img src="https://flagcdn.com/w40/fr.png" class="w-4 h-3 mr-1 inline"></span>
-                <span class="flex items-center text-yellow-500" title="Distributed"><img src="https://flagcdn.com/w40/es.png" class="w-4 h-3 mr-1 inline"></span>
-                <span class="flex items-center text-yellow-500" title="Distributed"><img src="https://flagcdn.com/w40/ar.png" class="w-4 h-3 mr-1 inline"></span>
-                <span class="text-[10px] text-yellow-600 font-bold">권역별 분산 (Distributed)</span>
+                <span class="bg-slate-900/80 px-2 py-1 rounded border border-slate-700 text-[10px] text-emerald-400 font-bold" data-key="fixed">OFFICIAL</span> 
+                <span class="text-slate-300 font-bold">2026 World Cup Final Draw Confirmed</span>
             </div>
             <div id="groupsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 pb-32"></div>
         </section>
@@ -482,16 +472,7 @@
 
     <div id="drawController" class="fixed bottom-0 left-0 w-full sticky-footer p-3 z-50 flex justify-center items-end pb-6 md:pb-8" style="display: none;">
         <div class="bg-slate-800/95 backdrop-blur-md border border-slate-600 rounded-2xl shadow-2xl p-3 flex items-center gap-3 w-full max-w-2xl mx-2 relative overflow-visible transition-all duration-300">
-            <div id="drawControlsGroup" class="flex items-center w-full relative">
-                <button onclick="drawNextStep()" id="lotteryBtn" class="bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white rounded-full w-16 h-16 md:w-20 md:h-20 flex items-center justify-center shadow-lg border-4 border-slate-900 absolute -top-6 left-4 md:left-8 transition active:scale-95 z-20">
-                    <i class="fas fa-dice text-2xl md:text-3xl animate-pulse"></i>
-                </button>
-                <div class="flex-grow pl-20 md:pl-32 pr-2 py-1">
-                    <div class="text-[10px] md:text-xs text-slate-400 uppercase font-bold tracking-wider">Live Status</div>
-                    <div id="drawStatusText" class="text-sm md:text-lg font-black text-white truncate">Ready</div>
-                </div>
-                <div class="flex gap-2"><button onclick="resetDraw()" class="text-slate-400 hover:text-white px-3 py-2 bg-slate-700/50 rounded-lg"><i class="fas fa-undo"></i></button></div>
-            </div>
+            <!-- Draw Controls Removed -->
             <div id="leagueControlsGroup" class="hidden w-full flex items-center justify-between pl-2">
                 <div class="flex-grow">
                     <div class="text-[10px] md:text-xs text-slate-400 uppercase font-bold tracking-wider">Group Stage</div>
@@ -518,19 +499,7 @@
 
     <div id="initialControls" class="fixed bottom-8 left-0 w-full flex justify-center z-40 px-4 pointer-events-none">
         <div class="pointer-events-auto bg-slate-800/95 backdrop-blur p-4 rounded-2xl shadow-2xl border border-slate-700 flex flex-col gap-3 w-full max-w-sm">
-            <button onclick="startLiveDraw()" class="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white font-bold py-4 px-6 rounded-xl shadow-lg text-lg w-full"><i class="fas fa-play-circle mr-2"></i> <span data-key="startLive">실시간 추첨 시작</span></button>
-            <div class="grid grid-cols-1">
-                 <button onclick="startSingleDraw()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-3 px-4 rounded-xl text-sm w-full"><i class="fas fa-fast-forward mr-2"></i> <span data-key="startResult">결과만 보기</span></button>
-            </div>
-        </div>
-    </div>
-
-    <div id="lotteryModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm p-4">
-        <div class="bg-slate-900 border-2 border-emerald-500/50 p-8 rounded-2xl shadow-2xl text-center max-w-xs w-full transform transition-all scale-100">
-            <div class="mb-6 relative h-24 flex items-center justify-center overflow-hidden bg-slate-800 rounded-xl inner-shadow">
-                <div id="spinningContent" class="text-4xl font-black text-white"><i class="fas fa-futbol text-5xl text-slate-700 animate-spin"></i></div>
-            </div>
-            <h3 id="lotteryTitle" class="text-lg font-bold text-emerald-400 mb-2">Drawing...</h3>
+            <button onclick="startSimulationMode()" class="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white font-bold py-4 px-6 rounded-xl shadow-lg text-lg w-full"><i class="fas fa-play-circle mr-2"></i> <span data-key="startLive">시뮬레이션 시작</span></button>
         </div>
     </div>
 
@@ -550,7 +519,7 @@
         const translations = {
             ko: {
                 title: "2026 북중미 월드컵 시뮬레이터",
-                headerSub: "Simulator Final - 불양TV 버전",
+                headerSub: "Simulation - 확정 조편성 버전",
                 happinessTitle: "행복회로",
                 selectTarget: "응원할 국가 선택",
                 probLabel: "32강 진출 확률",
@@ -564,7 +533,7 @@
                 tabDraw: "조별리그",
                 tabTournament: "32강",
                 tabReport: "데이터 센터",
-                fixed: "고정",
+                fixed: "OFFICIAL",
                 collapse32: "32강 접기",
                 expand32: "32강 보기",
                 tournamentWait: "조별리그가 완료되어야 합니다.",
@@ -581,14 +550,14 @@
                 go32: "32강 진출",
                 nextMatch: "다음 경기",
                 nextMatchShort: "다음",
-                startLive: "실시간 추첨 시작",
+                startLive: "시뮬레이션 시작",
                 startResult: "결과만 보기",
                 close: "닫기",
                 r32: "32강", r16: "16강", qf: "8강", sf: "4강", final: "결승", winner: "우승", groupOut: "조별 탈락"
             },
             en: {
                 title: "2026 World Cup Simulator",
-                headerSub: "Simulator Final - BoolyangTV Ver",
+                headerSub: "Simulation - Final Fixed Groups",
                 happinessTitle: "Happiness Circuit",
                 selectTarget: "Select Target Team",
                 probLabel: "Qualify Probability",
@@ -602,7 +571,7 @@
                 tabDraw: "Group Stage",
                 tabTournament: "Knockout",
                 tabReport: "Data Center",
-                fixed: "Fixed",
+                fixed: "OFFICIAL",
                 collapse32: "Collapse R32",
                 expand32: "View R32",
                 tournamentWait: "Group Stage must finish first.",
@@ -619,7 +588,7 @@
                 go32: "Go to R32",
                 nextMatch: "Next Match",
                 nextMatchShort: "Next",
-                startLive: "Start Live Draw",
+                startLive: "Start Simulation",
                 startResult: "Quick Result",
                 close: "Close",
                 r32: "Round of 32", r16: "Round of 16", qf: "Quarter-Finals", sf: "Semi-Finals", final: "Final", winner: "Winner", groupOut: "Group Stage Exit"
@@ -654,7 +623,8 @@
             L: { slots: ["554km", "1131km", "2483km", "2791km"] }
         };
 
-        // --- Nerfed & Balanced Pots Data ---
+        // --- Data ---
+        // Added Sweden(se) manually
         const pots = {
             pot1: [
                 { name: "스페인", nameEn: "Spain", conf: "UEFA", rank: 1, elo: 2171, delta: -6, code: "es", tier: "S", stars: 1 }, 
@@ -673,10 +643,10 @@
             pot2: [
                 { name: "크로아티아", nameEn: "Croatia", conf: "UEFA", rank: 10, elo: 1933, delta: 47, code: "hr", tier: "A", stars: 0 },
                 { name: "모로코", nameEn: "Morocco", conf: "CAF", rank: 11, elo: 1828, delta: 26, code: "ma", tier: "A", stars: 0 },
-                { name: "콜롬비아", nameEn: "Colombia", conf: "CONMEBOL", rank: 12, elo: 1900, delta: 5, code: "co", tier: "A", stars: 0 }, // Super Nerfed: 1998->1900
+                { name: "콜롬비아", nameEn: "Colombia", conf: "CONMEBOL", rank: 12, elo: 1900, delta: 5, code: "co", tier: "A", stars: 0 },
                 { name: "우루과이", nameEn: "Uruguay", conf: "CONMEBOL", rank: 14, elo: 1890, delta: -58, code: "uy", tier: "A", stars: 2 },
                 { name: "일본", nameEn: "Japan", conf: "AFC", rank: 16, elo: 1878, delta: -35, code: "jp", tier: "B", stars: 0 }, 
-                { name: "스위스", nameEn: "Switzerland", conf: "UEFA", rank: 17, elo: 1850, delta: 20, code: "ch", tier: "B", stars: 0 }, // Super Nerfed: 1897->1850
+                { name: "스위스", nameEn: "Switzerland", conf: "UEFA", rank: 17, elo: 1850, delta: 20, code: "ch", tier: "B", stars: 0 },
                 { name: "세네갈", nameEn: "Senegal", conf: "CAF", rank: 19, elo: 1803, delta: 33, code: "sn", tier: "B", stars: 0 },
                 { name: "이란", nameEn: "Iran", conf: "AFC", rank: 20, elo: 1754, delta: -83, code: "ir", tier: "B", stars: 0 },
                 { name: "대한민국", nameEn: "South Korea", conf: "AFC", rank: 22, elo: 1784, delta: 10, code: "kr", tier: "C", stars: 0 }, 
@@ -685,7 +655,7 @@
                 { name: "호주", nameEn: "Australia", conf: "AFC", rank: 25, elo: 1774, delta: 55, code: "au", tier: "C", stars: 0 }        
             ],
             pot3: [
-                { name: "노르웨이", nameEn: "Norway", conf: "UEFA", rank: 29, elo: 1840, delta: 30, code: "no", tier: "A", buff: true }, // Super Nerfed: 1922->1840
+                { name: "노르웨이", nameEn: "Norway", conf: "UEFA", rank: 29, elo: 1840, delta: 30, code: "no", tier: "A", buff: true },
                 { name: "파나마", nameEn: "Panama", conf: "CONCACAF", rank: 30, elo: 1742, delta: 16, code: "pa", tier: "C" },
                 { name: "이집트", nameEn: "Egypt", conf: "CAF", rank: 34, elo: 1645, delta: -12, code: "eg", tier: "C" },
                 { name: "알제리", nameEn: "Algeria", conf: "CAF", rank: 35, elo: 1718, delta: 33, code: "dz", tier: "C" },
@@ -701,8 +671,8 @@
             pot4: [
                 { name: "이탈리아", nameEn: "Italy", conf: "UEFA", rank: 12, elo: 1859, delta: -71, code: "it", tier: "A", stars: 4 }, 
                 { name: "덴마크", nameEn: "Denmark", conf: "UEFA", rank: 21, elo: 1864, delta: 8, code: "dk", tier: "B" },   
-                { name: "튀르키예", nameEn: "Turkey", conf: "UEFA", rank: 25, elo: 1780, delta: -20, code: "tr", tier: "B" }, // Ultra Nerfed: 1880->1780, Delta -20
-                { name: "우크라이나", nameEn: "Ukraine", conf: "UEFA", rank: 28, elo: 1802, delta: 0, code: "ua", tier: "C" },
+                { name: "튀르키예", nameEn: "Turkey", conf: "UEFA", rank: 25, elo: 1780, delta: -20, code: "tr", tier: "B" },
+                { name: "스웨덴", nameEn: "Sweden", conf: "UEFA", rank: 28, elo: 1830, delta: 5, code: "se", tier: "B" }, 
                 { name: "콩고민주공화국", nameEn: "DR Congo", conf: "CAF", rank: 56, elo: 1616, delta: 75, code: "cd", tier: "D" }, 
                 { name: "이라크", nameEn: "Iraq", conf: "AFC", rank: 58, elo: 1597, delta: -70, code: "iq", tier: "D" },        
                 { name: "요르단", nameEn: "Jordan", conf: "AFC", rank: 66, elo: 1610, delta: -8, code: "jo", tier: "D" },
@@ -713,6 +683,28 @@
                 { name: "뉴질랜드", nameEn: "New Zealand", conf: "OFC", rank: 86, elo: 1586, delta: 2, code: "nz", tier: "D" }
             ]
         };
+
+        const allTeams = [...pots.pot1, ...pots.pot2, ...pots.pot3, ...pots.pot4];
+        
+        function findTeam(code) {
+            return allTeams.find(t => t.code === code) || { name: code, code: code, elo: 1500, conf: "Unknown" };
+        }
+
+        // --- FIXED GROUPS CONFIGURATION (USER PROVIDED) ---
+        const fixedGroupCodes = [
+            ['mx', 'kr', 'za', 'dk'],    // A: 멕시코 한국 남아공 덴마크
+            ['ca', 'ch', 'qa', 'it'],    // B: 캐나다 스위스 카타르 이탈리아
+            ['br', 'ma', 'gb-sct', 'ht'],// C: 브라질 모로코 스코틀랜드 아이티
+            ['us', 'au', 'py', 'tr'],    // D: 미국 호주 파라과이 튀르키예
+            ['de', 'ec', 'ci', 'cw'],    // E: 독일 에콰도르 코트디부아르 퀴라소
+            ['nl', 'jp', 'tn', 'se'],    // F: 네덜란드 일본 튀니지 스웨덴 (Sweden added)
+            ['be', 'ir', 'eg', 'nz'],    // G: 벨기에 이란 이집트 뉴질랜드
+            ['es', 'uy', 'sa', 'cv'],    // H: 스페인 우루과이 사우디아라비아 카보베르데
+            ['fr', 'sn', 'no', 'iq'],    // I: 프랑스 세네갈 노르웨이 이라크
+            ['ar', 'at', 'dz', 'jo'],    // J: 아르헨티나 오스트리아 알제리 요르단
+            ['pt', 'co', 'uz', 'cd'],    // K: 포르투갈 콜롬비아 우즈베키스탄 콩고민주공화국
+            ['gb-eng', 'hr', 'pa', 'gh'] // L: 잉글랜드 크로아티아 파나마 가나
+        ];
 
         // Async Helpers
         const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -747,7 +739,7 @@
         function populateCountrySelect() {
             const select = document.getElementById('targetCountrySelect');
             const simSelect = document.getElementById('simTargetSelect');
-            const allTeams = [...pots.pot1, ...pots.pot2, ...pots.pot3, ...pots.pot4];
+            
             allTeams.sort((a,b) => getTeamName(a).localeCompare(getTeamName(b)));
             
             [select, simSelect].forEach(sel => {
@@ -772,9 +764,7 @@
             if(tournamentState.active) renderBracket();
         }
 
-        // Updated Function: Accepts Team Objects to apply Delta (Form)
         function getExpectedScore(tA, tB, isTournament = false) {
-            // Apply 1-Year Delta as a "Form" Bonus/Penalty to Elo
             const formMultiplier = isTournament ? 1.3 : 1.5;
 
             let formA = tA.delta || 0;
@@ -808,8 +798,6 @@
                 groupDiv.id = `group-card-${name}`;
                 groupDiv.className = 'group-card rounded-lg p-3 md:p-4 flex flex-col h-full relative';
                 
-                const logistic = groupLogistics[name];
-
                 groupDiv.innerHTML = `<div class="border-b border-slate-600 pb-2 mb-2 flex justify-between items-center"><span class="text-lg md:text-xl font-black text-white italic">GROUP ${name}</span></div>
                 <div class="flex-grow" id="group-${name}-content"><ul class="space-y-2" id="group-${name}-list"></ul></div>`;
                 
@@ -829,134 +817,15 @@
 
         function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
         
-        function solveBipartite(groups, teams, groupIndices, futureUEFA = 0) {
-            if (teams.length === 0) return true;
-            let team = teams[0]; let remainingTeams = teams.slice(1);
-            if (team.conf === 'UEFA') {
-                groupIndices.sort((a, b) => {
-                    const uefaA = groups[a].filter(t => t.conf === 'UEFA').length;
-                    const uefaB = groups[b].filter(t => t.conf === 'UEFA').length;
-                    return uefaA - uefaB;
-                });
-            } else { shuffle(groupIndices); }
-
-            for (let i = 0; i < groupIndices.length; i++) {
-                let gIdx = groupIndices[i];
-                const confCounts = {}; groups[gIdx].forEach(t => { confCounts[t.conf] = (confCounts[t.conf] || 0) + 1; });
-                let isValid = true;
-                
-                if (team.conf === 'UEFA') { 
-                    if ((confCounts['UEFA'] || 0) >= 2) isValid = false; 
-                    if (isValid && (confCounts['UEFA'] || 0) > 0) {
-                        const groupsWithZeroUEFA = groups.filter(g => !g.some(t => t.conf === 'UEFA')).length;
-                        const currentPotUEFA = teams.filter(t => t.conf === 'UEFA').length;
-                        const totalAvailableUEFA = currentPotUEFA + futureUEFA;
-                        if (totalAvailableUEFA <= groupsWithZeroUEFA) isValid = false;
-                    }
-                } else { 
-                    if ((confCounts[team.conf] || 0) >= 1) isValid = false; 
-                }
-
-                if (isValid && team.code === 'iq') {
-                    if ((confCounts['CONMEBOL'] || 0) > 0 || (confCounts['CONCACAF'] || 0) > 0) isValid = false;
-                }
-                
-                if (isValid) {
-                    groups[gIdx].push(team);
-                    let remainingIndices = groupIndices.filter(val => val !== gIdx);
-                    if (solveBipartite(groups, remainingTeams, remainingIndices, futureUEFA)) return true;
-                    groups[gIdx].pop();
-                }
-            }
-            return false;
-        }
-
         function generateOneSimulation() {
-            let simGroups = Array(12).fill(null).map(() => []);
-            const deepCopyPot = (potArr) => potArr.map(t => ({...t}));
-            const countUEFA = (arr) => arr.filter(t => t.conf === 'UEFA').length;
-
-            let pot1 = deepCopyPot(pots.pot1);
-            
-            // 1. Separate Hosts (Mexico, USA, Canada) - Keep Fixed
-            const hosts = pot1.filter(t => t.fixedGroup !== undefined);
-            hosts.forEach(host => simGroups[host.fixedGroup].push(host));
-
-            // 2. Separate "Big 4" (Spain, Argentina, France, England)
-            const big4Codes = ['es', 'ar', 'fr', 'gb-eng'];
-            const big4 = pot1.filter(t => big4Codes.includes(t.code));
-            
-            // 3. Separate Remaining Pot 1 Teams
-            const rest = pot1.filter(t => t.fixedGroup === undefined && !big4Codes.includes(t.code));
-
-            // 4. Cluster Distribution Logic
-            // ACL Cluster (Groups A, C, L -> Indices 0, 2, 11). Hosts: A(0). Avail: 2, 11.
-            // BJK Cluster (Groups B, J, K -> Indices 1, 9, 10). Hosts: B(1). Avail: 9, 10.
-            // DGH Cluster (Groups D, G, H -> Indices 3, 6, 7). Hosts: D(3). Avail: 6, 7.
-            // EFI Cluster (Groups E, F, I -> Indices 4, 5, 8). Hosts: None. Avail: 4, 5, 8.
-            const clusterSlots = [
-                [2, 11],    // Cluster 1: ACL (Avail)
-                [9, 10],    // Cluster 2: BJK (Avail)
-                [6, 7],     // Cluster 3: DGH (Avail)
-                [4, 5, 8]   // Cluster 4: EFI (Avail)
-            ];
-
-            // Shuffle Big 4 to randomize which team goes to which cluster
-            const shuffledBig4 = shuffle([...big4]);
-            
-            // Create a randomized order of clusters to assign to
-            // e.g., if order is [0, 1, 2, 3], Big4[0] goes to Cluster[0]...
-            // Shuffling clusters isn't strictly necessary if Big4 is shuffled, but good for robust randomness.
-            let clusterOrder = shuffle([0, 1, 2, 3]);
-
-            const usedSlots = [];
-
-            // Assign one Big 4 team to each cluster
-            for(let i=0; i<4; i++) {
-                const team = shuffledBig4[i];
-                const cIdx = clusterOrder[i];
-                const availableIndices = clusterSlots[cIdx];
-                
-                // Pick a random slot within the chosen cluster
-                const chosenSlot = availableIndices[Math.floor(Math.random() * availableIndices.length)];
-                
-                simGroups[chosenSlot].push(team);
-                usedSlots.push(chosenSlot);
-            }
-
-            // 5. Fill remaining Pot 1 slots with the rest
-            // Calculate remaining empty slots
-            let emptyGroupIndices = [];
-            for (let i=0; i<12; i++) { 
-                if (simGroups[i].length === 0) emptyGroupIndices.push(i); 
-            }
-            
-            // Assign remaining teams
-            const shuffledRest = shuffle([...rest]);
-            for (let i=0; i<shuffledRest.length; i++) { 
-                simGroups[emptyGroupIndices[i]].push(shuffledRest[i]); 
-            }
-            
-            // Continue with Pot 2, 3, 4...
-            const uefaP2 = countUEFA(pots.pot2);
-            const uefaP3 = countUEFA(pots.pot3);
-            const uefaP4 = countUEFA(pots.pot4);
-
-            const fillPot = (potName, futureUEFAVal) => {
-                let teams = shuffle(deepCopyPot(pots[potName]));
-                if(potName === 'pot4') {
-                    teams.sort((a,b) => (a.code === 'iq' ? -1 : b.code === 'iq' ? 1 : 0));
-                }
-
-                let availableGroupIndices = [0,1,2,3,4,5,6,7,8,9,10,11];
-                if (!solveBipartite(simGroups, teams, availableGroupIndices, futureUEFAVal)) throw new Error("Deadlock");
-            };
-            
-            fillPot('pot2', uefaP3 + uefaP4); 
-            fillPot('pot3', uefaP4); 
-            fillPot('pot4', 0);
-
-            simGroups.forEach(g => g.forEach(t => { t.pts = 0; t.gf = 0; t.ga = 0; t.gd = 0; t.played = 0; }));
+            // Updated to return FIXED GROUPS based on User Request
+            const simGroups = fixedGroupCodes.map(groupCodes => {
+                return groupCodes.map(code => {
+                    const teamData = findTeam(code);
+                    // Clone to avoid reference issues across simulations
+                    return { ...teamData, pts: 0, gf: 0, ga: 0, gd: 0, played: 0 };
+                });
+            });
             return simGroups;
         }
         
@@ -973,99 +842,51 @@
             return schedule;
         }
 
-        // --- WEIGHTED PK LOGIC v3 ---
+        // --- WEIGHTED PK LOGIC ---
         function simulatePK(teamA, teamB) {
-            // Outcomes based on provided distribution
-            // High Freq: 4-3, 4-2, 5-4
-            // Mid Freq: 3-2, 3-1, 5-3, 6-5, 4-1, 7-6, 3-0
-            // Low Freq: 8-7, 2-1, 9-8, 2-0, 10-9, 11-10, 12-11, 13-12, 14-13, 1-0
-            
             const scenarios = [
-                { w: 4, l: 3, weight: 25 }, // 4-3 (Highest)
-                { w: 4, l: 2, weight: 20 }, // 4-2
-                { w: 5, l: 4, weight: 15 }, // 5-4
-                { w: 3, l: 2, weight: 8 },
-                { w: 3, l: 1, weight: 6 },
-                { w: 5, l: 3, weight: 6 },
-                { w: 6, l: 5, weight: 5 }, // Sudden Death Start
-                { w: 4, l: 1, weight: 4 },
-                { w: 7, l: 6, weight: 3 },
-                { w: 3, l: 0, weight: 3 },
-                { w: 8, l: 7, weight: 2 },
-                { w: 2, l: 1, weight: 1 },
-                { w: 9, l: 8, weight: 1 },
-                { w: 2, l: 0, weight: 0.5 },
-                { w: 10, l: 9, weight: 0.5 }
+                { w: 4, l: 3, weight: 25 }, { w: 4, l: 2, weight: 20 }, { w: 5, l: 4, weight: 15 },
+                { w: 3, l: 2, weight: 8 }, { w: 3, l: 1, weight: 6 }, { w: 5, l: 3, weight: 6 },
+                { w: 6, l: 5, weight: 5 }, { w: 4, l: 1, weight: 4 }, { w: 7, l: 6, weight: 3 },
+                { w: 3, l: 0, weight: 3 }, { w: 8, l: 7, weight: 2 }, { w: 2, l: 1, weight: 1 },
+                { w: 9, l: 8, weight: 1 }, { w: 2, l: 0, weight: 0.5 }, { w: 10, l: 9, weight: 0.5 }
             ];
 
-            // Weighted Random Selection
             let totalWeight = scenarios.reduce((sum, s) => sum + s.weight, 0);
             let rand = Math.random() * totalWeight;
             let chosen = scenarios[0];
-            for(let s of scenarios) {
-                if(rand < s.weight) { chosen = s; break; }
-                rand -= s.weight;
-            }
+            for(let s of scenarios) { if(rand < s.weight) { chosen = s; break; } rand -= s.weight; }
 
-            // Determine Winner
-            // Elo based probability
             const winProbA = 0.5 + ((teamA.elo - teamB.elo) * 0.0005);
             let winner = Math.random() < winProbA ? teamA : teamB;
             let scoreA = winner === teamA ? chosen.w : chosen.l;
             let scoreB = winner === teamB ? chosen.w : chosen.l;
 
-            // Generate Kicks Sequence to Match Score
-            let kicksA = [];
-            let kicksB = [];
-
-            // Fill with O's based on score
+            let kicksA = [], kicksB = [];
             for(let i=0; i<scoreA; i++) kicksA.push('O');
             for(let i=0; i<scoreB; i++) kicksB.push('O');
 
-            // Calculate Misses (X) needed
-            const targetScoreW = chosen.w;
-            const targetScoreL = chosen.l;
-
-            let finalKicksW = [];
-            let finalKicksL = [];
+            const targetScoreW = chosen.w; const targetScoreL = chosen.l;
+            let finalKicksW = [], finalKicksL = [];
 
             if (targetScoreW <= 5) {
-                // Fill O's
                 for(let i=0; i<targetScoreW; i++) finalKicksW.push('O');
                 for(let i=0; i<targetScoreL; i++) finalKicksL.push('O');
-                // Fill X's to reach realistic kick count (usually 4 or 5)
-                let rounds = 5;
-                if (targetScoreW === 3 && targetScoreL === 0) rounds = 3; 
-                else if (targetScoreW === 3 && targetScoreL === 1) rounds = 4;
-                
+                let rounds = 5; if (targetScoreW === 3 && targetScoreL === 0) rounds = 3; else if (targetScoreW === 3 && targetScoreL === 1) rounds = 4;
                 while(finalKicksW.length < rounds) finalKicksW.push('X');
                 while(finalKicksL.length < rounds) finalKicksL.push('X');
-                
-                shuffle(finalKicksW);
-                shuffle(finalKicksL);
+                shuffle(finalKicksW); shuffle(finalKicksL);
             } else {
-                // Sudden Death (>5)
-                // First 5 must be tie. Let's say 4-4 or 5-5.
-                let tieScore = 4; // Common tie
-                if (Math.random() > 0.5) tieScore = 5;
-                
+                let tieScore = Math.random() > 0.5 ? 5 : 4; 
                 for(let i=0; i<tieScore; i++) { finalKicksW.push('O'); finalKicksL.push('O'); }
                 while(finalKicksW.length < 5) { finalKicksW.push('X'); finalKicksL.push('X'); }
                 shuffle(finalKicksW); shuffle(finalKicksL);
-
-                // Add sudden death kicks (Winner O, Loser O ... until Winner O, Loser X)
                 let extra = targetScoreW - tieScore;
                 for(let i=0; i<extra-1; i++) { finalKicksW.push('O'); finalKicksL.push('O'); }
-                finalKicksW.push('O'); finalKicksL.push('X'); // The deciding kick
+                finalKicksW.push('O'); finalKicksL.push('X');
             }
 
-            // Assign to A/B
-            if (winner === teamA) {
-                kicksA = finalKicksW; kicksB = finalKicksL;
-            } else {
-                kicksA = finalKicksL; kicksB = finalKicksW;
-            }
-
+            if (winner === teamA) { kicksA = finalKicksW; kicksB = finalKicksL; } else { kicksA = finalKicksL; kicksB = finalKicksW; }
             return { scoreA, scoreB, kicksA, kicksB, winner, rounds: kicksA.length };
         }
 
@@ -1094,26 +915,18 @@
 
             if (result.isPK) {
                 let pkDisplay = node.querySelector('.pk-display');
-                if(!pkDisplay) {
-                    pkDisplay = document.createElement('div');
-                    pkDisplay.className = 'pk-display';
-                    node.appendChild(pkDisplay);
-                }
+                if(!pkDisplay) { pkDisplay = document.createElement('div'); pkDisplay.className = 'pk-display'; node.appendChild(pkDisplay); }
                 
                 pkDisplay.innerText = "PK...";
                 await sleep(600);
 
                 const { kicksA, kicksB, pkA, pkB } = result;
-
-                // --- VISUAL FIX: Always slice first 5 kicks ---
                 let displayKicksA = kicksA.slice(0, 5);
                 let displayKicksB = kicksB.slice(0, 5);
                 
                 let html = `<span class="${pkA > pkB ? 'text-yellow-400' : 'text-slate-400'} tracking-widest mr-2 flex gap-1">`;
                 displayKicksA.forEach(k => html += k === 'O' ? '<span class="pk-o">O</span>' : '<span class="pk-x">X</span>');
-                
                 html += `</span> <span class="text-white mx-1 text-[10px] font-mono border border-slate-600 px-1 rounded bg-slate-800">${pkA}:${pkB}</span> <span class="${pkB > pkA ? 'text-yellow-400' : 'text-slate-400'} tracking-widest ml-2 flex gap-1">`;
-                
                 displayKicksB.forEach(k => html += k === 'O' ? '<span class="pk-o">O</span>' : '<span class="pk-x">X</span>');
                 html += `</span>`;
                 pkDisplay.innerHTML = html;
@@ -1123,7 +936,6 @@
                 if(!pkDisplay) { pkDisplay = document.createElement('div'); pkDisplay.className = 'pk-display'; node.appendChild(pkDisplay); }
                 pkDisplay.innerText = "(ET)";
             }
-
             node.classList.remove('live-match');
         }
 
@@ -1370,41 +1182,23 @@
             isMatchAnimating = false;
         }
 
-        // --- BATCH SIMULATION (DATA CENTER) ---
+        // --- BATCH SIMULATION ---
         async function runBatchSimulation() {
             const reportDiv = document.getElementById('reportResults');
             const loadingDiv = document.getElementById('simLoading');
             reportDiv.classList.add('hidden');
             loadingDiv.classList.remove('hidden');
 
-            await sleep(100); // UI render
+            await sleep(100); 
 
             const iterations = 100;
             const stats = { winners: {}, nemesis: {}, rounds: { r32:0, r16:0, qf:0, sf:0, final:0, winner:0, groupOut:0 } };
-            let targetGroupsCollected = []; // Collect groups containing target
+            let targetGroupsCollected = []; 
 
-            // Run Monte Carlo
             for(let i=0; i<iterations; i++) {
-                // Use CURRENT groups if available, otherwise generate fresh
-                // ** DEADLOCK FIX **: Wrap generation in try-catch loop
-                let simGroups = null;
-                let attempts = 0;
-                while(simGroups === null && attempts < 50) {
-                    try {
-                        if (i === 0 && liveDrawState.groups && liveDrawState.groups.length > 0) {
-                             simGroups = JSON.parse(JSON.stringify(liveDrawState.groups));
-                        } else {
-                             simGroups = generateOneSimulation();
-                        }
-                    } catch (e) {
-                        attempts++; // Retry silently
-                    }
-                }
-                if (!simGroups) continue; // Should not happen with retries, but safe guard
+                let simGroups = generateOneSimulation(); // Now always fixed groups
 
-                // 1. Group Stage
                 simGroups.forEach(g => {
-                    // Find Target Group for Analysis
                     if(g.some(t => t.code === simTargetCode)) {
                         const avg = g.reduce((a,b)=>a+b.elo,0)/4;
                         targetGroupsCollected.push({ avgElo: avg, teams: g, id: groupNames[simGroups.indexOf(g)] });
@@ -1420,7 +1214,6 @@
                     g.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.elo - a.elo);
                 });
 
-                // 2. Qualifiers
                 let qualified = [];
                 let thirds = [];
                 simGroups.forEach((g, idx) => {
@@ -1431,14 +1224,10 @@
                 thirds.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.elo - a.elo);
                 const top8Thirds = thirds.slice(0, 8);
                 
-                // Check Target Status
                 let targetStage = "groupOut";
-                let tTeam = null;
-                // Find target in simGroups to see result
                 for(let g of simGroups) {
                     const found = g.find(t => t.code === simTargetCode);
                     if(found) {
-                        tTeam = found;
                         const rank = g.indexOf(found);
                         if(rank < 2) targetStage = "r32";
                         else if (rank === 2) {
@@ -1447,51 +1236,35 @@
                     }
                 }
                 
-                // 3. Tournament Sim (Simplified)
                 if (targetStage !== "groupOut") {
                     let survivors = [...qualified, ...top8Thirds];
-                    // R32 -> R16 -> QF -> SF -> F -> Winner
                     let currentRound = survivors;
                     let roundNames = ["r32", "r16", "qf", "sf", "final", "winner"];
                     
-                    for(let r=0; r<5; r++) { // 5 rounds
+                    for(let r=0; r<5; r++) { 
                         let nextRound = [];
                         currentRound.sort(() => Math.random() - 0.5);
-                        
                         for(let k=0; k<currentRound.length; k+=2) {
-                            const p1 = currentRound[k]; 
-                            const p2 = currentRound[k+1];
+                            const p1 = currentRound[k]; const p2 = currentRound[k+1];
                             const res = getExpectedScore(p1, p2, true);
                             let winner = (res.a > res.b) ? p1 : ((res.b > res.a) ? p2 : (Math.random() > 0.5 ? p1 : p2)); 
-                            
                             nextRound.push(winner);
-                            
-                            // Track Nemesis
-                            if(p1.code === simTargetCode) {
-                                if(winner !== p1) stats.nemesis[p2.name] = (stats.nemesis[p2.name] || 0) + 1;
-                            } else if (p2.code === simTargetCode) {
-                                if(winner !== p2) stats.nemesis[p1.name] = (stats.nemesis[p1.name] || 0) + 1;
-                            }
+                            if(p1.code === simTargetCode && winner !== p1) stats.nemesis[p2.name] = (stats.nemesis[p2.name] || 0) + 1;
+                            else if (p2.code === simTargetCode && winner !== p2) stats.nemesis[p1.name] = (stats.nemesis[p1.name] || 0) + 1;
                         }
-                        
-                        if(nextRound.find(t => t.code === simTargetCode)) {
-                             targetStage = roundNames[r+1];
-                        }
+                        if(nextRound.find(t => t.code === simTargetCode)) targetStage = roundNames[r+1];
                         currentRound = nextRound;
                     }
                     const champ = currentRound[0];
                     stats.winners[champ.name] = (stats.winners[champ.name] || 0) + 1;
                 }
-                
                 stats.rounds[targetStage]++;
             }
 
-            // Render Round Stats
             const rContainer = document.getElementById('roundStatsContainer');
             rContainer.innerHTML = '';
             const orderedKeys = ['groupOut', 'r32', 'r16', 'qf', 'sf', 'final', 'winner'];
             const roundLabels = { groupOut: "조별 탈락", r32: "32강", r16: "16강", qf: "8강", sf: "4강", final: "결승", winner: "우승" };
-            const maxVal = Math.max(...Object.values(stats.rounds));
             
             orderedKeys.forEach(key => {
                 const count = stats.rounds[key];
@@ -1500,39 +1273,10 @@
                     const width = (count / iterations * 100); 
                     const colorClass = key === 'groupOut' ? 'bg-red-600' : (key === 'winner' ? 'bg-yellow-500' : 'bg-emerald-500');
                     const textClass = key === 'groupOut' ? 'text-red-400 font-bold' : (key === 'winner' ? 'text-yellow-400 font-bold' : 'text-slate-300');
-                    
-                    rContainer.innerHTML += `
-                        <div class="stat-row">
-                            <div class="stat-label"><span class="${textClass}">${roundLabels[key]}</span><span>${count}회 (${percent}%)</span></div>
-                            <div class="stat-track"><div class="stat-fill ${colorClass}" style="width: ${width}%"></div></div>
-                        </div>
-                    `;
+                    rContainer.innerHTML += `<div class="stat-row"><div class="stat-label"><span class="${textClass}">${roundLabels[key]}</span><span>${count}회 (${percent}%)</span></div><div class="stat-track"><div class="stat-fill ${colorClass}" style="width: ${width}%"></div></div></div>`;
                 }
             });
 
-            // Render Target Specific Group Analysis
-            if (targetGroupsCollected.length > 0) {
-                targetGroupsCollected.sort((a,b) => b.avgElo - a.avgElo); // Sort Descending Elo
-                const worstG = targetGroupsCollected[0]; // Highest Avg Elo
-                const bestG = targetGroupsCollected[targetGroupsCollected.length - 1]; // Lowest Avg Elo
-
-                const renderGroupInfo = (g, containerId) => {
-                    const div = document.getElementById(containerId);
-                    div.innerHTML = `
-                        <div class="flex justify-between items-center mb-2 border-b border-slate-700 pb-1">
-                            <span class="font-bold text-white">Group ${g.id}</span>
-                            <span class="text-xs text-slate-400">Avg Elo: ${Math.round(g.avgElo)}</span>
-                        </div>
-                        <ul class="space-y-1">
-                            ${g.teams.map(t => `<li class="flex items-center text-xs ${t.code === simTargetCode ? 'text-yellow-400 font-bold' : 'text-slate-300'}"><img src="https://flagcdn.com/w20/${t.code}.png" class="w-4 h-3 mr-2">${getTeamName(t)}</li>`).join('')}
-                        </ul>
-                    `;
-                };
-                renderGroupInfo(worstG, 'worstCaseContent');
-                renderGroupInfo(bestG, 'bestCaseContent');
-            }
-
-            // Render Top 5 Winners
             const sortedWinners = Object.entries(stats.winners).sort((a,b) => b[1] - a[1]).slice(0, 5);
             const wList = document.getElementById('winnerList');
             wList.innerHTML = '';
@@ -1540,7 +1284,6 @@
                  wList.innerHTML += `<li class="flex justify-between items-center bg-slate-900/50 p-2 rounded"><span class="font-bold ${idx===0?'text-yellow-400':'text-slate-300'}">${idx+1}. ${name}</span><span class="text-emerald-400 font-mono">${count}회</span></li>`;
             });
 
-            // Render Nemesis
             const sortedNemesis = Object.entries(stats.nemesis).sort((a,b) => b[1] - a[1]).slice(0, 5);
             const nList = document.getElementById('nemesisList');
             nList.innerHTML = '';
@@ -1548,9 +1291,7 @@
             else sortedNemesis.forEach(([name, count]) => {
                 nList.innerHTML += `<li class="flex justify-between items-center bg-slate-900/50 p-2 rounded"><span class="text-slate-300">${name}</span><span class="text-red-400 font-mono">${count}회</span></li>`;
             });
-
-            loadingDiv.classList.add('hidden');
-            reportDiv.classList.remove('hidden');
+            loadingDiv.classList.add('hidden'); reportDiv.classList.remove('hidden');
         }
 
         function showWinnerCeremony(team) {
@@ -1563,8 +1304,6 @@
         }
         function closeWinnerModal() { document.getElementById('winnerModal').classList.add('hidden'); if(confettiAnimationId) cancelAnimationFrame(confettiAnimationId); const ctx = document.getElementById('confetti-canvas').getContext('2d'); ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); }
         function fireConfetti() { const canvas = document.getElementById('confetti-canvas'); const ctx = canvas.getContext('2d'); canvas.width = window.innerWidth; canvas.height = window.innerHeight; const pieces = []; for(let i=0; i<300; i++) pieces.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height-canvas.height, color: ['#f00', '#0f0', '#00f', '#ff0'][Math.floor(Math.random()*4)], size: Math.random()*10+5 }); function draw() { ctx.clearRect(0, 0, canvas.width, canvas.height); pieces.forEach(p => { ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y+=5, p.size, p.size); if(p.y > canvas.height) p.y = -10; }); confettiAnimationId = requestAnimationFrame(draw); } draw(); }
-        function toggleR32() { const col = document.getElementById('col-r32'); const btn = document.getElementById('r32CollapseBtn'); if(col) { col.classList.toggle('collapsed'); btn.innerHTML = col.classList.contains('collapsed') ? `<i class="fas fa-chevron-right mr-1"></i>${translations[currentLang].expand32}` : `<i class="fas fa-chevron-left mr-1"></i>${translations[currentLang].collapse32}`; } }
-        function updateTournamentStatus() { const statusDiv = document.getElementById('tournamentStatusText'); if(!tournamentState.active) { if(statusDiv) statusDiv.innerText = "Finished"; return; } statusDiv.innerText = `${tournamentState.rounds[tournamentState.currentRoundIndex].name} - Match ${tournamentState.currentMatchIndex + 1}/${tournamentState.rounds[tournamentState.currentRoundIndex].matches.length}`; }
 
         function renderBracket() {
             const container = document.getElementById('tournamentBracket'); if(!container) return; let html = '';
@@ -1589,19 +1328,10 @@
         }
 
         function switchTab(tabId) {
-            // 1. Handle Tab Buttons & Sections
             ['draw', 'tournament', 'report'].forEach(t => { 
-                const btn = document.getElementById(`tab-${t}`); 
-                const section = document.getElementById(`section-${t}`); 
-                if (t === tabId) { 
-                    btn.classList.remove('tab-inactive', 'hidden'); 
-                    btn.classList.add('tab-active'); 
-                    section.classList.remove('hidden'); 
-                } else { 
-                    btn.classList.remove('tab-active'); 
-                    btn.classList.add('tab-inactive'); 
-                    section.classList.add('hidden'); 
-                } 
+                const btn = document.getElementById(`tab-${t}`); const section = document.getElementById(`section-${t}`); 
+                if (t === tabId) { btn.classList.remove('tab-inactive', 'hidden'); btn.classList.add('tab-active'); section.classList.remove('hidden'); } 
+                else { btn.classList.remove('tab-active'); btn.classList.add('tab-inactive'); section.classList.add('hidden'); } 
             });
             
             const footer = document.getElementById('drawController');
@@ -1610,166 +1340,64 @@
             const widget = document.getElementById('happinessWidget');
 
             if (tabId === 'report') {
-                // Hide ALL controls
                 if(footer) footer.style.display = 'none';
                 if(initial) initial.style.display = 'none';
                 if(toggleBtn) toggleBtn.style.display = 'none';
                 if(widget) widget.classList.remove('active');
-                if(toggleBtn) toggleBtn.classList.remove('open');
             } 
             else {
-                // Logic for Draw/Tournament Tabs
-                
-                // 1. Determine if we are in "Initial State" or "Running State"
                 const isRunning = liveDrawState.active || tournamentState.active;
-
                 if (!isRunning) {
-                    // Not started yet -> Show Initial, Hide Footer
                     if(initial) initial.style.display = 'flex'; 
                     if(footer) footer.style.display = 'none';
                     if(toggleBtn) toggleBtn.style.display = 'none';
                 } else {
-                    // Started -> Show Footer, Hide Initial
                     if(initial) initial.style.display = 'none';
                     if(footer) footer.style.display = 'flex';
                     if(toggleBtn) toggleBtn.style.display = 'flex';
                 }
 
-                // 2. Specific Tab Logic
                 if(tabId === 'tournament' && tournamentState.active) { 
-                    document.getElementById('drawControlsGroup').classList.add('hidden'); 
                     document.getElementById('leagueControlsGroup').classList.add('hidden'); 
                     document.getElementById('tournamentControlsGroup').classList.remove('hidden'); 
                     document.getElementById('tournamentControlsGroup').classList.add('flex'); 
-                    
                     if(widget) widget.classList.remove('active');
-                    if(toggleBtn) toggleBtn.classList.remove('open');
                 }
                 else if (tabId === 'draw') { 
-                    if(liveDrawState.currentStep >= 48) { 
-                        // League Phase
-                        document.getElementById('drawControlsGroup').classList.add('hidden'); 
-                        document.getElementById('leagueControlsGroup').classList.remove('hidden'); 
-                        document.getElementById('leagueControlsGroup').classList.add('flex'); 
-                        
-                        if(widget && isRunning) widget.classList.add('active');
-                        if(toggleBtn && isRunning) {
-                            toggleBtn.style.display = 'flex';
-                            toggleBtn.classList.add('open');
-                        }
-                    } else { 
-                        // Draw Phase
-                        document.getElementById('drawControlsGroup').classList.remove('hidden'); 
-                        document.getElementById('leagueControlsGroup').classList.add('hidden'); 
-                        document.getElementById('tournamentControlsGroup').classList.add('hidden'); 
-                        if(widget) widget.classList.remove('active');
-                        if(toggleBtn) toggleBtn.classList.remove('open');
-                    } 
+                     document.getElementById('leagueControlsGroup').classList.remove('hidden'); 
+                     document.getElementById('leagueControlsGroup').classList.add('flex'); 
+                     document.getElementById('tournamentControlsGroup').classList.add('hidden'); 
+                     if(widget && isRunning) widget.classList.add('active');
                 }
             }
         }
         function resetDraw() { location.reload(); }
         
-        // Re-declare missing functions
-        function startLiveDraw() {
-            if(isDrawing) return;
+        // Use this to simply START THE SIMULATION with Fixed Groups
+        function startSimulationMode() {
             initGrid();
-            let success = false, attempts = 0, finalGroups = [];
-            while (!success && attempts < 1000) { attempts++; try { finalGroups = generateOneSimulation(); success = true; } catch (e) {} }
+            const finalGroups = generateOneSimulation(); // Returns Fixed Groups
             const schedule = generateSchedule(finalGroups);
-            liveDrawState = { active: true, groups: finalGroups, currentPot: 0, currentGroupIndex: 0, currentStep: 0, totalSteps: 48, currentLeagueRound: 0, groupSchedule: schedule };
-            document.getElementById('initialControls').style.display = 'none';
-            document.getElementById('drawController').style.display = 'flex';
-            document.getElementById('drawControlsGroup').classList.remove('hidden');
-            document.getElementById('leagueControlsGroup').classList.add('hidden');
-            document.getElementById('tournamentControlsGroup').classList.add('hidden');
-            document.getElementById('happinessWidget').classList.remove('active');
-            document.getElementById('widgetToggle').classList.remove('open');
-            updateStatusText(); updateHappinessCircuit();
-        }
-
-        function startSingleDraw() {
-            initGrid();
-            let success = false, attempts = 0, finalGroups = [];
-            while (!success && attempts < 1000) { attempts++; try { finalGroups = generateOneSimulation(); success = true; } catch (e) {} }
-            const schedule = generateSchedule(finalGroups);
+            
+            // Set state to "League Ready"
             liveDrawState = { active: true, groups: finalGroups, currentPot: 4, currentGroupIndex: 0, currentStep: 48, totalSteps: 48, currentLeagueRound: 0, groupSchedule: schedule };
+            
             document.getElementById('initialControls').style.display = 'none';
             document.getElementById('drawController').style.display = 'flex';
-            document.getElementById('drawControlsGroup').classList.add('hidden');
             document.getElementById('leagueControlsGroup').classList.remove('hidden'); document.getElementById('leagueControlsGroup').classList.add('flex');
+            document.getElementById('tournamentControlsGroup').classList.add('hidden');
             
             const widget = document.getElementById('happinessWidget');
             const toggle = document.getElementById('widgetToggle');
             widget.classList.add('active');
             toggle.classList.add('open');
+            toggle.style.display = 'flex';
 
              liveDrawState.groups.forEach((group, idx) => {
                 const ul = document.getElementById(`group-${groupNames[idx]}-list`);
                 if(ul) { ul.innerHTML = ''; group.forEach(team => ul.appendChild(createTeamElement(team))); }
             });
             updateLeagueTableDisplay();
-        }
-
-        function updateStatusText() {
-            const pot = liveDrawState.currentPot + 1;
-            const group = groupNames[liveDrawState.currentGroupIndex];
-            document.getElementById('drawStatusText').innerHTML = `<span class="text-slate-400 font-normal">Next:</span> <span class="text-emerald-400">POT ${pot}</span> <span class="text-white">→ Group ${group}</span>`;
-        }
-
-        async function drawNextStep() {
-            if(!liveDrawState.active) return;
-            const btn = document.getElementById('lotteryBtn'); if(btn) btn.disabled = true;
-            const targetTeam = liveDrawState.groups[liveDrawState.currentGroupIndex][liveDrawState.currentPot];
-            const groupName = groupNames[liveDrawState.currentGroupIndex];
-            await spinLottery(targetTeam, liveDrawState.currentPot + 1);
-            const ul = document.getElementById(`group-${groupName}-list`);
-            if(ul) {
-                const li = createTeamElement(targetTeam);
-                const placeholder = ul.children[liveDrawState.currentPot];
-                if(placeholder) ul.replaceChild(li, placeholder); else ul.appendChild(li);
-            }
-            document.getElementById(`group-card-${groupName}`).scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
-            
-            liveDrawState.currentGroupIndex++;
-            if(liveDrawState.currentGroupIndex >= 12) { liveDrawState.currentGroupIndex = 0; liveDrawState.currentPot++; }
-            liveDrawState.currentStep++;
-
-            if(liveDrawState.currentStep >= 48) {
-                document.getElementById('drawControlsGroup').classList.add('hidden');
-                document.getElementById('leagueControlsGroup').classList.remove('hidden'); document.getElementById('leagueControlsGroup').classList.add('flex');
-                
-                const widget = document.getElementById('happinessWidget');
-                const toggle = document.getElementById('widgetToggle');
-                widget.classList.add('active');
-                toggle.classList.add('open');
-                
-                updateLeagueTableDisplay(); 
-            } else { updateStatusText(); if(btn) btn.disabled = false; }
-        }
-        
-        async function spinLottery(team, pot) {
-            const modal = document.getElementById('lotteryModal');
-            const title = document.getElementById('lotteryTitle');
-            const content = document.getElementById('spinningContent');
-            modal.classList.remove('hidden');
-            title.innerText = currentLang === 'ko' ? `POT ${pot} 추첨 중...` : `Drawing POT ${pot}...`;
-            const candidates = pots[`pot${pot}`]; 
-            let count = 0;
-            return new Promise(resolve => {
-                const interval = setInterval(() => {
-                    const rand = candidates[Math.floor(Math.random() * candidates.length)];
-                    content.innerHTML = `<img src="https://flagcdn.com/w80/${rand.code}.png" class="w-16 h-10 inline shadow-lg">`;
-                    count++;
-                    if(count > 8) {
-                        clearInterval(interval);
-                        content.innerHTML = `<img src="https://flagcdn.com/w160/${team.code}.png" class="w-24 h-16 inline shadow-2xl border-2 border-emerald-400">`;
-                        title.innerText = getTeamName(team);
-                        title.className = "text-2xl font-black text-emerald-400 mb-2 animate-bounce";
-                        setTimeout(() => { modal.classList.add('hidden'); title.className = "text-lg font-bold text-emerald-400 mb-2"; resolve(); }, 800);
-                    }
-                }, 100);
-            });
         }
 
         function startTournament() {
@@ -1789,43 +1417,33 @@
         }
 
         function initTournamentStructure() {
-            // Build Pool of Qualified Teams (Map by Code to ensure uniqueness)
             const qualifiedTeams = new Map();
             const thirdPlaceCandidates = [];
 
             liveDrawState.groups.forEach((group, idx) => {
                 const sorted = [...group].sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.rank - b.rank);
                 
-                // 1st Place
                 const t1 = { ...sorted[0], group: groupNames[idx], pos: 1 };
                 qualifiedTeams.set(`${groupNames[idx]}1`, t1);
-                qualifiedTeams.set(t1.code, t1); // Lookup by code
+                qualifiedTeams.set(t1.code, t1);
 
-                // 2nd Place
                 const t2 = { ...sorted[1], group: groupNames[idx], pos: 2 };
                 qualifiedTeams.set(`${groupNames[idx]}2`, t2);
                 qualifiedTeams.set(t2.code, t2);
 
-                // 3rd Candidate
                 const t3 = { ...sorted[2], group: groupNames[idx], pos: 3 };
                 thirdPlaceCandidates.push(t3);
             });
 
-            // Sort & Pick Top 8 Thirds
             thirdPlaceCandidates.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.rank - b.rank);
             const top8Thirds = thirdPlaceCandidates.slice(0, 8);
-            
-            // Add Thirds to Map (Using WC1..WC8 or just code)
-            // We'll use a pool for random assignment
             const thirdsPool = shuffle([...top8Thirds]);
-
-            // Helper to safely get team
             const registeredCodes = new Set();
 
             const getTeam = (key) => {
                 const t = qualifiedTeams.get(key);
                 if (t) {
-                    if (registeredCodes.has(t.code)) return null; // Prevent Duplicate
+                    if (registeredCodes.has(t.code)) return null; 
                     registeredCodes.add(t.code);
                     return t;
                 }
@@ -1833,7 +1451,6 @@
             };
 
             const get3rd = () => {
-                // Find a 3rd place team that isn't already used
                 while(thirdsPool.length > 0) {
                     const t = thirdsPool.pop();
                     if(!registeredCodes.has(t.code)) {
@@ -1844,7 +1461,6 @@
                 return { name: "TBD", code: "placeholder" };
             };
 
-            // Construct Round 32 Matches with Anti-Duplicate Check
             const round32 = [
                 { id: 73, p1: getTeam('A2'), p2: getTeam('B2'), venue: "6/28 LA", winner: null },
                 { id: 74, p1: getTeam('E1'), p2: get3rd(), venue: "6/29 Boston", winner: null },
