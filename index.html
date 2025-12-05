@@ -406,10 +406,11 @@
                 <span class="flex items-center text-slate-300"><img src="https://flagcdn.com/w40/ca.png" class="w-4 h-3 mr-1 inline"> B1</span>
                 <span class="flex items-center text-slate-300"><img src="https://flagcdn.com/w40/us.png" class="w-4 h-3 mr-1 inline"> D1</span>
                 <span class="border-l border-slate-600 mx-1 h-3"></span>
-                <span class="flex items-center text-yellow-500" title="Rank 4"><img src="https://flagcdn.com/w40/gb-eng.png" class="w-4 h-3 mr-1 inline"> C1</span>
-                <span class="flex items-center text-yellow-500" title="Rank 3"><img src="https://flagcdn.com/w40/fr.png" class="w-4 h-3 mr-1 inline"> E1</span>
-                <span class="flex items-center text-yellow-500" title="Rank 1"><img src="https://flagcdn.com/w40/es.png" class="w-4 h-3 mr-1 inline"> G1</span>
-                <span class="flex items-center text-yellow-500" title="Rank 2"><img src="https://flagcdn.com/w40/ar.png" class="w-4 h-3 mr-1 inline"> L1</span>
+                <span class="flex items-center text-yellow-500" title="Distributed"><img src="https://flagcdn.com/w40/gb-eng.png" class="w-4 h-3 mr-1 inline"></span>
+                <span class="flex items-center text-yellow-500" title="Distributed"><img src="https://flagcdn.com/w40/fr.png" class="w-4 h-3 mr-1 inline"></span>
+                <span class="flex items-center text-yellow-500" title="Distributed"><img src="https://flagcdn.com/w40/es.png" class="w-4 h-3 mr-1 inline"></span>
+                <span class="flex items-center text-yellow-500" title="Distributed"><img src="https://flagcdn.com/w40/ar.png" class="w-4 h-3 mr-1 inline"></span>
+                <span class="text-[10px] text-yellow-600 font-bold">권역별 분산 (Distributed)</span>
             </div>
             <div id="groupsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 pb-32"></div>
         </section>
@@ -656,10 +657,10 @@
         // --- Nerfed & Balanced Pots Data ---
         const pots = {
             pot1: [
-                { name: "스페인", nameEn: "Spain", conf: "UEFA", rank: 1, elo: 2171, delta: -6, code: "es", tier: "S", stars: 1, fixedGroup: 6 }, 
-                { name: "아르헨티나", nameEn: "Argentina", conf: "CONMEBOL", rank: 2, elo: 2113, delta: 5, code: "ar", tier: "S", stars: 3, fixedGroup: 11 },
-                { name: "프랑스", nameEn: "France", conf: "UEFA", rank: 3, elo: 2062, delta: 7, code: "fr", tier: "S", stars: 2, fixedGroup: 4 },
-                { name: "잉글랜드", nameEn: "England", conf: "UEFA", rank: 4, elo: 2042, delta: 36, code: "gb-eng", tier: "S", stars: 1, fixedGroup: 2 },
+                { name: "스페인", nameEn: "Spain", conf: "UEFA", rank: 1, elo: 2171, delta: -6, code: "es", tier: "S", stars: 1 }, 
+                { name: "아르헨티나", nameEn: "Argentina", conf: "CONMEBOL", rank: 2, elo: 2113, delta: 5, code: "ar", tier: "S", stars: 3 },
+                { name: "프랑스", nameEn: "France", conf: "UEFA", rank: 3, elo: 2062, delta: 7, code: "fr", tier: "S", stars: 2 },
+                { name: "잉글랜드", nameEn: "England", conf: "UEFA", rank: 4, elo: 2042, delta: 36, code: "gb-eng", tier: "S", stars: 1 },
                 { name: "브라질", nameEn: "Brazil", conf: "CONMEBOL", rank: 5, elo: 1978, delta: -18, code: "br", tier: "S", stars: 5 },
                 { name: "포르투갈", nameEn: "Portugal", conf: "UEFA", rank: 6, elo: 1976, delta: -17, code: "pt", tier: "A", stars: 0 },
                 { name: "네덜란드", nameEn: "Netherlands", conf: "UEFA", rank: 7, elo: 1959, delta: 21, code: "nl", tier: "A", stars: 0 },
@@ -876,14 +877,67 @@
             const countUEFA = (arr) => arr.filter(t => t.conf === 'UEFA').length;
 
             let pot1 = deepCopyPot(pots.pot1);
-            let fixedHosts = pot1.filter(t => t.fixedGroup !== undefined);
-            let randomPot1 = pot1.filter(t => t.fixedGroup === undefined);
-            fixedHosts.forEach(host => simGroups[host.fixedGroup].push(host));
-            randomPot1 = shuffle(randomPot1);
-            let emptyGroupIndices = [];
-            for (let i=0; i<12; i++) { if (simGroups[i].length === 0) emptyGroupIndices.push(i); }
-            for (let i=0; i<randomPot1.length; i++) { simGroups[emptyGroupIndices[i]].push(randomPot1[i]); }
             
+            // 1. Separate Hosts (Mexico, USA, Canada) - Keep Fixed
+            const hosts = pot1.filter(t => t.fixedGroup !== undefined);
+            hosts.forEach(host => simGroups[host.fixedGroup].push(host));
+
+            // 2. Separate "Big 4" (Spain, Argentina, France, England)
+            const big4Codes = ['es', 'ar', 'fr', 'gb-eng'];
+            const big4 = pot1.filter(t => big4Codes.includes(t.code));
+            
+            // 3. Separate Remaining Pot 1 Teams
+            const rest = pot1.filter(t => t.fixedGroup === undefined && !big4Codes.includes(t.code));
+
+            // 4. Cluster Distribution Logic
+            // ACL Cluster (Groups A, C, L -> Indices 0, 2, 11). Hosts: A(0). Avail: 2, 11.
+            // BJK Cluster (Groups B, J, K -> Indices 1, 9, 10). Hosts: B(1). Avail: 9, 10.
+            // DGH Cluster (Groups D, G, H -> Indices 3, 6, 7). Hosts: D(3). Avail: 6, 7.
+            // EFI Cluster (Groups E, F, I -> Indices 4, 5, 8). Hosts: None. Avail: 4, 5, 8.
+            const clusterSlots = [
+                [2, 11],    // Cluster 1: ACL (Avail)
+                [9, 10],    // Cluster 2: BJK (Avail)
+                [6, 7],     // Cluster 3: DGH (Avail)
+                [4, 5, 8]   // Cluster 4: EFI (Avail)
+            ];
+
+            // Shuffle Big 4 to randomize which team goes to which cluster
+            const shuffledBig4 = shuffle([...big4]);
+            
+            // Create a randomized order of clusters to assign to
+            // e.g., if order is [0, 1, 2, 3], Big4[0] goes to Cluster[0]...
+            // Shuffling clusters isn't strictly necessary if Big4 is shuffled, but good for robust randomness.
+            let clusterOrder = shuffle([0, 1, 2, 3]);
+
+            const usedSlots = [];
+
+            // Assign one Big 4 team to each cluster
+            for(let i=0; i<4; i++) {
+                const team = shuffledBig4[i];
+                const cIdx = clusterOrder[i];
+                const availableIndices = clusterSlots[cIdx];
+                
+                // Pick a random slot within the chosen cluster
+                const chosenSlot = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+                
+                simGroups[chosenSlot].push(team);
+                usedSlots.push(chosenSlot);
+            }
+
+            // 5. Fill remaining Pot 1 slots with the rest
+            // Calculate remaining empty slots
+            let emptyGroupIndices = [];
+            for (let i=0; i<12; i++) { 
+                if (simGroups[i].length === 0) emptyGroupIndices.push(i); 
+            }
+            
+            // Assign remaining teams
+            const shuffledRest = shuffle([...rest]);
+            for (let i=0; i<shuffledRest.length; i++) { 
+                simGroups[emptyGroupIndices[i]].push(shuffledRest[i]); 
+            }
+            
+            // Continue with Pot 2, 3, 4...
             const uefaP2 = countUEFA(pots.pot2);
             const uefaP3 = countUEFA(pots.pot3);
             const uefaP4 = countUEFA(pots.pot4);
